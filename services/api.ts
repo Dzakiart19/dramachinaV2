@@ -81,8 +81,12 @@ export const apiService = {
     return fetchWithProxy(`/dramabox/latest?page=${page}`);
   },
 
-  async getTrendingDramas(page: number = 1): Promise<Drama[]> {
-    return fetchWithProxy(`/dramabox/trending?page=${page}`);
+  async getTrendingDramas(page: number = 1, pageSize: number = 10): Promise<Drama[]> {
+    // API doesn't support pagination, so fetch all and slice client-side
+    const allDramas = await fetchWithProxy(`/dramabox/trending`);
+    const dramas = Array.isArray(allDramas) ? allDramas : [];
+    const startIndex = (page - 1) * pageSize;
+    return dramas.slice(startIndex, startIndex + pageSize);
   },
 
   async getIndoDubDramas(classify: 'terpopuler' | 'terbaru' = 'terbaru', page: number = 1): Promise<Drama[]> {

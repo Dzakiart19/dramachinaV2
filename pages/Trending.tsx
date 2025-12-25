@@ -16,23 +16,8 @@ const Trending: React.FC = () => {
     setError(null);
     setPage(p);
     try {
-      const data: any = await apiService.getTrendingDramas(p);
-      
-      // Handle different API response formats
-      let dramasArray = [];
-      if (Array.isArray(data)) {
-        dramasArray = data;
-      } else if (data && typeof data === 'object') {
-        if (Array.isArray(data.data)) {
-          dramasArray = data.data;
-        } else if (Array.isArray(data.list)) {
-          dramasArray = data.list;
-        } else if (Array.isArray(data.bookList)) {
-          dramasArray = data.bookList;
-        }
-      }
-      
-      setDramas(dramasArray);
+      const data = await apiService.getTrendingDramas(p);
+      setDramas(Array.isArray(data) ? data : []);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
       console.error('Failed to load trending:', err);
