@@ -9,48 +9,13 @@ const IndoDub: React.FC = () => {
   const [dramas, setDramas] = useState<Drama[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-
-  const loadMore = async () => {
-    if (loadingMore || !hasMore) return;
-    setLoadingMore(true);
-    try {
-      const nextPage = page + 1;
-      const data = await apiService.getIndoDubDramas('terpopuler', nextPage);
-      if (data && Array.isArray(data) && data.length > 0) {
-        // Filter out duplicates based on bookId
-        setDramas(prev => {
-          const existingIds = new Set(prev.map(d => d.bookId));
-          const filteredNew = data.filter(d => !existingIds.has(d.bookId));
-          if (filteredNew.length === 0) {
-            setHasMore(false);
-            return prev;
-          }
-          return [...prev, ...filteredNew];
-        });
-        setPage(nextPage);
-        if (data.length < 10) setHasMore(false);
-      } else {
-        setHasMore(false);
-      }
-    } catch (e) {
-      console.error('Load more error:', e);
-    } finally {
-      setLoadingMore(false);
-    }
-  };
 
   const loadIndoDub = async () => {
     setLoading(true);
-    setPage(1);
-    setHasMore(true);
     setError(null);
     try {
       const data = await apiService.getIndoDubDramas('terpopuler', 1);
       setDramas(Array.isArray(data) ? data : []);
-      if (Array.isArray(data) && data.length < 10) setHasMore(false);
     } catch (err) {
       console.error('Failed to load indo dub:', err);
       setError('Gagal memuat drama sulih suara Indonesia. Silakan coba lagi.');
@@ -99,35 +64,11 @@ const IndoDub: React.FC = () => {
       </div>
 
       {dramas.length > 0 ? (
-        <>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
-            {dramas.map((drama, idx) => (
-              <MovieCard key={`${drama.bookId}-${idx}`} drama={drama} />
-            ))}
-          </div>
-
-          {hasMore && (
-            <div className="flex justify-center mt-12 pb-12">
-              <button 
-                onClick={loadMore}
-                disabled={loadingMore}
-                className="group relative flex items-center gap-3 bg-slate-900 hover:bg-slate-800 text-white px-10 py-5 rounded-2xl font-black transition-all border border-slate-800 hover:border-orange-500/50 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100"
-              >
-                {loadingMore ? (
-                  <>
-                    <Loader2 className="animate-spin text-orange-500" size={24} />
-                    <span>MEMUAT...</span>
-                  </>
-                ) : (
-                  <>
-                    <span>TAMPILKAN LEBIH BANYAK</span>
-                    <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
-                  </>
-                )}
-              </button>
-            </div>
-          )}
-        </>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+          {dramas.map((drama) => (
+            <MovieCard key={drama.bookId} drama={drama} />
+          ))}
+        </div>
       ) : (
         <div className="text-center py-20">
           <p className="text-slate-500 text-lg">Belum ada drama sulih suara</p>
