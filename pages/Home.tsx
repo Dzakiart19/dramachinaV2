@@ -8,10 +8,33 @@ import { ChevronRight, Play, Info, Loader2, AlertCircle, RefreshCcw, LayoutDashb
 const Home: React.FC = () => {
   const [vipData, setVipData] = useState<VIPResponse | null>(null);
   const [latest, setLatest] = useState<Drama[]>([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [forYou, setForYou] = useState<Drama[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showGreeting, setShowGreeting] = useState(false);
+
+  const loadMore = async () => {
+    if (loadingMore || !hasMore) return;
+    setLoadingMore(true);
+    try {
+      const nextPage = page + 1;
+      const newData = await apiService.getLatestDramas(nextPage);
+      if (newData && Array.isArray(newData) && newData.length > 0) {
+        setLatest(prev => [...prev, ...newData]);
+        setPage(nextPage);
+        if (newData.length < 10) setHasMore(false);
+      } else {
+        setHasMore(false);
+      }
+    } catch (e) {
+      console.error('Load more error:', e);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -220,11 +243,33 @@ const Home: React.FC = () => {
               LIHAT SEMUA <ChevronRight size={18} />
             </a>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-8">
-            {latest.slice(0, 12).map((drama) => (
-              <MovieCard key={drama.bookId} drama={drama} />
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-8 mb-12">
+            {latest.map((drama, idx) => (
+              <MovieCard key={`${drama.bookId}-${idx}`} drama={drama} />
             ))}
           </div>
+
+          {hasMore && (
+            <div className="flex justify-center mt-12">
+              <button 
+                onClick={loadMore}
+                disabled={loadingMore}
+                className="group relative flex items-center gap-3 bg-slate-900 hover:bg-slate-800 text-white px-10 py-5 rounded-2xl font-black transition-all border border-slate-800 hover:border-blue-500/50 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100"
+              >
+                {loadingMore ? (
+                  <>
+                    <Loader2 className="animate-spin text-blue-500" size={24} />
+                    <span>MEMUAT...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>TAMPILKAN LEBIH BANYAK</span>
+                    <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                  </>
+                )}
+              </button>
+            </div>
+          )}
         </section>
       )}
 

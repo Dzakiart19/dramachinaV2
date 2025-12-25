@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { apiService } from '../services/api';
 import { Drama } from '../types';
 import MovieCard from '../components/MovieCard';
-import { Search as SearchIcon, Loader2, TrendingUp, X } from 'lucide-react';
+import { Search as SearchIcon, Loader2, TrendingUp, X, ChevronRight } from 'lucide-react';
 
 const Search: React.FC = () => {
   const [query, setQuery] = useState('');
@@ -11,10 +11,37 @@ const Search: React.FC = () => {
   const [popularSearches, setPopularSearches] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   useEffect(() => {
     loadPopularSearches();
   }, []);
+
+  const loadMore = async () => {
+    if (loadingMore || !hasMore || !query.trim()) return;
+    setLoadingMore(true);
+    try {
+      const nextPage = page + 1;
+      const targetUrl = `https://dramabox.sansekai.my.id/api/dramabox/search?query=${encodeURIComponent(query)}&page=${nextPage}`;
+      // Direct proxy call for search pagination since it's custom
+      const res = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`);
+      const data = await res.json();
+      
+      if (data && Array.isArray(data) && data.length > 0) {
+        setResults(prev => [...prev, ...data]);
+        setPage(nextPage);
+        if (data.length < 10) setHasMore(false);
+      } else {
+        setHasMore(false);
+      }
+    } catch (e) {
+      console.error('Search load more error:', e);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
 
   const loadPopularSearches = async () => {
     try {
@@ -32,9 +59,12 @@ const Search: React.FC = () => {
 
     setLoading(true);
     setSearched(true);
+    setPage(1);
+    setHasMore(true);
     try {
       const data = await apiService.searchDramas(trimmedQuery);
       setResults(Array.isArray(data) ? data : []);
+      if (Array.isArray(data) && data.length < 10) setHasMore(false);
     } catch (error) {
       console.error('Search error:', error);
       setResults([]);
@@ -135,11 +165,35 @@ const Search: React.FC = () => {
             </div>
 
             {results && results.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
-                {results.map((drama) => (
-                  <MovieCard key={drama.bookId} drama={drama} />
-                ))}
-              </div>
+              <>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+                  {results.map((drama, idx) => (
+                    <MovieCard key={`${drama.bookId}-${idx}`} drama={drama} />
+                  ))}
+                </div>
+
+                {hasMore && (
+                  <div className="flex justify-center mt-12 pb-12">
+                    <button 
+                      onClick={loadMore}
+                      disabled={loadingMore}
+                      className="group relative flex items-center gap-3 bg-slate-900 hover:bg-slate-800 text-white px-10 py-5 rounded-2xl font-black transition-all border border-slate-800 hover:border-blue-500/50 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100"
+                    >
+                      {loadingMore ? (
+                        <>
+                          <Loader2 className="animate-spin text-blue-500" size={24} />
+                          <span>MEMUAT...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>TAMPILKAN LEBIH BANYAK</span>
+                          <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                        </>
+                      )}
+                    </button>
+                  </div>
+                )}
+              </>
             ) : (
               <div className="text-center py-20">
                 <p className="text-slate-500 text-xl mb-4">Tidak ada drama yang sesuai dengan pencarian Anda.</p>

@@ -59,12 +59,12 @@ export const apiService = {
     return fetchWithProxy('/dramabox/vip');
   },
 
-  async getLatestDramas(): Promise<Drama[]> {
-    return fetchWithProxy('/dramabox/latest');
+  async getLatestDramas(page: number = 1): Promise<Drama[]> {
+    return fetchWithProxy(`/dramabox/latest?page=${page}`);
   },
 
-  async getTrendingDramas(): Promise<Drama[]> {
-    return fetchWithProxy('/dramabox/trending');
+  async getTrendingDramas(page: number = 1): Promise<Drama[]> {
+    return fetchWithProxy(`/dramabox/trending?page=${page}`);
   },
 
   async getIndoDubDramas(classify: 'terpopuler' | 'terbaru' = 'terbaru', page: number = 1): Promise<Drama[]> {
