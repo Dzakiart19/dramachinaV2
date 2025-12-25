@@ -62,6 +62,7 @@ const Search: React.FC = () => {
     setQuery('');
     setResults([]);
     setSearched(false);
+    setPage(1);
   };
 
   return (
