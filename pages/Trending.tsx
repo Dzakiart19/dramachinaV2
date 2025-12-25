@@ -3,20 +3,18 @@ import React, { useEffect, useState } from 'react';
 import { apiService } from '../services/api';
 import { Drama } from '../types';
 import MovieCard from '../components/MovieCard';
-import { Loader2, AlertCircle, RefreshCcw, ChevronRight, LayoutDashboard } from 'lucide-react';
+import { AlertCircle, RefreshCcw, LayoutDashboard } from 'lucide-react';
 
 const Trending: React.FC = () => {
   const [dramas, setDramas] = useState<Drama[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [page, setPage] = useState(1);
 
-  const loadTrending = async (p: number = 1) => {
+  const loadTrending = async () => {
     setLoading(true);
     setError(null);
-    setPage(p);
     try {
-      const data = await apiService.getTrendingDramas(p);
+      const data = await apiService.getTrendingDramas();
       setDramas(Array.isArray(data) ? data : []);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
@@ -29,7 +27,7 @@ const Trending: React.FC = () => {
   };
 
   useEffect(() => {
-    loadTrending(1);
+    loadTrending();
   }, []);
 
   if (loading) {
@@ -105,48 +103,11 @@ const Trending: React.FC = () => {
       </div>
 
       {dramas.length > 0 ? (
-        <>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
-            {dramas.map((drama) => (
-              <MovieCard key={drama.bookId} drama={drama} />
-            ))}
-          </div>
-
-          {/* Numerical Pagination */}
-          <div className="flex items-center justify-center gap-2 mt-16 pb-12">
-            <button 
-              onClick={() => loadTrending(page - 1)}
-              disabled={page === 1}
-              className="p-4 bg-slate-900 border border-slate-800 rounded-2xl text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-red-600 transition-all"
-            >
-              <ChevronRight size={20} className="rotate-180" />
-            </button>
-            
-            {[page - 1, page, page + 1].map(p => {
-              if (p < 1) return null;
-              return (
-                <button
-                  key={p}
-                  onClick={() => loadTrending(p)}
-                  className={`w-14 h-14 rounded-2xl font-black transition-all ${
-                    page === p 
-                    ? 'bg-red-600 text-white shadow-2xl shadow-red-600/40' 
-                    : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white'
-                  }`}
-                >
-                  {p}
-                </button>
-              );
-            })}
-
-            <button 
-              onClick={() => loadTrending(page + 1)}
-              className="p-4 bg-slate-900 border border-slate-800 rounded-2xl text-white hover:bg-red-600 transition-all"
-            >
-              <ChevronRight size={20} />
-            </button>
-          </div>
-        </>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 pb-12">
+          {dramas.map((drama) => (
+            <MovieCard key={drama.bookId} drama={drama} />
+          ))}
+        </div>
       ) : (
         <div className="text-center py-20">
           <p className="text-slate-500 text-lg">Belum ada data trending</p>
