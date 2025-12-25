@@ -6,30 +6,68 @@ import MovieCard from '../components/MovieCard';
 import { Loader2, AlertCircle, RefreshCcw, ChevronRight, LayoutDashboard } from 'lucide-react';
 
 const IndoDub: React.FC = () => {
-  const [dramas, setDramas] = useState<Drama[]>([]);
+  const [allDramas, setAllDramas] = useState<Drama[]>([]);
+  const [displayedDramas, setDisplayedDramas] = useState<Drama[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
+  const itemsPerPage = 12;
 
-  const loadIndoDub = async (p: number = 1) => {
+  const loadAllIndoDub = async () => {
     setLoading(true);
     setError(null);
-    setPage(p);
     try {
-      const data = await apiService.getIndoDubDramas('terpopuler', p);
-      setDramas(Array.isArray(data) ? data : []);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      const allData: Drama[] = [];
+      
+      // Load from 'terpopuler' category - continue until no more data
+      let p = 1;
+      while (true) {
+        const data = await apiService.getIndoDubDramas('terpopuler', p).catch(() => []);
+        if (!Array.isArray(data) || data.length === 0) break;
+        allData.push(...data);
+        p++;
+      }
+      
+      // Load from 'terbaru' category - continue until no more data
+      p = 1;
+      while (true) {
+        const data = await apiService.getIndoDubDramas('terbaru', p).catch(() => []);
+        if (!Array.isArray(data) || data.length === 0) break;
+        allData.push(...data);
+        p++;
+      }
+
+      // Remove duplicates by bookId
+      const uniqueDramas = Array.from(new Map(allData.map(d => [d.bookId, d])).values());
+      
+      setAllDramas(uniqueDramas);
+      setPage(1);
+      setDisplayedDramas(uniqueDramas.slice(0, itemsPerPage));
+      
+      if (uniqueDramas.length === 0) {
+        throw new Error('Tidak ada data ditemukan');
+      }
     } catch (err) {
       console.error('Failed to load indo dub:', err);
       setError('Gagal memuat drama sulih suara Indonesia. Silakan coba lagi.');
-      setDramas([]);
+      setAllDramas([]);
+      setDisplayedDramas([]);
     } finally {
       setLoading(false);
     }
   };
 
+  const changePage = (p: number) => {
+    if (p < 1 || (p - 1) * itemsPerPage >= allDramas.length) return;
+    setPage(p);
+    const start = (p - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    setDisplayedDramas(allDramas.slice(start, end));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   useEffect(() => {
-    loadIndoDub(1);
+    loadAllIndoDub();
   }, []);
 
   if (loading) {
@@ -85,7 +123,7 @@ const IndoDub: React.FC = () => {
         <AlertCircle size={48} className="text-red-500 mb-4" />
         <p className="text-slate-400 mb-6">{error}</p>
         <button 
-          onClick={loadIndoDub}
+          onClick={loadAllIndoDub}
           className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-8 py-4 rounded-2xl font-bold transition-all"
         >
           <RefreshCcw size={20} />
@@ -95,19 +133,21 @@ const IndoDub: React.FC = () => {
     );
   }
 
+  const totalPages = Math.ceil(allDramas.length / itemsPerPage);
+
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="mb-12">
         <h1 className="text-4xl md:text-5xl font-black text-white mb-2">
           Drama <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">Sulih Suara</span>
         </h1>
-        <p className="text-slate-400">Drama dengan versi sulih suara Indonesia berkualitas tinggi</p>
+        <p className="text-slate-400">Drama dengan versi sulih suara Indonesia berkualitas tinggi ({allDramas.length} total)</p>
       </div>
 
-      {dramas.length > 0 ? (
+      {displayedDramas.length > 0 ? (
         <>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
-            {dramas.map((drama) => (
+            {displayedDramas.map((drama) => (
               <MovieCard key={drama.bookId} drama={drama} />
             ))}
           </div>
@@ -115,17 +155,17 @@ const IndoDub: React.FC = () => {
           {/* Numerical Pagination */}
           <div className="flex items-center justify-center gap-2 mt-16 pb-12">
             <button 
-              onClick={() => loadIndoDub(page - 1)}
+              onClick={() => changePage(page - 1)}
               disabled={page === 1}
               className="p-4 bg-slate-900 border border-slate-800 rounded-2xl text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-orange-600 transition-all"
             >
               <ChevronRight size={20} className="rotate-180" />
             </button>
             
-            {[page - 1, page, page + 1].filter(p => p >= 1).map(p => (
+            {[page - 1, page, page + 1].filter(p => p >= 1 && p <= totalPages).map(p => (
               <button
                 key={`indodub-page-${p}`}
-                onClick={() => loadIndoDub(p)}
+                onClick={() => changePage(p)}
                 className={`w-14 h-14 rounded-2xl font-black transition-all ${
                   page === p 
                   ? 'bg-orange-600 text-white shadow-2xl shadow-orange-600/40' 
@@ -137,8 +177,9 @@ const IndoDub: React.FC = () => {
             ))}
 
             <button 
-              onClick={() => loadIndoDub(page + 1)}
-              className="p-4 bg-slate-900 border border-slate-800 rounded-2xl text-white hover:bg-orange-600 transition-all"
+              onClick={() => changePage(page + 1)}
+              disabled={page >= totalPages}
+              className="p-4 bg-slate-900 border border-slate-800 rounded-2xl text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-orange-600 transition-all"
             >
               <ChevronRight size={20} />
             </button>

@@ -14,9 +14,21 @@ const Trending: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await apiService.getTrendingDramas();
-      setDramas(Array.isArray(data) ? data : []);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      const allData: Drama[] = [];
+      let page = 1;
+      
+      // Keep loading until no more data
+      while (true) {
+        const data = await apiService.getTrendingDramas().catch(() => []);
+        if (!Array.isArray(data) || data.length === 0) break;
+        allData.push(...data);
+        page++;
+      }
+      
+      setDramas(allData);
+      if (allData.length === 0) {
+        throw new Error('Tidak ada data ditemukan');
+      }
     } catch (err) {
       console.error('Failed to load trending:', err);
       setError('Gagal memuat drama trending. Silakan coba lagi.');
@@ -99,7 +111,7 @@ const Trending: React.FC = () => {
         <h1 className="text-4xl md:text-5xl font-black text-white mb-2">
           Drama <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-red-600">Trending</span>
         </h1>
-        <p className="text-slate-400">Drama paling populer dan banyak ditonton minggu ini</p>
+        <p className="text-slate-400">Drama paling populer dan banyak ditonton ({dramas.length} total)</p>
       </div>
 
       {dramas.length > 0 ? (

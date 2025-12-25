@@ -35,21 +35,32 @@ const Search: React.FC = () => {
     setSearched(true);
     setPage(p);
     try {
-      const data: any = await apiService.searchDramas(trimmedQuery, p);
+      const allResults: Drama[] = [];
+      let pageNum = 1;
       
-      // Handle different API response formats
-      let resultsArray = [];
-      if (Array.isArray(data)) {
-        resultsArray = data;
-      } else if (data && typeof data === 'object') {
-        if (Array.isArray(data.data)) {
-          resultsArray = data.data;
-        } else if (Array.isArray(data.list)) {
-          resultsArray = data.list;
+      // Load all search results
+      while (true) {
+        const data: any = await apiService.searchDramas(trimmedQuery, pageNum).catch(() => null);
+        
+        // Handle different API response formats
+        let resultsArray = [];
+        if (Array.isArray(data)) {
+          resultsArray = data;
+        } else if (data && typeof data === 'object') {
+          if (Array.isArray(data.data)) {
+            resultsArray = data.data;
+          } else if (Array.isArray(data.list)) {
+            resultsArray = data.list;
+          }
         }
+        
+        if (!resultsArray || resultsArray.length === 0) break;
+        allResults.push(...resultsArray);
+        pageNum++;
+        if (allResults.length > 300) break; // Safety limit
       }
       
-      setResults(resultsArray);
+      setResults(allResults);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (error) {
       console.error('Search error:', error);

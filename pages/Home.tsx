@@ -14,19 +14,10 @@ const Home: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [showGreeting, setShowGreeting] = useState(false);
 
-  const changePage = async (newPage: number) => {
+  const changePage = (newPage: number) => {
     if (newPage < 1) return;
-    setLoading(true);
     setPage(newPage);
-    try {
-      const data = await apiService.getLatestDramas(newPage);
-      setLatest(Array.isArray(data) ? data : []);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } catch (e) {
-      console.error('Page change error:', e);
-    } finally {
-      setLoading(false);
-    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const loadData = useCallback(async () => {
@@ -34,18 +25,29 @@ const Home: React.FC = () => {
     setError(null);
     
     try {
-      // Load all data in parallel for much faster initial load
-      const [latestData, vip, recommended] = await Promise.all([
-        apiService.getLatestDramas(page).catch(() => []),
-        apiService.getVIPDramas().catch(() => null),
-        apiService.getForYouDramas().catch(() => []),
-      ]);
+      // Load all latest drama pages
+      const allLatest: Drama[] = [];
+      let p = 1;
+      while (true) {
+        const data = await apiService.getLatestDramas(p).catch(() => []);
+        if (!Array.isArray(data) || data.length === 0) break;
+        allLatest.push(...data);
+        p++;
+        if (allLatest.length > 200) break; // Safety limit
+      }
 
-      setLatest(latestData);
+      // Load VIP data
+      const vip = await apiService.getVIPDramas().catch(() => null);
+      
+      // Load ForYou data
+      const recommended = await apiService.getForYouDramas().catch(() => []);
+
+      setLatest(allLatest);
       setVipData(vip);
       setForYou(recommended);
+      setPage(1);
 
-      if (latestData.length === 0 && !vip && recommended.length === 0) {
+      if (allLatest.length === 0 && !vip && recommended.length === 0) {
         throw new Error('Semua sumber data gagal dimuat.');
       }
 
