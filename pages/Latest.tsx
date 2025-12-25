@@ -24,16 +24,22 @@ const Latest: React.FC = () => {
     try {
       const allLatest: Drama[] = [];
       let p = 1;
-      // Load pages but limit to 60 items (5 pages) for speed + deduplicate
-      while (allLatest.length < 60) {
+      // Load ALL pages from API until response is empty (no limit)
+      let hasMore = true;
+      while (hasMore) {
         const data = await apiService.getLatestDramas(p).catch(() => []);
-        if (!Array.isArray(data) || data.length === 0) break;
+        if (!Array.isArray(data) || data.length === 0) {
+          hasMore = false;
+          break;
+        }
         allLatest.push(...data);
         p++;
       }
 
       // Remove duplicates by bookId
-      const uniqueDramas = Array.from(new Map(allLatest.map(d => [d.bookId, d])).values());
+      const dramaMaps = new Map<string, Drama>();
+      allLatest.forEach(d => dramaMaps.set(d.bookId, d));
+      const uniqueDramas = Array.from(dramaMaps.values());
       
       setLatest(uniqueDramas);
       setPage(1);
@@ -149,17 +155,14 @@ const Latest: React.FC = () => {
                 <ChevronRight size={16} className="rotate-180" /> <span className="hidden sm:inline">Sebelumnya</span>
               </button>
 
-              <div className="flex gap-1 sm:gap-2 flex-wrap justify-center">
-                {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
-                  const p = Math.max(1, page - 2 + i);
-                  return p <= totalPages ? p : null;
-                }).filter(Boolean).map((p) => (
+              <div className="flex gap-1 sm:gap-2 flex-wrap justify-center max-w-4xl">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
                   <button
                     key={p}
                     onClick={() => changePage(p)}
-                    className={`font-bold py-2 px-2 sm:px-4 rounded-lg text-xs sm:text-base transition-colors ${
+                    className={`font-bold py-2 px-2 sm:px-3 md:px-4 rounded-lg text-[10px] sm:text-xs md:text-base transition-colors ${
                       p === page
-                        ? 'bg-blue-600 text-white'
+                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/40'
                         : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
                     }`}
                   >
