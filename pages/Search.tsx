@@ -185,8 +185,8 @@ const Search: React.FC = () => {
             {searched && results && results.length > 0 ? (
               <>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
-                  {results.map((drama) => (
-                    <MovieCard key={drama.bookId} drama={drama} />
+                  {results.map((drama, idx) => (
+                    <MovieCard key={`${drama.bookId}-${idx}`} drama={drama} />
                   ))}
                 </div>
 
