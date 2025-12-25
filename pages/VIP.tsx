@@ -2,13 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { apiService } from '../services/api';
 import { Drama, VIPResponse } from '../types';
 import MovieCard from '../components/MovieCard';
-import { AlertCircle, RefreshCcw, LayoutDashboard } from 'lucide-react';
+import { AlertCircle, RefreshCcw, LayoutDashboard, ChevronRight } from 'lucide-react';
 
 const VIP: React.FC = () => {
   const [vipData, setVipData] = useState<VIPResponse | null>(null);
   const [selectedCategory, setSelectedCategory] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 12;
+
+  const changePage = (newPage: number) => {
+    if (newPage < 1) return;
+    setPage(newPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const loadVIP = async () => {
     setLoading(true);
@@ -22,6 +30,7 @@ const VIP: React.FC = () => {
 
       setVipData(data);
       setSelectedCategory(0);
+      setPage(1);
     } catch (err) {
       console.error('Failed to load VIP:', err);
       setError('Gagal memuat drama VIP. Silakan coba lagi.');
@@ -100,7 +109,11 @@ const VIP: React.FC = () => {
   }
 
   const column = vipData.columnVoList[selectedCategory];
-  const dramas = column?.bookList || [];
+  const allDramas = column?.bookList || [];
+  const totalPages = Math.ceil(allDramas.length / itemsPerPage);
+  const startIdx = (page - 1) * itemsPerPage;
+  const endIdx = startIdx + itemsPerPage;
+  const displayedDramas = allDramas.slice(startIdx, endIdx).filter(d => d && d.bookId);
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -108,7 +121,7 @@ const VIP: React.FC = () => {
         <h1 className="text-4xl md:text-5xl font-black text-white mb-2">
           Drama <span className="text-yellow-500">VIP</span>
         </h1>
-        <p className="text-slate-400">Pilihan eksklusif mingguan</p>
+        <p className="text-slate-400">Pilihan eksklusif mingguan - Total: {allDramas.length} drama</p>
       </div>
 
       {vipData.columnVoList.length > 1 && (
@@ -116,7 +129,10 @@ const VIP: React.FC = () => {
           {vipData.columnVoList.map((col, idx) => (
             <button
               key={idx}
-              onClick={() => setSelectedCategory(idx)}
+              onClick={() => {
+                setSelectedCategory(idx);
+                setPage(1);
+              }}
               className={`px-3 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl font-bold whitespace-nowrap transition-colors text-xs sm:text-base ${
                 selectedCategory === idx
                   ? 'bg-yellow-600 text-white'
@@ -129,12 +145,50 @@ const VIP: React.FC = () => {
         </div>
       )}
 
-      {dramas.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
-          {dramas.filter(d => d && d.bookId).map((drama) => (
-            <MovieCard key={drama.bookId} drama={drama} />
-          ))}
-        </div>
+      {displayedDramas.length > 0 ? (
+        <>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3 md:gap-4 mb-8 sm:mb-12">
+            {displayedDramas.map((drama) => (
+              <MovieCard key={drama.bookId} drama={drama} />
+            ))}
+          </div>
+
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-1 sm:gap-2 mt-8 sm:mt-12 flex-wrap pb-8">
+              <button
+                onClick={() => changePage(page - 1)}
+                disabled={page === 1}
+                className="flex items-center gap-1 sm:gap-2 bg-slate-800 hover:bg-slate-700 disabled:bg-slate-900 disabled:text-slate-600 text-white font-bold py-2 sm:py-3 px-3 sm:px-6 rounded-lg sm:rounded-xl transition-colors text-xs sm:text-base"
+              >
+                <ChevronRight size={16} className="rotate-180" /> <span className="hidden sm:inline">Sebelumnya</span>
+              </button>
+
+              <div className="flex gap-1 sm:gap-2 flex-wrap justify-center max-w-4xl">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                  <button
+                    key={p}
+                    onClick={() => changePage(p)}
+                    className={`font-bold py-2 px-2 sm:px-3 md:px-4 rounded-lg text-[10px] sm:text-xs md:text-base transition-colors ${
+                      p === page
+                        ? 'bg-yellow-600 text-white shadow-lg shadow-yellow-600/40'
+                        : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                    }`}
+                  >
+                    {p}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                onClick={() => changePage(page + 1)}
+                disabled={page >= totalPages}
+                className="flex items-center gap-1 sm:gap-2 bg-slate-800 hover:bg-slate-700 disabled:bg-slate-900 disabled:text-slate-600 text-white font-bold py-2 sm:py-3 px-3 sm:px-6 rounded-lg sm:rounded-xl transition-colors text-xs sm:text-base"
+              >
+                <span className="hidden sm:inline">Selanjutnya</span> <ChevronRight size={16} />
+              </button>
+            </div>
+          )}
+        </>
       ) : (
         <div className="text-center py-12">
           <p className="text-slate-400">Tidak ada drama ditemukan</p>

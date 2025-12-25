@@ -2,12 +2,20 @@ import React, { useEffect, useState } from 'react';
 import { apiService } from '../services/api';
 import { Drama } from '../types';
 import MovieCard from '../components/MovieCard';
-import { AlertCircle, RefreshCcw, LayoutDashboard } from 'lucide-react';
+import { AlertCircle, RefreshCcw, LayoutDashboard, ChevronRight } from 'lucide-react';
 
 const ForYou: React.FC = () => {
   const [dramas, setDramas] = useState<Drama[]>([]);
+  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const itemsPerPage = 12;
+
+  const changePage = (newPage: number) => {
+    if (newPage < 1) return;
+    setPage(newPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const loadForYou = async () => {
     setLoading(true);
@@ -24,6 +32,7 @@ const ForYou: React.FC = () => {
       data.forEach(d => dramaMaps.set(d.bookId, d));
       const uniqueDramas = Array.from(dramaMaps.values());
       setDramas(uniqueDramas);
+      setPage(1);
     } catch (err) {
       console.error('Failed to load for you:', err);
       setError('Gagal memuat rekomendasi. Silakan coba lagi.');
@@ -101,6 +110,11 @@ const ForYou: React.FC = () => {
     );
   }
 
+  const totalPages = Math.ceil(dramas.length / itemsPerPage);
+  const startIdx = (page - 1) * itemsPerPage;
+  const endIdx = startIdx + itemsPerPage;
+  const displayedDramas = dramas.slice(startIdx, endIdx).filter(d => d && d.bookId);
+
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="mb-12">
@@ -110,11 +124,55 @@ const ForYou: React.FC = () => {
         <p className="text-slate-400">Rekomendasi pilihan spesial: {dramas.length} drama</p>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
-        {dramas.filter(d => d && d.bookId).map((drama) => (
-          <MovieCard key={drama.bookId} drama={drama} />
-        ))}
-      </div>
+      {displayedDramas.length > 0 ? (
+        <>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3 md:gap-4 mb-8 sm:mb-12">
+            {displayedDramas.map((drama) => (
+              <MovieCard key={drama.bookId} drama={drama} />
+            ))}
+          </div>
+
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-1 sm:gap-2 mt-8 sm:mt-12 flex-wrap pb-8">
+              <button
+                onClick={() => changePage(page - 1)}
+                disabled={page === 1}
+                className="flex items-center gap-1 sm:gap-2 bg-slate-800 hover:bg-slate-700 disabled:bg-slate-900 disabled:text-slate-600 text-white font-bold py-2 sm:py-3 px-3 sm:px-6 rounded-lg sm:rounded-xl transition-colors text-xs sm:text-base"
+              >
+                <ChevronRight size={16} className="rotate-180" /> <span className="hidden sm:inline">Sebelumnya</span>
+              </button>
+
+              <div className="flex gap-1 sm:gap-2 flex-wrap justify-center max-w-4xl">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                  <button
+                    key={p}
+                    onClick={() => changePage(p)}
+                    className={`font-bold py-2 px-2 sm:px-3 md:px-4 rounded-lg text-[10px] sm:text-xs md:text-base transition-colors ${
+                      p === page
+                        ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/40'
+                        : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                    }`}
+                  >
+                    {p}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                onClick={() => changePage(page + 1)}
+                disabled={page >= totalPages}
+                className="flex items-center gap-1 sm:gap-2 bg-slate-800 hover:bg-slate-700 disabled:bg-slate-900 disabled:text-slate-600 text-white font-bold py-2 sm:py-3 px-3 sm:px-6 rounded-lg sm:rounded-xl transition-colors text-xs sm:text-base"
+              >
+                <span className="hidden sm:inline">Selanjutnya</span> <ChevronRight size={16} />
+              </button>
+            </div>
+          )}
+        </>
+      ) : (
+        <div className="text-center py-12">
+          <p className="text-slate-400">Tidak ada rekomendasi ditemukan</p>
+        </div>
+      )}
     </div>
   );
 };
