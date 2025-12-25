@@ -170,7 +170,7 @@ const Search: React.FC = () => {
               <span className="text-slate-500 text-sm">{results.length} hasil</span>
             </div>
 
-            {results && results.length > 0 ? (
+            {searched && results && results.length > 0 ? (
               <>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
                   {results.map((drama) => (
@@ -213,7 +213,7 @@ const Search: React.FC = () => {
                   </button>
                 </div>
               </>
-            ) : (
+            ) : searched && results && results.length === 0 ? (
               <div className="text-center py-20">
                 <p className="text-slate-500 text-xl mb-4">Tidak ada drama yang sesuai dengan pencarian Anda.</p>
                 <button 
@@ -223,7 +223,7 @@ const Search: React.FC = () => {
                   Coba cari drama lain
                 </button>
               </div>
-            )}
+            ) : null}
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-20 opacity-40">
