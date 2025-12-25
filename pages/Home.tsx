@@ -119,7 +119,7 @@ const Home: React.FC = () => {
               </h2>
               
               <p className="text-slate-400 text-lg mb-10 leading-relaxed font-medium">
-                Nikmati ribuan drama Korea dan Asia terlengkap dengan kualitas terbaik. Selamat menonton!
+                Nikmati ribuan drama China dan Asia terlengkap dengan kualitas terbaik. Selamat menonton!
               </p>
               
               <button 
