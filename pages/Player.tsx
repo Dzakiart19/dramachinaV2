@@ -193,94 +193,62 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[90vh] bg-slate-950 p-6 overflow-hidden">
-        <div className="relative group scale-110 md:scale-125 mb-16">
-          <div className="absolute inset-[-40px] bg-blue-600/20 blur-[60px] rounded-full animate-pulse"></div>
-          <div className="absolute inset-[-20px] bg-indigo-600/10 blur-[40px] rounded-full animate-pulse delay-700"></div>
-          
-          <div className="relative w-32 h-32">
-            <div className="absolute inset-0 border-[3px] border-slate-800 rounded-full"></div>
-            <div className="absolute inset-0 border-[3px] border-t-blue-500 border-r-indigo-500 rounded-full animate-spin"></div>
-            <div className="absolute inset-4 border border-blue-500/20 rounded-full animate-[spin_3s_linear_infinite_reverse]"></div>
-            
-            <div className="absolute inset-0 m-auto w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center shadow-2xl border border-white/5">
-               <Monitor className="text-blue-500 animate-pulse" size={24} />
-            </div>
-          </div>
-        </div>
-
-        <div className="flex flex-col items-center gap-4 max-w-sm w-full">
-           <div className="space-y-1 text-center">
-              <h2 className="text-3xl font-black text-white tracking-tighter uppercase italic bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent animate-in slide-in-from-bottom-2 duration-700">
-                Menyiapkan Video...
-              </h2>
-              <div className="flex justify-center gap-1.5 py-2">
-                 {[0, 1, 2].map((i) => (
-                   <div key={i} className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: `${i * 200}ms` }} />
-                 ))}
-              </div>
-           </div>
-           
-           <div className="relative w-full bg-slate-900 h-1.5 rounded-full overflow-hidden border border-white/5">
-              <div className="absolute inset-y-0 left-0 bg-gradient-to-r from-blue-600 to-indigo-600 w-full -translate-x-[100%] animate-[progress_3s_ease-in-out_infinite]"></div>
-           </div>
-           <p className="text-slate-500 text-xs font-black uppercase tracking-[0.4em] animate-pulse">Menghubungkan ke Server CDN</p>
-        </div>
-
-        <style>{`
-          @keyframes progress {
-            0% { transform: translateX(-100%); }
-            50% { transform: translateX(0%); }
-            100% { transform: translateX(100%); }
-          }
-        `}</style>
+      <div className="flex flex-col items-center justify-center min-h-[90vh] bg-black">
+        <div className="w-16 h-16 border-4 border-red-600 border-t-transparent rounded-full animate-spin shadow-[0_0_20px_rgba(220,38,38,0.5)]"></div>
+        <p className="mt-6 text-red-600 font-bold tracking-[0.3em] uppercase animate-pulse">DZECK STREAM</p>
       </div>
     );
   }
 
   if (error || !currentEpisode) {
     return (
-      <div className="flex flex-col items-center justify-center h-[90vh] bg-[#020617] px-6 text-center">
-        <ShieldAlert size={64} className="text-red-500 mb-6" />
-        <h2 className="text-2xl font-black text-white mb-4">Akses Gagal</h2>
-        <p className="text-slate-400 mb-10 max-w-sm">{error || "Server tidak merespon permintaan Anda."}</p>
-        <button onClick={loadContent} className="bg-white text-black px-10 py-4 rounded-2xl font-black transition-all hover:scale-105 active:scale-95 shadow-xl">
-          COBA LAGI
+      <div className="flex flex-col items-center justify-center h-[90vh] bg-black px-6 text-center">
+        <ShieldAlert size={64} className="text-red-600 mb-6" />
+        <h2 className="text-2xl font-black text-white mb-4 uppercase tracking-tighter">Playback Failed</h2>
+        <p className="text-zinc-500 mb-10 max-w-sm font-medium">{error || "Server tidak merespon permintaan Anda."}</p>
+        <button onClick={loadContent} className="bg-red-600 text-white px-10 py-3 rounded-md font-bold transition-all hover:bg-red-700 active:scale-95 shadow-xl uppercase tracking-widest">
+          Retry
         </button>
       </div>
     );
   }
 
   return (
-    <div className="bg-[#020617] min-h-screen pb-20">
-      <div className="container mx-auto py-8 px-4 max-w-6xl">
-        {/* Navigation Header */}
-        <div className="flex items-center gap-5 mb-8">
-          <a href={`#/detail/${bookId}`} className="group p-4 bg-slate-900/40 border border-slate-800 rounded-2xl text-white hover:bg-blue-600 hover:border-blue-400 transition-all">
-            <ChevronLeft size={24} className="group-hover:-translate-x-1 transition-transform" />
-          </a>
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="bg-blue-600 text-[9px] font-black px-1.5 py-0.5 rounded text-white tracking-widest uppercase">Streaming</span>
-              <span className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">{drama?.bookName}</span>
+    <div className="bg-black min-h-screen pb-20">
+      <div className="container mx-auto py-8 px-4 md:px-12 max-w-7xl">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+          <div className="flex items-start gap-4">
+            <a href={`#/detail/${bookId}`} className="mt-1 p-3 bg-zinc-900 border border-zinc-800 rounded-md text-white hover:bg-zinc-800 transition-all">
+              <ChevronLeft size={24} />
+            </a>
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-red-600 text-[10px] font-black tracking-[0.2em] uppercase">Streaming</span>
+                <span className="text-zinc-600 text-[10px] font-bold uppercase tracking-widest">{drama?.bookName}</span>
+              </div>
+              <h1 className="text-white text-2xl md:text-4xl font-black uppercase tracking-tighter">Episode {currentEpisode.chapterName}</h1>
             </div>
-            <h1 className="text-white text-xl md:text-3xl font-black leading-none">EPS {currentEpisode.chapterName}</h1>
+          </div>
+          
+          <div className="flex items-center gap-3">
+             <div className="bg-zinc-900/80 px-4 py-2 rounded-md border border-zinc-800 text-zinc-400 text-xs font-black uppercase tracking-widest">
+               {selectedQuality}P
+             </div>
+             <div className="bg-zinc-900/80 px-4 py-2 rounded-md border border-zinc-800 text-zinc-400 text-xs font-black uppercase tracking-widest">
+               {getCdnLabel(selectedCdnIndex)}
+             </div>
           </div>
         </div>
 
-        {/* Enhanced Player Container */}
-        <div className="relative aspect-video w-full bg-slate-950 rounded-[2rem] overflow-hidden shadow-[0_0_50px_-12px_rgba(59,130,246,0.3)] ring-1 ring-slate-800 group">
+        {/* Video Player */}
+        <div className="relative aspect-video w-full bg-zinc-950 rounded-md overflow-hidden shadow-2xl ring-1 ring-zinc-800 group">
           {isBlockedByGoogle ? (
-            <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-slate-950/80 backdrop-blur-2xl p-8 text-center animate-in fade-in zoom-in duration-700">
-              <div className="relative mb-8">
-                <div className="absolute inset-0 bg-blue-500/20 blur-3xl rounded-full animate-pulse"></div>
-                <Monitor size={70} className="text-blue-500/30 relative z-10" />
-                <AlertCircle size={35} className="text-blue-500 absolute -bottom-2 -right-2 animate-bounce shadow-2xl" />
-              </div>
-              <h3 className="text-white text-2xl font-black mb-4 tracking-tight">Gangguan Koneksi</h3>
-              <p className="text-slate-400 text-sm md:text-base max-w-md mb-10 leading-relaxed font-medium">
-                Gagal memuat video secara otomatis. <br/>
-                Coba ganti server atau gunakan opsi di bawah.
+            <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/90 backdrop-blur-xl p-8 text-center">
+              <ShieldAlert size={60} className="text-red-600 mb-6" />
+              <h3 className="text-white text-2xl font-black mb-4 uppercase tracking-tighter">Playback Error</h3>
+              <p className="text-zinc-500 text-sm max-w-md mb-10 font-medium">
+                Gagal memuat video. Coba ganti server atau buka di tab baru.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 w-full max-w-sm">
                 <button 
@@ -289,26 +257,19 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
                     const nextCdn = (selectedCdnIndex + 1) % currentEpisode.cdnList.length;
                     setSelectedCdnIndex(nextCdn);
                   }}
-                  className="flex-1 px-8 py-4 bg-blue-600 text-white rounded-2xl font-black hover:bg-blue-500 transition-all shadow-[0_15px_30px_-10px_rgba(37,99,235,0.4)] hover:scale-105 active:scale-95"
+                  className="flex-1 px-8 py-3 bg-red-600 text-white rounded-md font-bold hover:bg-red-700 transition-all shadow-lg uppercase tracking-widest"
                 >
-                  Ganti Server
+                  Switch Server
                 </button>
                 <a 
                   href={currentVideoSource?.videoPath} 
                   target="_blank" 
                   rel="noreferrer"
-                  className="flex-1 flex items-center justify-center gap-2 bg-white/10 backdrop-blur-xl border border-white/10 hover:bg-white/20 text-white px-8 py-4 rounded-2xl font-black transition-all hover:scale-105 active:scale-95"
+                  className="flex-1 flex items-center justify-center gap-2 bg-zinc-800 text-white px-8 py-3 rounded-md font-bold transition-all hover:bg-zinc-700 uppercase tracking-widest"
                 >
-                  <ExternalLink size={20} />
-                  Tab Baru
+                  External
                 </a>
               </div>
-              <button 
-                onClick={() => setIsBlockedByGoogle(false)}
-                className="mt-8 text-slate-500 text-xs font-black uppercase tracking-[0.3em] hover:text-white transition-all hover:tracking-[0.4em]"
-              >
-                TETAP GUNAKAN PEMUTAR INI
-              </button>
             </div>
           ) : (
             <video 
@@ -325,115 +286,99 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
           )}
         </div>
 
-        {/* Video Info & Controls */}
-        <div className="mt-8 flex flex-col gap-6">
-          {/* CDN/Dubbing Selection */}
-          {currentEpisode && currentEpisode.cdnList && currentEpisode.cdnList.length > 1 && (
-            <div className="flex items-center gap-3 p-3 bg-slate-900/40 rounded-2xl border border-slate-800 flex-wrap">
-              <span className="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] ml-2">Server/Dubbing</span>
-              <div className="flex gap-1.5">
-                {currentEpisode.cdnList.map((_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => { setSelectedCdnIndex(idx); setIsBlockedByGoogle(false); }}
-                    className={`px-4 py-2 text-[9px] font-black rounded-xl transition-all whitespace-nowrap ${
-                      selectedCdnIndex === idx 
-                      ? 'bg-blue-600 text-white shadow-lg' 
-                      : 'bg-slate-800 text-slate-400 hover:text-white'
-                    }`}
+        {/* Controls */}
+        <div className="mt-10 grid grid-cols-1 lg:grid-cols-12 gap-8">
+           <div className="lg:col-span-8 space-y-8">
+              {/* Navigation */}
+              <div className="flex flex-wrap gap-4">
+                {prevEpisode && (
+                  <a 
+                    href={`#/player/${bookId}/${prevEpisode.chapterId}`}
+                    className="flex-1 flex items-center justify-center gap-3 px-8 py-4 bg-zinc-900 hover:bg-zinc-800 text-white rounded-md font-bold text-sm border border-zinc-800 transition-all uppercase tracking-widest"
                   >
-                    {getCdnLabel(idx)}
-                  </button>
-                ))}
+                    <ChevronLeft size={20} /> Prev Episode
+                  </a>
+                )}
+                {nextEpisode && (
+                  <a 
+                    href={`#/player/${bookId}/${nextEpisode.chapterId}`}
+                    className="flex-1 flex items-center justify-center gap-3 px-8 py-4 bg-red-600 hover:bg-red-700 text-white rounded-md font-bold text-sm transition-all shadow-lg uppercase tracking-widest"
+                  >
+                    Next Episode <ChevronRight size={20} />
+                  </a>
+                )}
               </div>
-            </div>
-          )}
 
-          {/* Episodes Navigation & Quality */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-            {/* Left: Episodes Navigation */}
-            <div className="md:col-span-7 flex flex-wrap items-center gap-4">
-              {prevEpisode && (
-                <a 
-                  href={`#/player/${bookId}/${prevEpisode.chapterId}`}
-                  className="flex items-center gap-3 px-8 py-4 bg-slate-900/60 hover:bg-slate-800 text-white rounded-2xl font-black text-sm border border-slate-800 transition-all hover:-translate-y-1"
-                >
-                  <ChevronLeft size={20} /> EP SEBELUMNYA
-                </a>
-              )}
-              {nextEpisode && (
-                <a 
-                  href={`#/player/${bookId}/${nextEpisode.chapterId}`}
-                  className="flex items-center gap-3 px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-black text-sm transition-all hover:scale-105 shadow-xl shadow-blue-600/20"
-                >
-                  EP SELANJUTNYA <ChevronRight size={20} />
-                </a>
-              )}
-            </div>
-
-            {/* Right: Quality & Extra Actions */}
-            <div className="md:col-span-5 flex items-center justify-end gap-4">
-              <div className="flex items-center gap-3 p-2 bg-slate-900/40 rounded-2xl border border-slate-800">
-                <span className="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] ml-2">Quality</span>
-                <div className="flex gap-1.5">
-                  {availableQualities.map(q => (
-                    <button
-                      key={q}
-                      onClick={() => { setSelectedQuality(q); setIsBlockedByGoogle(false); }}
-                      className={`px-4 py-2 text-[10px] font-black rounded-xl transition-all ${
-                        selectedQuality === q 
-                        ? 'bg-blue-600 text-white shadow-lg' 
-                        : 'bg-slate-800 text-slate-400 hover:text-white'
+              {/* Episode Selection */}
+              <div>
+                <div className="flex items-center justify-between mb-6 border-b border-zinc-900 pb-3">
+                  <h3 className="text-xl font-black text-white uppercase tracking-tight">Select Episode</h3>
+                  <span className="text-zinc-600 font-bold text-[10px] uppercase tracking-[0.2em]">{episodes.length} Episodes</span>
+                </div>
+                <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">
+                  {episodes.map((ep) => (
+                    <a 
+                      key={ep.chapterId}
+                      href={`#/player/${bookId}/${ep.chapterId}`}
+                      className={`flex items-center justify-center py-4 rounded-md border transition-all duration-300 font-bold ${
+                        ep.chapterId === episodeId 
+                          ? 'bg-red-600 border-red-600 text-white shadow-lg' 
+                          : 'bg-zinc-900 border-zinc-800 text-zinc-500 hover:border-zinc-600 hover:text-white'
                       }`}
                     >
-                      {q}P
-                    </button>
+                      {ep.chapterName}
+                    </a>
                   ))}
                 </div>
               </div>
-              {currentVideoSource && (
-                <a 
-                  href={currentVideoSource.videoPath} 
-                  target="_blank" 
-                  rel="noreferrer" 
-                  className="p-4 bg-slate-800/80 text-white rounded-2xl hover:bg-blue-600 transition-all group"
-                  title="Bypass Mode (Buka di Tab Baru)"
-                >
-                  <ExternalLink size={24} className="group-hover:rotate-12 transition-transform" />
-                </a>
-              )}
-            </div>
-          </div>
-        </div>
+           </div>
 
-        {/* Episode Selector Grid */}
-        <div className="mt-16">
-          <div className="flex items-center justify-between mb-8 border-b border-slate-800 pb-6">
-            <h3 className="text-2xl font-black text-white flex items-center gap-3">
-              <div className="w-1.5 h-8 bg-blue-600 rounded-full"></div>
-              Pilih Episode
-            </h3>
-            <div className="text-slate-500 font-bold bg-slate-900/80 px-5 py-2 rounded-full border border-slate-800 text-xs">
-              {episodes.length} TOTAL EPS
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-12 gap-3">
-            {episodes.map((ep) => (
-              <a 
-                key={ep.chapterId}
-                href={`#/player/${bookId}/${ep.chapterId}`}
-                className={`flex flex-col items-center justify-center py-5 rounded-2xl border-2 transition-all duration-300 ${
-                  ep.chapterId === episodeId 
-                    ? 'bg-blue-600 border-blue-400 text-white font-black scale-110 shadow-[0_0_30px_-5px_rgba(59,130,246,0.6)] z-10' 
-                    : 'bg-slate-900/30 border-slate-800/50 text-slate-600 hover:bg-slate-800 hover:border-slate-500 hover:text-white'
-                }`}
-              >
-                <span className={`text-[9px] font-black mb-1 opacity-50`}>EPS</span>
-                <span className="text-lg">{ep.chapterName}</span>
-              </a>
-            ))}
-          </div>
+           {/* Settings Sidebar */}
+           <div className="lg:col-span-4 space-y-6">
+              <div className="bg-zinc-900/50 p-6 rounded-md border border-zinc-800">
+                <h4 className="text-zinc-500 font-black text-[10px] uppercase tracking-[0.2em] mb-4">Video Settings</h4>
+                
+                <div className="space-y-6">
+                  <div>
+                    <span className="text-white text-sm font-bold block mb-3">Server Selector</span>
+                    <div className="flex flex-wrap gap-2">
+                      {currentEpisode.cdnList.map((_, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => { setSelectedCdnIndex(idx); setIsBlockedByGoogle(false); }}
+                          className={`px-4 py-2 text-[10px] font-bold rounded-md transition-all border ${
+                            selectedCdnIndex === idx 
+                            ? 'bg-red-600 border-red-600 text-white' 
+                            : 'bg-zinc-800 border-zinc-700 text-zinc-400 hover:text-white'
+                          }`}
+                        >
+                          {getCdnLabel(idx)}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <span className="text-white text-sm font-bold block mb-3">Resolution</span>
+                    <div className="flex flex-wrap gap-2">
+                      {availableQualities.map(q => (
+                        <button
+                          key={q}
+                          onClick={() => { setSelectedQuality(q); setIsBlockedByGoogle(false); }}
+                          className={`px-4 py-2 text-[10px] font-bold rounded-md transition-all border ${
+                            selectedQuality === q 
+                            ? 'bg-red-600 border-red-600 text-white' 
+                            : 'bg-zinc-800 border-zinc-700 text-zinc-400 hover:text-white'
+                          }`}
+                        >
+                          {q}P
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+           </div>
         </div>
       </div>
     </div>

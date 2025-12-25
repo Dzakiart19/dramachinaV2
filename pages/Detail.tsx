@@ -36,146 +36,98 @@ const Detail: React.FC<DetailProps> = ({ bookId }) => {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[90vh] bg-slate-950 p-6 overflow-hidden">
-        <div className="relative group scale-110 md:scale-125 mb-16">
-          <div className="absolute inset-[-40px] bg-indigo-600/20 blur-[60px] rounded-full animate-pulse"></div>
-          
-          <div className="relative w-32 h-32">
-            <div className="absolute inset-0 border-[3px] border-slate-800 rounded-full"></div>
-            <div className="absolute inset-0 border-[3px] border-t-indigo-500 border-r-blue-500 rounded-full animate-spin"></div>
-            <div className="absolute inset-4 border border-blue-500/20 rounded-full animate-[spin_3s_linear_infinite_reverse]"></div>
-            
-            <div className="absolute inset-0 m-auto w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center shadow-2xl border border-white/5">
-               <LayoutDashboard className="text-indigo-500 animate-pulse" size={24} />
-            </div>
-          </div>
-        </div>
-
-        <div className="flex flex-col items-center gap-4 max-w-sm w-full">
-           <div className="space-y-1 text-center">
-              <h2 className="text-3xl font-black text-white tracking-tighter uppercase italic bg-gradient-to-r from-indigo-400 to-blue-400 bg-clip-text text-transparent animate-in slide-in-from-bottom-2 duration-700">
-                Membuka Arsip...
-              </h2>
-              <div className="flex justify-center gap-1.5 py-2">
-                 {[0, 1, 2].map((i) => (
-                   <div key={i} className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: `${i * 200}ms` }} />
-                 ))}
-              </div>
-           </div>
-           
-           <div className="relative w-full bg-slate-900 h-1.5 rounded-full overflow-hidden border border-white/5">
-              <div className="absolute inset-y-0 left-0 bg-gradient-to-r from-indigo-600 to-blue-600 w-full -translate-x-[100%] animate-[progress_3s_ease-in-out_infinite]"></div>
-           </div>
-           <p className="text-slate-500 text-xs font-black uppercase tracking-[0.4em] animate-pulse">Data Sinopsis & Episode</p>
-        </div>
-
-        <style>{`
-          @keyframes progress {
-            0% { transform: translateX(-100%); }
-            50% { transform: translateX(0%); }
-            100% { transform: translateX(100%); }
-          }
-        `}</style>
+      <div className="flex flex-col items-center justify-center min-h-[90vh] bg-black">
+        <div className="w-16 h-16 border-4 border-red-600 border-t-transparent rounded-full animate-spin shadow-[0_0_20px_rgba(220,38,38,0.5)]"></div>
+        <p className="mt-6 text-red-600 font-bold tracking-[0.3em] uppercase animate-pulse">DZECK STREAM</p>
       </div>
     );
   }
 
   if (!drama) {
     return (
-      <div className="flex flex-col items-center justify-center h-[70vh] px-6 text-center">
-        <div className="bg-red-500/10 p-6 rounded-full mb-6 border border-red-500/20">
-          <Play size={48} className="text-red-500 rotate-45" />
-        </div>
-        <h2 className="text-2xl font-black text-white mb-2">Drama Tidak Ditemukan</h2>
-        <p className="text-slate-400 max-w-sm mb-10">Data drama mungkin telah dihapus atau server sedang mengalami gangguan koneksi.</p>
+      <div className="flex flex-col items-center justify-center h-[70vh] px-6 text-center bg-black">
+        <AlertCircle size={64} className="text-red-600 mb-6" />
+        <h2 className="text-2xl font-black text-white mb-2 uppercase tracking-tight">Content Not Found</h2>
+        <p className="text-zinc-500 max-w-sm mb-10 font-medium">Drama mungkin tidak tersedia atau terjadi kesalahan jaringan.</p>
         <button 
           onClick={() => window.location.reload()} 
-          className="bg-white text-black px-10 py-4 rounded-2xl font-black transition-all hover:scale-105 active:scale-95 shadow-xl"
+          className="bg-red-600 text-white px-10 py-3 rounded-md font-bold transition-all hover:bg-red-700 active:scale-95 shadow-lg shadow-red-600/20 uppercase tracking-wider"
         >
-          COBA LAGI
+          Retry
         </button>
       </div>
     );
   }
 
   return (
-    <div className="pb-20">
-      {/* Background/Banner */}
-      <div className="relative h-[40vh] md:h-[60vh] w-full">
+    <div className="pb-20 bg-black">
+      {/* Hero Banner */}
+      <div className="relative h-[50vh] md:h-[75vh] w-full overflow-hidden">
         <div className="absolute inset-0">
           <img 
             src={drama.coverWap || drama.cover} 
             alt={drama.bookName}
-            className="w-full h-full object-cover object-center"
+            className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-sm" />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/20 to-transparent" />
         </div>
         
-        <div className="absolute bottom-4 left-4">
-           <a href="#/" className="flex items-center gap-2 text-white hover:text-blue-400 transition-colors">
-             <ChevronLeft size={24} /> Back
+        <div className="absolute top-6 left-6 md:left-12">
+           <a href="#/" className="flex items-center gap-2 text-white hover:text-gray-300 transition-colors bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
+             <ChevronLeft size={20} /> Back
            </a>
+        </div>
+
+        <div className="absolute bottom-10 left-6 md:left-12 max-w-4xl">
+           <h1 className="text-4xl md:text-7xl font-black text-white mb-6 uppercase tracking-tighter leading-none drop-shadow-2xl">
+             {drama.bookName}
+           </h1>
+           
+           <div className="flex flex-wrap gap-4 mb-8">
+              <div className="flex items-center gap-2 text-green-500 font-bold">
+                <Star size={18} fill="currentColor" />
+                <span>9.2 Rating</span>
+              </div>
+              <div className="text-zinc-400 font-bold">2024</div>
+              <div className="text-white border border-white/40 px-1.5 py-0.5 rounded text-[10px] font-black uppercase tracking-widest">4K Ultra HD</div>
+              <div className="text-zinc-400 font-bold">{drama.chapterCount} Episodes</div>
+           </div>
+
+           {episodes.length > 0 && (
+             <div className="flex gap-4">
+               <a 
+                 href={`#/player/${bookId}/${episodes[0].chapterId}`}
+                 className="flex items-center justify-center gap-3 bg-white hover:bg-zinc-200 text-black font-black px-8 md:px-12 py-3 md:py-4 rounded-md transition-all scale-100 hover:scale-105 uppercase tracking-wider shadow-2xl"
+               >
+                 <Play size={24} fill="currentColor" />
+                 Play
+               </a>
+               <button className="flex items-center justify-center gap-3 bg-zinc-500/30 hover:bg-zinc-500/50 backdrop-blur-md text-white font-black px-8 md:px-12 py-3 md:py-4 rounded-md transition-all uppercase tracking-wider border border-white/10">
+                 More Info
+               </button>
+             </div>
+           )}
         </div>
       </div>
 
-      <div className="container mx-auto px-4 -mt-32 relative z-10">
-        <div className="flex flex-col md:flex-row gap-8">
-          {/* Poster */}
-          <div className="w-48 md:w-64 flex-shrink-0 mx-auto md:mx-0">
-            <div className="rounded-xl overflow-hidden shadow-2xl border-4 border-slate-900">
-              <img 
-                src={drama.coverWap || drama.cover} 
-                alt={drama.bookName}
-                className="w-full aspect-[2/3] object-cover"
-              />
-            </div>
-            
-            {episodes.length > 0 && (
-              <a 
-                href={`#/player/${bookId}/${episodes[0].chapterId}`}
-                className="mt-6 flex items-center justify-center gap-2 w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl transition-all hover:scale-105"
-              >
-                <Play size={24} fill="currentColor" />
-                Start Watching
-              </a>
-            )}
-          </div>
-
-          {/* Info */}
-          <div className="flex-grow">
-            <h1 className="text-3xl md:text-5xl font-black text-white mb-4">{drama.bookName}</h1>
-            
-            <div className="flex flex-wrap gap-4 mb-8">
-              <div className="flex items-center gap-1.5 text-slate-300 bg-slate-800/50 px-3 py-1.5 rounded-full border border-slate-700">
-                <Star size={16} className="text-yellow-400" />
-                <span>4.8 Rating</span>
-              </div>
-              <div className="flex items-center gap-1.5 text-slate-300 bg-slate-800/50 px-3 py-1.5 rounded-full border border-slate-700">
-                <Eye size={16} className="text-blue-400" />
-                <span>{drama.viewCount?.toLocaleString() || '1M+'} Views</span>
-              </div>
-              <div className="flex items-center gap-1.5 text-slate-300 bg-slate-800/50 px-3 py-1.5 rounded-full border border-slate-700">
-                <List size={16} className="text-purple-400" />
-                <span>{drama.chapterCount} Episodes</span>
-              </div>
-            </div>
-
-            <div className="mb-8">
-              <h3 className="text-lg font-bold text-white mb-3">Synopsis</h3>
-              <p className="text-slate-400 leading-relaxed max-w-3xl whitespace-pre-wrap">
+      <div className="container mx-auto px-4 md:px-12 mt-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+          {/* Main Content */}
+          <div className="lg:col-span-8">
+            <div className="mb-12">
+              <h3 className="text-xl font-bold text-zinc-500 uppercase tracking-widest mb-4">Synopsis</h3>
+              <p className="text-zinc-300 text-lg leading-relaxed whitespace-pre-wrap font-medium">
                 {drama.introduction}
               </p>
             </div>
 
             {drama.tags && (
-              <div className="mb-10">
-                <h3 className="text-lg font-bold text-white mb-3 flex items-center gap-2">
-                  <Tag size={18} /> Tags
-                </h3>
+              <div className="mb-12">
+                <h3 className="text-sm font-bold text-zinc-500 uppercase tracking-[0.2em] mb-4">Genre</h3>
                 <div className="flex flex-wrap gap-2">
                   {drama.tags.map(tag => (
-                    <span key={tag} className="bg-slate-900 border border-slate-800 text-slate-300 px-3 py-1 rounded text-sm hover:border-blue-500 hover:text-blue-500 transition-colors cursor-default">
+                    <span key={tag} className="bg-zinc-900 text-zinc-400 border border-zinc-800 px-4 py-1.5 rounded-full text-sm font-bold hover:text-white hover:border-zinc-600 transition-all cursor-default">
                       {tag}
                     </span>
                   ))}
@@ -184,21 +136,45 @@ const Detail: React.FC<DetailProps> = ({ bookId }) => {
             )}
 
             {/* Episode List */}
-            <div className="mt-12 bg-slate-900/50 rounded-2xl border border-slate-800 p-6">
-              <h3 className="text-xl font-bold text-white mb-6">Episodes</h3>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+            <div className="mt-16">
+              <div className="flex items-center justify-between mb-8 border-b border-zinc-900 pb-4">
+                <h3 className="text-2xl font-black text-white uppercase tracking-tight">Episodes</h3>
+                <span className="text-zinc-500 font-bold uppercase tracking-widest text-xs">{episodes.length} Items</span>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                 {episodes.map((ep, idx) => (
                   <a 
                     key={ep.chapterId}
                     href={`#/player/${bookId}/${ep.chapterId}`}
-                    className="flex flex-col items-center justify-center p-4 bg-slate-800/50 border border-slate-700 rounded-xl hover:bg-blue-600 hover:border-blue-400 group transition-all"
+                    className="flex flex-col p-4 bg-zinc-900/50 border border-zinc-800/50 rounded-md hover:bg-zinc-800 hover:border-zinc-600 group transition-all"
                   >
-                    <span className="text-slate-300 group-hover:text-white text-xs mb-1">Chapter {ep.chapterIndex + 1}</span>
-                    <span className="text-white font-bold">{ep.chapterName}</span>
+                    <span className="text-red-600 font-black text-[10px] mb-1 uppercase tracking-widest">EPS {ep.chapterName}</span>
+                    <span className="text-white font-bold group-hover:text-red-500 transition-colors line-clamp-1">{drama.bookName}</span>
                   </a>
                 ))}
               </div>
             </div>
+          </div>
+
+          {/* Sidebar */}
+          <div className="lg:col-span-4">
+             <div className="bg-zinc-900/30 p-8 rounded-md border border-zinc-800/50">
+               <h3 className="text-zinc-500 font-bold uppercase tracking-[0.2em] mb-6 text-sm">About {drama.bookName}</h3>
+               <div className="space-y-6">
+                 <div>
+                   <span className="text-zinc-600 block text-xs uppercase font-black tracking-widest mb-1">Director</span>
+                   <span className="text-white font-bold">Dzeck Production</span>
+                 </div>
+                 <div>
+                   <span className="text-zinc-600 block text-xs uppercase font-black tracking-widest mb-1">Status</span>
+                   <span className="text-green-500 font-bold uppercase tracking-wider">Completed</span>
+                 </div>
+                 <div>
+                   <span className="text-zinc-600 block text-xs uppercase font-black tracking-widest mb-1">Language</span>
+                   <span className="text-white font-bold">Mandarin, Indonesian</span>
+                 </div>
+               </div>
+             </div>
           </div>
         </div>
       </div>
