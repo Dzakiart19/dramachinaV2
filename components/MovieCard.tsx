@@ -14,42 +14,44 @@ const MovieCard: React.FC<MovieCardProps> = ({ drama, className = "" }) => {
   return (
     <a 
       href={`#/detail/${drama.bookId}`}
-      className={`group relative overflow-hidden rounded-xl bg-slate-800 transition-all duration-300 hover:scale-[1.03] hover:shadow-xl hover:shadow-blue-500/10 block ${className}`}
+      className={`group relative overflow-hidden rounded-[2rem] bg-slate-900 transition-all duration-500 hover:scale-105 hover:shadow-[0_20px_50px_-20px_rgba(59,130,246,0.5)] ring-1 ring-white/5 hover:ring-blue-500/50 block ${className}`}
     >
       <div className="aspect-[2/3] relative">
         <img 
           src={imageUrl} 
           alt={drama.bookName}
-          className="w-full h-full object-cover group-hover:opacity-60 transition-opacity"
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
           loading="lazy"
         />
         
-        {/* Hover Overlay */}
-        <div className="absolute inset-0 flex flex-col justify-end p-4 opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent">
-          <div className="mb-2">
-            <PlayCircle size={40} className="text-blue-500 mb-2" />
-          </div>
-          <h3 className="text-white font-bold leading-tight line-clamp-2">
-            {drama.bookName}
-          </h3>
-          {drama.chapterCount && (
-            <p className="text-slate-300 text-xs mt-1">
-              {drama.chapterCount} Episodes
-            </p>
-          )}
+        {/* Modern Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-500" />
+        
+        {/* Glassmorphism Info Badge */}
+        <div className="absolute top-4 right-4 bg-white/10 backdrop-blur-md border border-white/10 px-3 py-1 rounded-full">
+           <span className="text-[10px] font-black text-white tracking-widest">4K HD</span>
         </div>
 
-        {/* Info Badge */}
-        {drama.playCount && (
-          <div className="absolute top-2 right-2 bg-slate-900/80 backdrop-blur-md px-2 py-1 rounded-md text-[10px] font-bold text-blue-400 border border-slate-700">
-            {drama.playCount} Views
+        {/* Play Icon on Hover */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 transform scale-75 group-hover:scale-100">
+          <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center shadow-2xl shadow-blue-600/50">
+            <PlayCircle size={32} className="text-white ml-1" />
           </div>
-        )}
-      </div>
-      
-      {/* Fallback title for always-on display on smaller screens */}
-      <div className="p-2 md:hidden">
-        <h3 className="text-white text-xs font-medium truncate">{drama.bookName}</h3>
+        </div>
+
+        <div className="absolute inset-x-0 bottom-0 p-6 translate-y-2 group-hover:translate-y-0 transition-all duration-500">
+          <h3 className="text-white font-black text-lg md:text-xl line-clamp-2 leading-none tracking-tighter mb-2 drop-shadow-2xl">
+            {drama.bookName}
+          </h3>
+          <div className="flex items-center gap-3">
+             <div className="flex gap-1">
+                {[1,2,3,4,5].map(i => (
+                  <div key={i} className="w-1 h-1 bg-blue-500 rounded-full animate-pulse" style={{ animationDelay: `${i * 150}ms` }} />
+                ))}
+             </div>
+             <span className="text-[10px] text-blue-400 font-black uppercase tracking-[0.2em]">Live Preview</span>
+          </div>
+        </div>
       </div>
     </a>
   );
