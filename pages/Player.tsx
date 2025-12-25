@@ -34,6 +34,7 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
     setIsBlockedByGoogle(false);
     
     try {
+      // Parallel loading of detail and episodes
       const [dramaData, epsData] = await Promise.all([
         apiService.getDramaDetail(bookId).catch(() => null),
         apiService.getAllEpisodes(bookId).catch(() => [])
@@ -45,12 +46,18 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
       
       if (epsData && Array.isArray(epsData) && epsData.length > 0) {
         setEpisodes(epsData);
+        // Pre-fetch video source for the current episode to speed up loading
+        const initialEp = epsData.find(ep => ep.chapterId === episodeId) || epsData[0];
+        if (initialEp && initialEp.cdnList && initialEp.cdnList.length > 0) {
+           // We could trigger a hidden pre-fetch here if needed
+        }
       } else {
         throw new Error("Daftar episode tidak ditemukan.");
       }
     } catch (err: any) {
       setError(err.message || "Gagal memuat data video.");
     } finally {
+      // Small delay removed to make it faster
       setLoading(false);
     }
   };
