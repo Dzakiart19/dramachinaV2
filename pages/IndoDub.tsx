@@ -70,7 +70,7 @@ const IndoDub: React.FC = () => {
     loadAllIndoDub();
   }, []);
 
-  if (loading) {
+  if (loading && allDramas.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[90vh] bg-black">
         <div className="w-16 h-16 border-4 border-red-600 border-t-transparent rounded-full animate-spin shadow-[0_0_20px_rgba(220,38,38,0.5)]"></div>

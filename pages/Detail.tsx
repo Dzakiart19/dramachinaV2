@@ -103,7 +103,10 @@ const Detail: React.FC<DetailProps> = ({ bookId }) => {
                  <Play size={24} fill="currentColor" />
                  Play
                </a>
-               <button className="flex items-center justify-center gap-3 bg-zinc-500/30 hover:bg-zinc-500/50 backdrop-blur-md text-white font-black px-8 md:px-12 py-3 md:py-4 rounded-md transition-all uppercase tracking-wider border border-white/10">
+               <button 
+                 onClick={() => document.getElementById('synopsis-section')?.scrollIntoView({ behavior: 'smooth' })}
+                 className="flex items-center justify-center gap-3 bg-zinc-500/30 hover:bg-zinc-500/50 backdrop-blur-md text-white font-black px-8 md:px-12 py-3 md:py-4 rounded-md transition-all uppercase tracking-wider border border-white/10"
+               >
                  More Info
                </button>
              </div>
@@ -115,7 +118,7 @@ const Detail: React.FC<DetailProps> = ({ bookId }) => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           {/* Main Content */}
           <div className="lg:col-span-8">
-            <div className="mb-12">
+            <div className="mb-12" id="synopsis-section">
               <h3 className="text-xl font-bold text-zinc-500 uppercase tracking-widest mb-4">Synopsis</h3>
               <p className="text-zinc-300 text-lg leading-relaxed whitespace-pre-wrap font-medium">
                 {drama.introduction}
