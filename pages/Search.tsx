@@ -7,11 +7,12 @@ import { Search as SearchIcon, TrendingUp, X, ChevronRight } from 'lucide-react'
 
 const Search: React.FC = () => {
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState<Drama[]>([]);
+  const [allResults, setAllResults] = useState<Drama[]>([]);
   const [popularSearches, setPopularSearches] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const [page, setPage] = useState(1);
+  const itemsPerPage = 12;
 
   useEffect(() => {
     loadPopularSearches();
@@ -35,38 +36,24 @@ const Search: React.FC = () => {
     setSearched(true);
     setPage(p);
     try {
-      const allResults: Drama[] = [];
-      let pageNum = 1;
+      // Load search results in PARALLEL (5 pages at once for speed)
+      const promises = Array.from({ length: 5 }, (_, i) => 
+        apiService.searchDramas(trimmedQuery, i + 1).catch(() => [])
+      );
       
-      // Load search results - max 60 items for speed
-      while (allResults.length < 60) {
-        const data: any = await apiService.searchDramas(trimmedQuery, pageNum).catch(() => null);
-        
-        // Handle different API response formats
-        let resultsArray = [];
-        if (Array.isArray(data)) {
-          resultsArray = data;
-        } else if (data && typeof data === 'object') {
-          if (Array.isArray(data.data)) {
-            resultsArray = data.data;
-          } else if (Array.isArray(data.list)) {
-            resultsArray = data.list;
-          }
-        }
-        
-        if (!resultsArray || resultsArray.length === 0) break;
-        allResults.push(...resultsArray);
-        pageNum++;
-      }
+      const results = await Promise.all(promises);
+      const allResultsData = results.flat();
       
       // Remove duplicates by bookId
-      const uniqueResults = Array.from(new Map(allResults.map(d => [d.bookId, d])).values());
+      const uniqueResults = Array.from(new Map(allResultsData.map(d => [d.bookId, d])).values());
       
-      setResults(uniqueResults);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setAllResults(uniqueResults);
+      requestAnimationFrame(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
     } catch (error) {
       console.error('Search error:', error);
-      setResults([]);
+      setAllResults([]);
     } finally {
       setLoading(false);
     }
@@ -84,10 +71,24 @@ const Search: React.FC = () => {
 
   const clearSearch = () => {
     setQuery('');
-    setResults([]);
+    setAllResults([]);
     setSearched(false);
     setPage(1);
   };
+
+  const changePage = (newPage: number) => {
+    if (newPage < 1 || (newPage - 1) * itemsPerPage >= allResults.length) return;
+    setPage(newPage);
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  };
+
+  const displayedResults = allResults.slice(
+    (page - 1) * itemsPerPage,
+    page * itemsPerPage
+  );
+  const totalPages = Math.ceil(allResults.length / itemsPerPage);
 
   return (
     <div className="container mx-auto px-4 py-12 min-h-screen">
@@ -196,47 +197,55 @@ const Search: React.FC = () => {
               <span className="text-slate-500 text-sm">{results.length} hasil</span>
             </div>
 
-            {searched && results && results.length > 0 ? (
+            {searched && allResults && allResults.length > 0 ? (
               <>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3 md:gap-4 lg:gap-6">
-                  {results.map((drama, idx) => (
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-2">
+                  <span className="text-slate-500 text-sm">Halaman {page} dari {totalPages}</span>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3 md:gap-4 lg:gap-6 mb-8 sm:mb-12">
+                  {displayedResults.map((drama, idx) => (
                     <MovieCard key={`${drama.bookId}-${idx}`} drama={drama} />
                   ))}
                 </div>
 
-                {/* Numerical Pagination */}
-                <div className="flex items-center justify-center gap-1 sm:gap-2 mt-8 sm:mt-16 pb-8 sm:pb-12 flex-wrap">
-                  <button 
-                    onClick={() => handleSearch(query, page - 1)}
-                    disabled={page === 1}
-                    className="p-2 sm:p-4 bg-slate-900 border border-slate-800 rounded-lg sm:rounded-2xl text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-blue-600 transition-all"
-                  >
-                    <ChevronRight size={16} className="rotate-180 sm:w-5 sm:h-5" />
-                  </button>
-                  
-                  {[page - 1, page, page + 1].filter(p => p >= 1).map(p => (
-                    <button
-                      key={`search-page-${p}`}
-                      onClick={() => handleSearch(query, p)}
-                      className={`w-10 h-10 sm:w-14 sm:h-14 rounded-lg sm:rounded-2xl font-black text-sm sm:text-base transition-all ${
-                        page === p 
-                        ? 'bg-blue-600 text-white shadow-2xl shadow-blue-600/40' 
-                        : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white'
-                      }`}
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-center gap-1 sm:gap-2 mt-8 sm:mt-16 pb-8 sm:pb-12 flex-wrap">
+                    <button 
+                      onClick={() => changePage(page - 1)}
+                      disabled={page === 1}
+                      className="flex items-center gap-1 sm:gap-2 bg-slate-800 hover:bg-slate-700 disabled:bg-slate-900 disabled:text-slate-600 text-white font-bold py-2 sm:py-3 px-3 sm:px-6 rounded-lg sm:rounded-xl transition-colors text-xs sm:text-base"
                     >
-                      {p}
+                      <ChevronRight size={16} className="rotate-180" /> <span className="hidden sm:inline">Sebelumnya</span>
                     </button>
-                  ))}
 
-                  <button 
-                    onClick={() => handleSearch(query, page + 1)}
-                    className="p-2 sm:p-4 bg-slate-900 border border-slate-800 rounded-lg sm:rounded-2xl text-white hover:bg-blue-600 transition-all"
-                  >
-                    <ChevronRight size={16} className="sm:w-5 sm:h-5" />
-                  </button>
-                </div>
+                    <div className="flex gap-1 sm:gap-2 flex-wrap justify-center max-w-4xl">
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                        <button
+                          key={p}
+                          onClick={() => changePage(p)}
+                          className={`font-bold py-2 px-2 sm:px-3 md:px-4 rounded-lg text-[10px] sm:text-xs md:text-base transition-colors ${
+                            p === page
+                              ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/40'
+                              : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                          }`}
+                        >
+                          {p}
+                        </button>
+                      ))}
+                    </div>
+
+                    <button 
+                      onClick={() => changePage(page + 1)}
+                      disabled={page >= totalPages}
+                      className="flex items-center gap-1 sm:gap-2 bg-slate-800 hover:bg-slate-700 disabled:bg-slate-900 disabled:text-slate-600 text-white font-bold py-2 sm:py-3 px-3 sm:px-6 rounded-lg sm:rounded-xl transition-colors text-xs sm:text-base"
+                    >
+                      <span className="hidden sm:inline">Selanjutnya</span> <ChevronRight size={16} />
+                    </button>
+                  </div>
+                )}
               </>
-            ) : searched && results && results.length === 0 ? (
+            ) : searched && allResults && allResults.length === 0 ? (
               <div className="text-center py-20">
                 <p className="text-slate-500 text-xl mb-4">Tidak ada drama yang sesuai dengan pencarian Anda.</p>
                 <button 

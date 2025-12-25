@@ -135,6 +135,7 @@ Popular   → /popular  (Bookmark) - Search trends
 #### Fast Loading (Parallel API Calls):
 - **Latest.tsx**: Promise.all() → Load 5 pages PARALLEL (3x faster!)
 - **IndoDub.tsx**: Promise.all() → Load terpopuler + terbaru PARALLEL (6 pages concurrent)
+- **Search.tsx**: Promise.all() → Load 5 pages PARALLEL (unlimited pagination!)
 - **Trending/VIP/ForYou**: Single API (no sequential delays)
 - **Responsive loading UI**: Animated spinner + progress bar + bounce dots
 
@@ -143,6 +144,25 @@ Popular   → /popular  (Bookmark) - Search trends
 - **Page changes**: Instant scroll to top (no blocking)
 - **Navigation**: All state updates happen without delay
 - **Result**: 3x faster data loading, instant user interactions
+
+### ✅ SEARCH PAGE PAGINATION FIX (25 Dec 23:00)
+#### Before (Problem):
+- Load max 60 items only (sequential while loop)
+- Only show 3 pagination buttons (page-1, page, page+1)
+- Page 2,3,4 tidak menampilkan hasil berbeda
+
+#### After (Fixed):
+- **Promise.all() → Load 5 pages search results PARALLEL**
+- **Show ALL pagination buttons (unlimited, responsive wrap)**
+- **12 items per page → Different results on each page**
+- **Fast loading + responsive pagination like other pages**
+- Example: Search "pewaris" → page 1 shows items 1-12, page 2 shows 13-24, etc.
+
+### ✅ POPULAR PAGE FIX (25 Dec 22:45)
+- API returns Drama objects with `bookName`, not raw strings
+- Extract `bookName` properly di api.ts
+- Simplified logic di PopularSearch.tsx
+- Shows trending dramas correctly now
 
 ## 📁 Project Structure
 ```
