@@ -17,28 +17,25 @@ const IndoDub: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const allData: Drama[] = [];
+      // Load both categories in parallel (3 pages each)
+      const terpopulerPromises = Array.from({ length: 3 }, (_, i) => 
+        apiService.getIndoDubDramas('terpopuler', i + 1).catch(() => [])
+      );
+      const terbaruPromises = Array.from({ length: 3 }, (_, i) => 
+        apiService.getIndoDubDramas('terbaru', i + 1).catch(() => [])
+      );
       
-      // Load from 'terpopuler' category - max 30 items for speed
-      let p = 1;
-      while (allData.length < 30) {
-        const data = await apiService.getIndoDubDramas('terpopuler', p).catch(() => []);
-        if (!Array.isArray(data) || data.length === 0) break;
-        allData.push(...data);
-        p++;
-      }
+      const [terpopulerResults, terbaruResults] = await Promise.all([
+        Promise.all(terpopulerPromises),
+        Promise.all(terbaruPromises)
+      ]);
       
-      // Load from 'terbaru' category - max 30 items for speed
-      p = 1;
-      while (allData.length < 60) {
-        const data = await apiService.getIndoDubDramas('terbaru', p).catch(() => []);
-        if (!Array.isArray(data) || data.length === 0) break;
-        allData.push(...data);
-        p++;
-      }
+      const allData = [...terpopulerResults.flat(), ...terbaruResults.flat()];
 
       // Remove duplicates by bookId
-      const uniqueDramas = Array.from(new Map(allData.map(d => [d.bookId, d])).values());
+      const dramaMap = new Map<string, Drama>();
+      allData.forEach(d => dramaMap.set(d.bookId, d));
+      const uniqueDramas = Array.from(dramaMap.values());
       
       setAllDramas(uniqueDramas);
       setPage(1);
@@ -63,7 +60,10 @@ const IndoDub: React.FC = () => {
     const start = (p - 1) * itemsPerPage;
     const end = start + itemsPerPage;
     setDisplayedDramas(allDramas.slice(start, end));
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Instant scroll without delay
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
   };
 
   useEffect(() => {

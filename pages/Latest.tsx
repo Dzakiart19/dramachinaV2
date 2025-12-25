@@ -14,7 +14,10 @@ const Latest: React.FC = () => {
   const changePage = (newPage: number) => {
     if (newPage < 1) return;
     setPage(newPage);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Instant scroll without delay
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
   };
 
   const loadData = useCallback(async () => {
@@ -22,19 +25,13 @@ const Latest: React.FC = () => {
     setError(null);
     
     try {
-      const allLatest: Drama[] = [];
-      let p = 1;
-      // Load ALL pages from API until response is empty (no limit)
-      let hasMore = true;
-      while (hasMore) {
-        const data = await apiService.getLatestDramas(p).catch(() => []);
-        if (!Array.isArray(data) || data.length === 0) {
-          hasMore = false;
-          break;
-        }
-        allLatest.push(...data);
-        p++;
-      }
+      // Load first 5 pages in parallel for instant display
+      const promises = Array.from({ length: 5 }, (_, i) => 
+        apiService.getLatestDramas(i + 1).catch(() => [])
+      );
+      
+      const results = await Promise.all(promises);
+      const allLatest: Drama[] = results.flat();
 
       // Remove duplicates by bookId
       const dramaMaps = new Map<string, Drama>();

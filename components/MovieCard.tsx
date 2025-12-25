@@ -14,7 +14,13 @@ const MovieCard: React.FC<MovieCardProps> = ({ drama, className = "" }) => {
   return (
     <a 
       href={`#/detail/${drama.bookId}`}
-      className={`group relative overflow-hidden rounded-xl sm:rounded-2xl bg-slate-900 transition-all duration-500 hover:scale-105 hover:shadow-[0_20px_50px_-20px_rgba(59,130,246,0.5)] ring-1 ring-white/5 hover:ring-blue-500/50 block ${className}`}
+      onClick={(e) => {
+        // Instant navigation without waiting for anything
+        requestAnimationFrame(() => {
+          window.location.hash = `/detail/${drama.bookId}`;
+        });
+      }}
+      className={`group relative overflow-hidden rounded-xl sm:rounded-2xl bg-slate-900 transition-all duration-300 hover:scale-105 hover:shadow-[0_20px_50px_-20px_rgba(59,130,246,0.5)] ring-1 ring-white/5 hover:ring-blue-500/50 block ${className}`}
     >
       <div className="aspect-[2/3] relative w-full">
         <img 

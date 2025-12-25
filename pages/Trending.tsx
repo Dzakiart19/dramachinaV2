@@ -15,7 +15,10 @@ const Trending: React.FC = () => {
   const changePage = (newPage: number) => {
     if (newPage < 1) return;
     setPage(newPage);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Instant scroll without delay
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
   };
 
   const loadTrending = async () => {
