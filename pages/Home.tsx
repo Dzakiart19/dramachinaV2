@@ -3,7 +3,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { apiService } from '../services/api';
 import { Drama, VIPResponse } from '../types';
 import MovieCard from '../components/MovieCard';
-import { ChevronRight, Play, Info, Loader2, AlertCircle, RefreshCcw } from 'lucide-react';
+import { ChevronRight, Play, Info, Loader2, AlertCircle, RefreshCcw, LayoutDashboard, X } from 'lucide-react';
 
 const Home: React.FC = () => {
   const [vipData, setVipData] = useState<VIPResponse | null>(null);
@@ -11,37 +11,40 @@ const Home: React.FC = () => {
   const [forYou, setForYou] = useState<Drama[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showGreeting, setShowGreeting] = useState(false);
 
   const loadData = useCallback(async () => {
     setLoading(true);
     setError(null);
     
-    // We fetch them individually so one failure doesn't block others
     try {
-      // Fetch Latest first as it's the primary content
       const latestData = await apiService.getLatestDramas().catch(e => {
         console.error('Failed to fetch latest:', e);
         return [] as Drama[];
       });
       setLatest(latestData);
 
-      // Fetch VIP
       const vip = await apiService.getVIPDramas().catch(e => {
         console.error('Failed to fetch VIP:', e);
         return null;
       });
       setVipData(vip);
 
-      // Fetch Recommendations
       const recommended = await apiService.getForYouDramas().catch(e => {
         console.error('Failed to fetch recommendations:', e);
         return [] as Drama[];
       });
       setForYou(recommended);
 
-      // If everything is empty, then we show a global error
       if (latestData.length === 0 && !vip && recommended.length === 0) {
         throw new Error('Semua sumber data gagal dimuat.');
+      }
+
+      // Show greeting after successful load
+      const hasGreeted = sessionStorage.getItem('hasGreeted');
+      if (!hasGreeted) {
+        setShowGreeting(true);
+        sessionStorage.setItem('hasGreeted', 'true');
       }
     } catch (err) {
       console.error('Failed to load home data:', err);
@@ -90,6 +93,47 @@ const Home: React.FC = () => {
 
   return (
     <div className="pb-20">
+      {/* Greeting Modal */}
+      {showGreeting && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+          <div 
+            className="absolute inset-0 bg-slate-950/80 backdrop-blur-xl animate-in fade-in duration-500"
+            onClick={() => setShowGreeting(false)}
+          />
+          <div className="relative w-full max-w-lg bg-slate-900 border border-slate-800 rounded-[2.5rem] p-8 md:p-12 shadow-[0_0_100px_-20px_rgba(59,130,246,0.3)] animate-in zoom-in slide-in-from-bottom-10 duration-500">
+            <button 
+              onClick={() => setShowGreeting(false)}
+              className="absolute top-6 right-6 p-2 text-slate-500 hover:text-white transition-colors"
+            >
+              <X size={24} />
+            </button>
+            
+            <div className="flex flex-col items-center text-center">
+              <div className="w-20 h-20 bg-blue-600 rounded-3xl flex items-center justify-center mb-8 shadow-2xl shadow-blue-600/20 rotate-12">
+                <LayoutDashboard size={40} className="text-white -rotate-12" />
+              </div>
+              
+              <h2 className="text-3xl md:text-4xl font-black text-white mb-4 leading-tight">
+                Selamat Datang di <br/>
+                <span className="text-blue-500">Dzeck Stream!</span>
+              </h2>
+              
+              <p className="text-slate-400 text-lg mb-10 leading-relaxed font-medium">
+                Nikmati ribuan drama Korea dan Asia terlengkap dengan kualitas terbaik. Selamat menonton!
+              </p>
+              
+              <button 
+                onClick={() => setShowGreeting(false)}
+                className="w-full flex items-center justify-center gap-3 bg-white text-slate-950 px-10 py-5 rounded-2xl font-black text-lg transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-white/10"
+              >
+                <LayoutDashboard size={24} />
+                MASUK KE DASHBOARD
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Hero Section */}
       {featured && (
         <section className="relative h-[65vh] md:h-[85vh] w-full overflow-hidden">
