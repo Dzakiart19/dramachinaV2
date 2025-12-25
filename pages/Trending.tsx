@@ -20,7 +20,16 @@ const Trending: React.FC = () => {
       const nextPage = page + 1;
       const data = await apiService.getTrendingDramas(nextPage);
       if (data && Array.isArray(data) && data.length > 0) {
-        setDramas(prev => [...prev, ...data]);
+        // Filter out duplicates based on bookId
+        setDramas(prev => {
+          const existingIds = new Set(prev.map(d => d.bookId));
+          const filteredNew = data.filter(d => !existingIds.has(d.bookId));
+          if (filteredNew.length === 0) {
+            setHasMore(false);
+            return prev;
+          }
+          return [...prev, ...filteredNew];
+        });
         setPage(nextPage);
         if (data.length < 10) setHasMore(false);
       } else {

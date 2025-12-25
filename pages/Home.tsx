@@ -23,7 +23,16 @@ const Home: React.FC = () => {
       const nextPage = page + 1;
       const newData = await apiService.getLatestDramas(nextPage);
       if (newData && Array.isArray(newData) && newData.length > 0) {
-        setLatest(prev => [...prev, ...newData]);
+        // Filter out duplicates based on bookId
+        setLatest(prev => {
+          const existingIds = new Set(prev.map(d => d.bookId));
+          const filteredNew = newData.filter(d => !existingIds.has(d.bookId));
+          if (filteredNew.length === 0) {
+            setHasMore(false);
+            return prev;
+          }
+          return [...prev, ...filteredNew];
+        });
         setPage(nextPage);
         if (newData.length < 10) setHasMore(false);
       } else {

@@ -30,7 +30,16 @@ const Search: React.FC = () => {
       const data = await res.json();
       
       if (data && Array.isArray(data) && data.length > 0) {
-        setResults(prev => [...prev, ...data]);
+        // Filter out duplicates based on bookId
+        setResults(prev => {
+          const existingIds = new Set(prev.map(d => d.bookId));
+          const filteredNew = data.filter(d => !existingIds.has(d.bookId));
+          if (filteredNew.length === 0) {
+            setHasMore(false);
+            return prev;
+          }
+          return [...prev, ...filteredNew];
+        });
         setPage(nextPage);
         if (data.length < 10) setHasMore(false);
       } else {
