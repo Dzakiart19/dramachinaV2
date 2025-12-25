@@ -19,9 +19,11 @@ const Detail: React.FC<DetailProps> = ({ bookId }) => {
       try {
         const [detailData, epsData] = await Promise.all([
           apiService.getDramaDetail(bookId),
-          apiService.getAllEpisodes(bookId)
+          apiService.getAllEpisodes(bookId).catch(() => [])
         ]);
-        setDrama(detailData.data.book);
+        if (detailData && detailData.data) {
+          setDrama(detailData.data.book);
+        }
         setEpisodes(epsData);
       } catch (error) {
         console.error('Failed to load detail:', error);
