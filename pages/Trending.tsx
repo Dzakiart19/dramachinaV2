@@ -21,7 +21,9 @@ const Trending: React.FC = () => {
         throw new Error('Tidak ada data ditemukan');
       }
       
-      setDramas(data);
+      // Remove duplicates by bookId
+      const uniqueDramas = Array.from(new Map(data.map(d => [d.bookId, d])).values());
+      setDramas(uniqueDramas);
     } catch (err) {
       console.error('Failed to load trending:', err);
       setError('Gagal memuat drama trending. Silakan coba lagi.');

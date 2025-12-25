@@ -24,18 +24,21 @@ const Latest: React.FC = () => {
     try {
       const allLatest: Drama[] = [];
       let p = 1;
-      while (true) {
+      // Load pages but limit to 60 items (5 pages) for speed + deduplicate
+      while (allLatest.length < 60) {
         const data = await apiService.getLatestDramas(p).catch(() => []);
         if (!Array.isArray(data) || data.length === 0) break;
         allLatest.push(...data);
         p++;
-        if (allLatest.length > 300) break;
       }
 
-      setLatest(allLatest);
+      // Remove duplicates by bookId
+      const uniqueDramas = Array.from(new Map(allLatest.map(d => [d.bookId, d])).values());
+      
+      setLatest(uniqueDramas);
       setPage(1);
 
-      if (allLatest.length === 0) {
+      if (uniqueDramas.length === 0) {
         throw new Error('Tidak ada drama terbaru ditemukan.');
       }
     } catch (err) {

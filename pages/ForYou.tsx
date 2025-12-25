@@ -19,7 +19,9 @@ const ForYou: React.FC = () => {
         throw new Error('Tidak ada rekomendasi ditemukan');
       }
 
-      setDramas(data);
+      // Remove duplicates by bookId
+      const uniqueDramas = Array.from(new Map(data.map(d => [d.bookId, d])).values());
+      setDramas(uniqueDramas);
     } catch (err) {
       console.error('Failed to load for you:', err);
       setError('Gagal memuat rekomendasi. Silakan coba lagi.');

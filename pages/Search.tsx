@@ -38,8 +38,8 @@ const Search: React.FC = () => {
       const allResults: Drama[] = [];
       let pageNum = 1;
       
-      // Load all search results
-      while (true) {
+      // Load search results - max 60 items for speed
+      while (allResults.length < 60) {
         const data: any = await apiService.searchDramas(trimmedQuery, pageNum).catch(() => null);
         
         // Handle different API response formats
@@ -57,10 +57,12 @@ const Search: React.FC = () => {
         if (!resultsArray || resultsArray.length === 0) break;
         allResults.push(...resultsArray);
         pageNum++;
-        if (allResults.length > 300) break; // Safety limit
       }
       
-      setResults(allResults);
+      // Remove duplicates by bookId
+      const uniqueResults = Array.from(new Map(allResults.map(d => [d.bookId, d])).values());
+      
+      setResults(uniqueResults);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (error) {
       console.error('Search error:', error);

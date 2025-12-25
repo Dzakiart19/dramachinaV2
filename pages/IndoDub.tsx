@@ -19,18 +19,18 @@ const IndoDub: React.FC = () => {
     try {
       const allData: Drama[] = [];
       
-      // Load from 'terpopuler' category - continue until no more data
+      // Load from 'terpopuler' category - max 30 items for speed
       let p = 1;
-      while (true) {
+      while (allData.length < 30) {
         const data = await apiService.getIndoDubDramas('terpopuler', p).catch(() => []);
         if (!Array.isArray(data) || data.length === 0) break;
         allData.push(...data);
         p++;
       }
       
-      // Load from 'terbaru' category - continue until no more data
+      // Load from 'terbaru' category - max 30 items for speed
       p = 1;
-      while (true) {
+      while (allData.length < 60) {
         const data = await apiService.getIndoDubDramas('terbaru', p).catch(() => []);
         if (!Array.isArray(data) || data.length === 0) break;
         allData.push(...data);
