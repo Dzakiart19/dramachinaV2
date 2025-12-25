@@ -35,18 +35,28 @@ const Search: React.FC = () => {
     setSearched(true);
     setPage(p);
     try {
-      const targetUrl = `https://dramabox.sansekai.my.id/api/dramabox/search?query=${encodeURIComponent(trimmedQuery)}&page=${p}`;
+      // Force page number in the query string
+      const targetUrl = `https://dramabox.sansekai.my.id/api/dramabox/search?query=${encodeURIComponent(trimmedQuery)}&page=${p}&_t=${Date.now()}`;
       const res = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`);
+      
       if (!res.ok) throw new Error('Network response was not ok');
       const data = await res.json();
       
-      // Some API responses might be wrapped in a data property
-      const resultsArray = Array.isArray(data) ? data : (data.data && Array.isArray(data.data) ? data.data : []);
+      // Handle different API response formats
+      let resultsArray = [];
+      if (Array.isArray(data)) {
+        resultsArray = data;
+      } else if (data.data && Array.isArray(data.data)) {
+        resultsArray = data.data;
+      } else if (data.list && Array.isArray(data.list)) {
+        resultsArray = data.list;
+      }
+      
       setResults(resultsArray);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (error) {
       console.error('Search error:', error);
-      // Fallback to apiService if proxy fails
+      // Fallback
       try {
         const data = await apiService.searchDramas(trimmedQuery);
         setResults(Array.isArray(data) ? data : []);
