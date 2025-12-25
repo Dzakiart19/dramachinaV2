@@ -121,9 +121,39 @@ const Search: React.FC = () => {
       {/* Results */}
       <div className="min-h-[40vh]">
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-20">
-            <Loader2 className="animate-spin text-blue-500 mb-4" size={48} />
-            <p className="text-slate-400">Tunggu sebentar maaf agak lama karena pakai gratisan 😅</p>
+          <div className="flex flex-col items-center justify-center min-h-[50vh] bg-transparent p-6 overflow-hidden">
+            <div className="relative group scale-75 md:scale-100 mb-12">
+              <div className="absolute inset-[-40px] bg-blue-600/20 blur-[60px] rounded-full animate-pulse"></div>
+              
+              <div className="relative w-32 h-32">
+                <div className="absolute inset-0 border-[3px] border-slate-800 rounded-full"></div>
+                <div className="absolute inset-0 border-[3px] border-t-blue-500 border-r-indigo-500 rounded-full animate-spin"></div>
+                
+                <div className="absolute inset-0 m-auto w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center shadow-2xl border border-white/5">
+                   <SearchIcon className="text-blue-500 animate-pulse" size={24} />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col items-center gap-4 max-w-sm w-full">
+               <div className="space-y-1 text-center">
+                  <h2 className="text-2xl font-black text-white tracking-tighter uppercase italic bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
+                    Mencari Koleksi...
+                  </h2>
+               </div>
+               
+               <div className="relative w-full bg-slate-900 h-1.5 rounded-full overflow-hidden border border-white/5 max-w-[200px]">
+                  <div className="absolute inset-y-0 left-0 bg-gradient-to-r from-blue-600 to-indigo-600 w-full -translate-x-[100%] animate-[progress_3s_ease-in-out_infinite]"></div>
+               </div>
+            </div>
+
+            <style>{`
+              @keyframes progress {
+                0% { transform: translateX(-100%); }
+                50% { transform: translateX(0%); }
+                100% { transform: translateX(100%); }
+              }
+            `}</style>
           </div>
         ) : searched ? (
           <div>

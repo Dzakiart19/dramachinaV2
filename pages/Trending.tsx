@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { apiService } from '../services/api';
 import { Drama } from '../types';
 import MovieCard from '../components/MovieCard';
-import { Loader2, AlertCircle, RefreshCcw, ChevronRight } from 'lucide-react';
+import { Loader2, AlertCircle, RefreshCcw, ChevronRight, LayoutDashboard } from 'lucide-react';
 
 const Trending: React.FC = () => {
   const [dramas, setDramas] = useState<Drama[]>([]);
@@ -31,9 +31,47 @@ const Trending: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center h-[70vh] gap-4">
-        <Loader2 className="animate-spin text-blue-500" size={56} />
-        <p className="text-slate-400 font-medium">Tunggu sebentar maaf agak lama karena pakai gratisan 😅</p>
+      <div className="flex flex-col items-center justify-center min-h-[90vh] bg-slate-950 p-6 overflow-hidden">
+        <div className="relative group scale-110 md:scale-125 mb-16">
+          <div className="absolute inset-[-40px] bg-red-600/20 blur-[60px] rounded-full animate-pulse"></div>
+          <div className="absolute inset-[-20px] bg-orange-600/10 blur-[40px] rounded-full animate-pulse delay-700"></div>
+          
+          <div className="relative w-32 h-32">
+            <div className="absolute inset-0 border-[3px] border-slate-800 rounded-full"></div>
+            <div className="absolute inset-0 border-[3px] border-t-red-500 border-r-orange-500 rounded-full animate-spin"></div>
+            <div className="absolute inset-4 border border-red-500/20 rounded-full animate-[spin_3s_linear_infinite_reverse]"></div>
+            
+            <div className="absolute inset-0 m-auto w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center shadow-2xl border border-white/5">
+               <LayoutDashboard className="text-red-500 animate-pulse" size={24} />
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-col items-center gap-4 max-w-sm w-full">
+           <div className="space-y-1 text-center">
+              <h2 className="text-3xl font-black text-white tracking-tighter uppercase italic bg-gradient-to-r from-red-400 to-orange-400 bg-clip-text text-transparent">
+                Mencari Tren...
+              </h2>
+              <div className="flex justify-center gap-1.5 py-2">
+                 {[0, 1, 2].map((i) => (
+                   <div key={i} className="w-2 h-2 bg-red-500 rounded-full animate-bounce" style={{ animationDelay: `${i * 200}ms` }} />
+                 ))}
+              </div>
+           </div>
+           
+           <div className="relative w-full bg-slate-900 h-1.5 rounded-full overflow-hidden border border-white/5">
+              <div className="absolute inset-y-0 left-0 bg-gradient-to-r from-red-600 to-orange-600 w-full -translate-x-[100%] animate-[progress_3s_ease-in-out_infinite]"></div>
+           </div>
+           <p className="text-slate-500 text-xs font-black uppercase tracking-[0.4em] animate-pulse">Update Real-Time</p>
+        </div>
+
+        <style>{`
+          @keyframes progress {
+            0% { transform: translateX(-100%); }
+            50% { transform: translateX(0%); }
+            100% { transform: translateX(100%); }
+          }
+        `}</style>
       </div>
     );
   }
