@@ -109,7 +109,16 @@ export const apiService = {
   async getPopularSearch(): Promise<string[]> {
     try {
       const data = await fetchWithProxy('/dramabox/populersearch');
-      return Array.isArray(data) ? data : [];
+      if (!Array.isArray(data)) return [];
+      
+      // Extract bookName from Drama objects or use string directly
+      return data
+        .map((item: any) => {
+          if (typeof item === 'string') return item;
+          if (item && typeof item === 'object' && item.bookName) return item.bookName;
+          return null;
+        })
+        .filter((name): name is string => name !== null && name.trim().length > 0);
     } catch (e) {
       console.warn('Popular search fetch failed', e);
       return [];

@@ -13,37 +13,13 @@ const PopularSearch: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const rawData = await apiService.getPopularSearch().catch(() => null);
+      const data = await apiService.getPopularSearch();
       
-      let data = [];
-      
-      // Handle various response formats
-      if (Array.isArray(rawData)) {
-        data = rawData;
-      } else if (rawData && typeof rawData === 'object') {
-        if (Array.isArray(rawData.data)) {
-          data = rawData.data;
-        } else if (Array.isArray(rawData.list)) {
-          data = rawData.list;
-        } else if (typeof rawData === 'string') {
-          // Try parsing if it's a stringified array
-          try {
-            const parsed = JSON.parse(rawData);
-            data = Array.isArray(parsed) ? parsed : [];
-          } catch {
-            data = [];
-          }
-        }
-      }
-      
-      // Filter only string values
-      const validSearches = data.filter(item => typeof item === 'string' && item.trim().length > 0);
-      
-      if (!validSearches || validSearches.length === 0) {
+      if (!data || data.length === 0) {
         throw new Error('Tidak ada pencarian populer ditemukan');
       }
 
-      setSearches(validSearches);
+      setSearches(data);
     } catch (err) {
       console.error('Failed to load popular search:', err);
       setError('Gagal memuat pencarian populer. Silakan coba lagi.');
