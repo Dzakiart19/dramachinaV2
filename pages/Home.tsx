@@ -287,22 +287,19 @@ const Home: React.FC = () => {
               <ChevronRight size={20} className="rotate-180" />
             </button>
             
-            {[page - 1, page, page + 1].map(p => {
-              if (p < 1) return null;
-              return (
-                <button
-                  key={p}
-                  onClick={() => changePage(p)}
-                  className={`w-14 h-14 rounded-2xl font-black transition-all ${
-                    page === p 
-                    ? 'bg-blue-600 text-white shadow-2xl shadow-blue-600/40' 
-                    : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white'
-                  }`}
-                >
-                  {p}
-                </button>
-              );
-            })}
+            {[page - 1, page, page + 1].filter(p => p >= 1).map(p => (
+              <button
+                key={`page-${p}`}
+                onClick={() => changePage(p)}
+                className={`w-14 h-14 rounded-2xl font-black transition-all ${
+                  page === p 
+                  ? 'bg-blue-600 text-white shadow-2xl shadow-blue-600/40' 
+                  : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white'
+                }`}
+              >
+                {p}
+              </button>
+            ))}
 
             <button 
               onClick={() => changePage(page + 1)}
