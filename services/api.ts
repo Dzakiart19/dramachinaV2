@@ -6,9 +6,9 @@ import { Drama, Episode, VIPResponse } from '../types';
  * We rotate through different services to ensure the app stays functional.
  */
 const PROXIES = [
+  (url: string) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
   (url: string) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
   (url: string) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
-  (url: string) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
 ];
 
 const TARGET_BASE_URL = 'https://dramabox.sansekai.my.id/api';
