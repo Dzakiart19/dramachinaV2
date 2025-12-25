@@ -7,51 +7,68 @@ import { Drama, Episode, VIPResponse } from '../types';
  */
 const PROXIES = [
   (url: string) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-  (url: string) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
   (url: string) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
-  (url: string) => `https://thingproxy.freeboard.io/fetch/${url}`,
-  (url: string) => `https://proxy.cors.sh/${url}`,
+  (url: string) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
 ];
 
 const TARGET_BASE_URL = 'https://dramabox.sansekai.my.id/api';
 
+// Cache to avoid repeated slow fetches in a single session
+const apiCache = new Map<string, {data: any, timestamp: number}>();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
 const fetchWithProxy = async (path: string) => {
   const targetUrl = `${TARGET_BASE_URL}${path}`;
-  let lastError: any = null;
-
-  // Try each proxy in order until one works
-  for (const getProxiedUrl of PROXIES) {
-    const proxiedUrl = getProxiedUrl(targetUrl);
-    
-    try {
-      const res = await fetch(proxiedUrl, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-        }
-      });
-
-      if (!res.ok) {
-        throw new Error(`Proxy returned status ${res.status}`);
-      }
-
-      const data = await res.json();
-      
-      // Basic validation that we got actual data and not an error page/HTML
-      if (typeof data !== 'object' || data === null) {
-        throw new Error('Invalid JSON response');
-      }
-
-      return data;
-    } catch (error) {
-      console.warn(`Proxy failed: ${proxiedUrl.split('?')[0]}`, error);
-      lastError = error;
-      continue; // Try next proxy
+  
+  // Return cached data if available and fresh
+  if (apiCache.has(path)) {
+    const cached = apiCache.get(path)!;
+    if (Date.now() - cached.timestamp < CACHE_TTL) {
+      return cached.data;
     }
   }
 
-  console.error(`All proxies failed for ${path}. Last error:`, lastError);
-  throw lastError || new Error('All connection attempts failed');
+  let lastError: any = null;
+
+  // Try top 3 proxies in parallel for speed, use the first successful one
+  const controller = new AbortController();
+  const promises = PROXIES.map(async (getProxiedUrl) => {
+    const proxiedUrl = getProxiedUrl(targetUrl);
+    try {
+      const res = await fetch(proxiedUrl, {
+        signal: controller.signal,
+        method: 'GET',
+        headers: { 'Accept': 'application/json' }
+      });
+      if (!res.ok) throw new Error('Proxy error');
+      const data = await res.json();
+      if (typeof data !== 'object' || data === null) throw new Error('Invalid JSON');
+      
+      controller.abort(); // Cancel other requests once we have data
+      apiCache.set(path, { data, timestamp: Date.now() });
+      return data;
+    } catch (e) {
+      throw e;
+    }
+  });
+
+  try {
+    return await Promise.any(promises);
+  } catch (error) {
+    // Fallback to sequential if parallel fails (legacy behavior)
+    console.warn('Parallel fetch failed, retrying sequentially...', error);
+    for (const getProxiedUrl of PROXIES) {
+      try {
+        const res = await fetch(getProxiedUrl(targetUrl));
+        if (res.ok) {
+          const data = await res.json();
+          apiCache.set(path, { data, timestamp: Date.now() });
+          return data;
+        }
+      } catch (e) { continue; }
+    }
+    throw new Error('All connection attempts failed');
+  }
 };
 
 export const apiService = {

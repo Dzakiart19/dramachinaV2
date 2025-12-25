@@ -18,22 +18,15 @@ const Home: React.FC = () => {
     setError(null);
     
     try {
-      const latestData = await apiService.getLatestDramas().catch(e => {
-        console.error('Failed to fetch latest:', e);
-        return [] as Drama[];
-      });
+      // Load all data in parallel for much faster initial load
+      const [latestData, vip, recommended] = await Promise.all([
+        apiService.getLatestDramas().catch(() => []),
+        apiService.getVIPDramas().catch(() => null),
+        apiService.getForYouDramas().catch(() => []),
+      ]);
+
       setLatest(latestData);
-
-      const vip = await apiService.getVIPDramas().catch(e => {
-        console.error('Failed to fetch VIP:', e);
-        return null;
-      });
       setVipData(vip);
-
-      const recommended = await apiService.getForYouDramas().catch(e => {
-        console.error('Failed to fetch recommendations:', e);
-        return [] as Drama[];
-      });
       setForYou(recommended);
 
       if (latestData.length === 0 && !vip && recommended.length === 0) {
