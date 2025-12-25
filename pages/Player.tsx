@@ -79,25 +79,43 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
     
     // Set a timeout to detect if the connection is refused by Google/Sandbox
     if (connectionTimeoutRef.current) window.clearTimeout(connectionTimeoutRef.current);
+    
+    // Reset state when source changes
+    setIsBlockedByGoogle(false);
+    
     connectionTimeoutRef.current = window.setTimeout(() => {
-      if (video.networkState === 3 || video.readyState === 0) {
+      // Check if video is stuck in initial state
+      if (video.networkState === 3 || (video.readyState === 0 && !video.paused)) {
         setIsBlockedByGoogle(true);
       }
-    }, 5000);
+    }, 4000);
+
+    const handleError = () => {
+      console.error("Video error detected");
+      setIsBlockedByGoogle(true);
+    };
+
+    video.addEventListener('error', handleError);
 
     if (url.includes('.m3u8')) {
       if (window.Hls && window.Hls.isSupported()) {
         const hls = new window.Hls({
           enableWorker: true,
           lowLatencyMode: true,
+          backBufferLength: 90,
+          maxBufferLength: 30,
         });
         hls.loadSource(url);
         hls.attachMedia(video);
         hls.on(window.Hls.Events.ERROR, (event: any, data: any) => {
-          if (data.fatal) setIsBlockedByGoogle(true);
+          if (data.fatal) {
+            console.error("HLS fatal error:", data.type);
+            setIsBlockedByGoogle(true);
+          }
         });
         return () => {
           hls.destroy();
+          video.removeEventListener('error', handleError);
           if (connectionTimeoutRef.current) window.clearTimeout(connectionTimeoutRef.current);
         };
       } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
@@ -108,6 +126,11 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
     } else {
       video.src = url;
     }
+
+    return () => {
+      video.removeEventListener('error', handleError);
+      if (connectionTimeoutRef.current) window.clearTimeout(connectionTimeoutRef.current);
+    };
   }, [currentVideoSource, loading]);
 
   const availableQualities = useMemo(() => {
@@ -190,10 +213,10 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
                 <Monitor size={80} className="text-blue-500/20" />
                 <AlertCircle size={40} className="text-blue-500 absolute -bottom-2 -right-2 animate-pulse" />
               </div>
-              <h3 className="text-white text-2xl font-black mb-4">Koneksi Ditolak Google</h3>
+              <h3 className="text-white text-2xl font-black mb-4">Akses Video Terbatas</h3>
               <p className="text-slate-400 text-sm md:text-base max-w-md mb-10 leading-relaxed font-medium">
-                Sistem keamanan Google AI Studio memblokir pemutar video ini. <br/>
-                Gunakan tombol di bawah untuk memutar langsung di tab baru.
+                Pemutar video diblokir oleh sistem keamanan browser atau sandbox. <br/>
+                Klik tombol di bawah untuk menonton di tab baru atau ganti server.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 w-full max-w-sm">
                 <a 
@@ -206,10 +229,14 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
                   BUKA DI TAB BARU
                 </a>
                 <button 
-                  onClick={() => setIsBlockedByGoogle(false)}
+                  onClick={() => {
+                    setIsBlockedByGoogle(false);
+                    const nextCdn = (selectedCdnIndex + 1) % currentEpisode.cdnList.length;
+                    setSelectedCdnIndex(nextCdn);
+                  }}
                   className="px-8 py-4 bg-slate-800 text-slate-300 rounded-2xl font-bold hover:bg-slate-700 transition-all"
                 >
-                  Coba Ulang
+                  Ganti Server
                 </button>
               </div>
             </div>
