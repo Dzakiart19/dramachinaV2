@@ -110,15 +110,17 @@ const Search: React.FC = () => {
             <span className="text-slate-500 flex items-center gap-1 text-sm">
               <TrendingUp size={16} /> Populer:
             </span>
-            {popularSearches.slice(0, 6).map((tag, i) => (
-              <button
-                key={`popular-${i}`}
-                type="button"
-                onClick={() => handlePopularClick(tag)}
-                className="bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white px-3 py-1 rounded-full text-sm border border-slate-700 transition-colors"
-              >
-                {tag}
-              </button>
+            {popularSearches && Array.isArray(popularSearches) && popularSearches.slice(0, 6).map((tag, i) => (
+              typeof tag === 'string' ? (
+                <button
+                  key={`popular-${i}`}
+                  type="button"
+                  onClick={() => handlePopularClick(tag)}
+                  className="bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white px-3 py-1 rounded-full text-sm border border-slate-700 transition-colors"
+                >
+                  {tag}
+                </button>
+              ) : null
             ))}
           </div>
         )}
