@@ -53,16 +53,53 @@ const Home: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center h-[80vh] gap-8">
-        <div className="relative">
-          <div className="w-24 h-24 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin"></div>
-          <div className="absolute inset-0 bg-blue-500/10 blur-3xl rounded-full animate-pulse"></div>
-          <LayoutDashboard className="absolute inset-0 m-auto text-blue-500 animate-pulse" size={32} />
+      <div className="flex flex-col items-center justify-center min-h-[90vh] bg-slate-950 p-6 overflow-hidden">
+        <div className="relative group scale-110 md:scale-125 mb-16">
+          {/* Animated Glow Rings */}
+          <div className="absolute inset-[-40px] bg-blue-600/20 blur-[60px] rounded-full animate-pulse"></div>
+          <div className="absolute inset-[-20px] bg-indigo-600/10 blur-[40px] rounded-full animate-pulse delay-700"></div>
+          
+          {/* Main Loader Ring */}
+          <div className="relative w-32 h-32">
+            <div className="absolute inset-0 border-[3px] border-slate-800 rounded-full"></div>
+            <div className="absolute inset-0 border-[3px] border-t-blue-500 border-r-indigo-500 rounded-full animate-spin"></div>
+            <div className="absolute inset-4 border border-blue-500/20 rounded-full animate-[spin_3s_linear_infinite_reverse]"></div>
+            
+            {/* Center Icon */}
+            <div className="absolute inset-0 m-auto w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center shadow-2xl border border-white/5 group-hover:scale-110 transition-transform duration-500">
+               <LayoutDashboard className="text-blue-500 animate-pulse" size={24} />
+            </div>
+          </div>
         </div>
-        <div className="text-center space-y-2">
-          <h2 className="text-2xl font-black text-white tracking-tight">Menyiapkan Sinema...</h2>
-          <p className="text-slate-500 font-medium animate-pulse">Sedang mengambil drama terbaik untuk Anda</p>
+
+        <div className="flex flex-col items-center gap-4 max-w-sm w-full">
+           <div className="space-y-1 text-center">
+              <h2 className="text-3xl font-black text-white tracking-tighter uppercase italic bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent animate-in slide-in-from-bottom-2 duration-700">
+                Memuat Pengalaman...
+              </h2>
+              <div className="flex justify-center gap-1.5 py-2">
+                 {[0, 1, 2].map((i) => (
+                   <div key={i} className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: `${i * 200}ms` }} />
+                 ))}
+              </div>
+           </div>
+           
+           <div className="relative w-full bg-slate-900 h-1.5 rounded-full overflow-hidden border border-white/5">
+              <div className="absolute inset-y-0 left-0 bg-gradient-to-r from-blue-600 to-indigo-600 w-full -translate-x-[100%] animate-[progress_3s_ease-in-out_infinite]"></div>
+           </div>
+           
+           <p className="text-slate-500 text-xs font-black uppercase tracking-[0.4em] animate-pulse">
+              Sinkronisasi Server Utama
+           </p>
         </div>
+
+        <style>{`
+          @keyframes progress {
+            0% { transform: translateX(-100%); }
+            50% { transform: translateX(0%); }
+            100% { transform: translateX(100%); }
+          }
+        `}</style>
       </div>
     );
   }
