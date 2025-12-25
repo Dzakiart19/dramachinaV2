@@ -229,8 +229,8 @@ const Home: React.FC = () => {
       )}
 
       {/* Dynamic Sections from VIP API */}
-      {vipData?.columnVoList.slice(1).map((section) => (
-        <section key={section.columnId} className="container mx-auto px-4 mt-16">
+      {vipData?.columnVoList.slice(1).map((section, idx) => (
+        <section key={`${section.columnId}-${idx}`} className="container mx-auto px-4 mt-16">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl md:text-3xl font-black text-white flex items-center gap-3">
               <div className="w-2 h-8 bg-slate-700 rounded-full"></div>
