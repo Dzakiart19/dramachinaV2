@@ -315,18 +315,19 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
                   <h3 className="text-xl font-black text-white uppercase tracking-tight">Select Episode</h3>
                   <span className="text-zinc-600 font-bold text-[10px] uppercase tracking-[0.2em]">{episodes.length} Episodes</span>
                 </div>
-                <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">
+                <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12 gap-2">
                   {episodes.map((ep) => (
                     <a 
                       key={ep.chapterId}
                       href={`#/player/${bookId}/${ep.chapterId}`}
-                      className={`flex items-center justify-center py-4 rounded-md border transition-all duration-300 font-bold ${
+                      className={`flex flex-col items-center justify-center py-3 rounded-md border transition-all duration-300 font-black ${
                         ep.chapterId === episodeId 
-                          ? 'bg-red-600 border-red-600 text-white shadow-lg' 
+                          ? 'bg-red-600 border-red-600 text-white shadow-lg scale-110 z-10' 
                           : 'bg-zinc-900 border-zinc-800 text-zinc-500 hover:border-zinc-600 hover:text-white'
                       }`}
                     >
-                      {ep.chapterName}
+                      <span className="text-[8px] opacity-50 mb-0.5">EPS</span>
+                      <span className="text-lg">{ep.chapterName}</span>
                     </a>
                   ))}
                 </div>

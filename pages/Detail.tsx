@@ -144,15 +144,15 @@ const Detail: React.FC<DetailProps> = ({ bookId }) => {
                 <h3 className="text-2xl font-black text-white uppercase tracking-tight">Episodes</h3>
                 <span className="text-zinc-500 font-bold uppercase tracking-widest text-xs">{episodes.length} Items</span>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-3">
                 {episodes.map((ep, idx) => (
                   <a 
                     key={ep.chapterId}
                     href={`#/player/${bookId}/${ep.chapterId}`}
-                    className="flex flex-col p-4 bg-zinc-900/50 border border-zinc-800/50 rounded-md hover:bg-zinc-800 hover:border-zinc-600 group transition-all"
+                    className="flex flex-col items-center justify-center p-4 bg-zinc-900/50 border border-zinc-800/50 rounded-md hover:bg-red-600 hover:border-red-500 group transition-all aspect-square"
                   >
-                    <span className="text-red-600 font-black text-[10px] mb-1 uppercase tracking-widest">EPS {ep.chapterName}</span>
-                    <span className="text-white font-bold group-hover:text-red-500 transition-colors line-clamp-1">{drama.bookName}</span>
+                    <span className="text-zinc-500 group-hover:text-red-200 text-[10px] mb-1 uppercase tracking-widest font-black">EPS</span>
+                    <span className="text-white font-black text-xl group-hover:scale-110 transition-transform">{ep.chapterName}</span>
                   </a>
                 ))}
               </div>
