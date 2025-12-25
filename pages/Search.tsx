@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { apiService } from '../services/api';
 import { Drama } from '../types';
 import MovieCard from '../components/MovieCard';
-import { Search as SearchIcon, Loader2, TrendingUp, X, ChevronRight } from 'lucide-react';
+import { Search as SearchIcon, TrendingUp, X, ChevronRight } from 'lucide-react';
 
 const Search: React.FC = () => {
   const [query, setQuery] = useState('');
@@ -35,16 +35,18 @@ const Search: React.FC = () => {
     setSearched(true);
     setPage(p);
     try {
-      const data = await apiService.searchDramas(trimmedQuery, p);
+      const data: any = await apiService.searchDramas(trimmedQuery, p);
       
       // Handle different API response formats
       let resultsArray = [];
       if (Array.isArray(data)) {
         resultsArray = data;
-      } else if (data.data && Array.isArray(data.data)) {
-        resultsArray = data.data;
-      } else if (data.list && Array.isArray(data.list)) {
-        resultsArray = data.list;
+      } else if (data && typeof data === 'object') {
+        if (Array.isArray(data.data)) {
+          resultsArray = data.data;
+        } else if (Array.isArray(data.list)) {
+          resultsArray = data.list;
+        }
       }
       
       setResults(resultsArray);

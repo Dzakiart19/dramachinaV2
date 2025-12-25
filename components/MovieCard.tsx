@@ -39,17 +39,17 @@ const MovieCard: React.FC<MovieCardProps> = ({ drama, className = "" }) => {
           </div>
         </div>
 
-        <div className="absolute inset-x-0 bottom-0 p-6 translate-y-2 group-hover:translate-y-0 transition-all duration-500">
-          <h3 className="text-white font-black text-lg md:text-xl line-clamp-2 leading-none tracking-tighter mb-2 drop-shadow-2xl">
+        <div className="absolute inset-x-0 bottom-0 p-4 sm:p-6 translate-y-2 group-hover:translate-y-0 transition-all duration-500">
+          <h3 className="text-white font-black text-base sm:text-lg md:text-xl line-clamp-2 leading-none tracking-tighter mb-2 drop-shadow-2xl">
             {drama.bookName}
           </h3>
-          <div className="flex items-center gap-3">
-             <div className="flex gap-1">
+          <div className="flex items-center gap-2 sm:gap-3">
+             <div className="flex gap-0.5 sm:gap-1">
                 {[1,2,3,4,5].map(i => (
-                  <div key={i} className="w-1 h-1 bg-blue-500 rounded-full animate-pulse" style={{ animationDelay: `${i * 150}ms` }} />
+                  <div key={i} className="w-0.5 h-0.5 sm:w-1 sm:h-1 bg-blue-500 rounded-full animate-pulse" style={{ animationDelay: `${i * 150}ms` }} />
                 ))}
              </div>
-             <span className="text-[10px] text-blue-400 font-black uppercase tracking-[0.2em]">Live Preview</span>
+             <span className="text-[8px] sm:text-[10px] text-blue-400 font-black uppercase tracking-[0.2em]">Live Preview</span>
           </div>
         </div>
       </div>
