@@ -14,21 +14,14 @@ const Trending: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const allData: Drama[] = [];
-      let page = 1;
+      // Trending API returns all trending data in one request
+      const data = await apiService.getTrendingDramas().catch(() => []);
       
-      // Keep loading until no more data
-      while (true) {
-        const data = await apiService.getTrendingDramas().catch(() => []);
-        if (!Array.isArray(data) || data.length === 0) break;
-        allData.push(...data);
-        page++;
-      }
-      
-      setDramas(allData);
-      if (allData.length === 0) {
+      if (!Array.isArray(data) || data.length === 0) {
         throw new Error('Tidak ada data ditemukan');
       }
+      
+      setDramas(data);
     } catch (err) {
       console.error('Failed to load trending:', err);
       setError('Gagal memuat drama trending. Silakan coba lagi.');
