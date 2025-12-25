@@ -18,11 +18,11 @@ const TARGET_BASE_URL = 'https://dramabox.sansekai.my.id/api';
 const apiCache = new Map<string, {data: any, timestamp: number}>();
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
-const fetchWithProxy = async (path: string) => {
+const fetchWithProxy = async (path: string, skipCache: boolean = false) => {
   const targetUrl = `${TARGET_BASE_URL}${path}`;
   
-  // Return cached data if available and fresh
-  if (apiCache.has(path)) {
+  // Return cached data if available and fresh (unless skipCache is true)
+  if (!skipCache && apiCache.has(path)) {
     const cached = apiCache.get(path)!;
     if (Date.now() - cached.timestamp < CACHE_TTL) {
       return cached.data;
@@ -78,11 +78,11 @@ export const apiService = {
   },
 
   async getLatestDramas(page: number = 1): Promise<Drama[]> {
-    return fetchWithProxy(`/dramabox/latest?page=${page}`);
+    return fetchWithProxy(`/dramabox/latest?page=${page}`, page > 1);
   },
 
   async getTrendingDramas(page: number = 1): Promise<Drama[]> {
-    return fetchWithProxy(`/dramabox/trending?page=${page}`);
+    return fetchWithProxy(`/dramabox/trending?page=${page}`, page > 1);
   },
 
   async getIndoDubDramas(classify: 'terpopuler' | 'terbaru' = 'terbaru', page: number = 1): Promise<Drama[]> {
