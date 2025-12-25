@@ -88,8 +88,8 @@ export const apiService = {
     return fetchWithProxy(`/dramabox/dubindo?classify=${classify}&page=${page}`);
   },
 
-  async searchDramas(query: string): Promise<Drama[]> {
-    return fetchWithProxy(`/dramabox/search?query=${encodeURIComponent(query)}`);
+  async searchDramas(query: string, page: number = 1): Promise<Drama[]> {
+    return fetchWithProxy(`/dramabox/search?query=${encodeURIComponent(query)}&page=${page}`);
   },
 
   async getDramaDetail(bookId: string): Promise<{ data: { book: Drama } }> {

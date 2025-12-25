@@ -35,12 +35,7 @@ const Search: React.FC = () => {
     setSearched(true);
     setPage(p);
     try {
-      // Force page number in the query string
-      const targetUrl = `https://dramabox.sansekai.my.id/api/dramabox/search?query=${encodeURIComponent(trimmedQuery)}&page=${p}&_t=${Date.now()}`;
-      const res = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`);
-      
-      if (!res.ok) throw new Error('Network response was not ok');
-      const data = await res.json();
+      const data = await apiService.searchDramas(trimmedQuery, p);
       
       // Handle different API response formats
       let resultsArray = [];
@@ -56,13 +51,7 @@ const Search: React.FC = () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (error) {
       console.error('Search error:', error);
-      // Fallback
-      try {
-        const data = await apiService.searchDramas(trimmedQuery);
-        setResults(Array.isArray(data) ? data : []);
-      } catch (e) {
-        setResults([]);
-      }
+      setResults([]);
     } finally {
       setLoading(false);
     }
