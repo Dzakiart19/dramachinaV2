@@ -86,13 +86,17 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
     connectionTimeoutRef.current = window.setTimeout(() => {
       // Check if video is stuck in initial state
       if (video.networkState === 3 || (video.readyState === 0 && !video.paused)) {
+        // We will no longer force the block overlay, just log it
+        console.warn("Potential video block detected, but allowing manual play.");
+      }
+    }, 8000); // Increase timeout to 8 seconds
+
+    const handleError = (e: any) => {
+      console.error("Video error detected", e);
+      // Only show block if it's a fatal network error and we haven't loaded anything
+      if (video.readyState === 0) {
         setIsBlockedByGoogle(true);
       }
-    }, 4000);
-
-    const handleError = () => {
-      console.error("Video error detected");
-      setIsBlockedByGoogle(true);
     };
 
     video.addEventListener('error', handleError);
@@ -110,7 +114,7 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
         hls.on(window.Hls.Events.ERROR, (event: any, data: any) => {
           if (data.fatal) {
             console.error("HLS fatal error:", data.type);
-            setIsBlockedByGoogle(true);
+            // Don't immediately block, let the user try to play or change server
           }
         });
         return () => {
@@ -208,37 +212,43 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
         {/* Enhanced Player Container */}
         <div className="relative aspect-video w-full bg-slate-950 rounded-[2rem] overflow-hidden shadow-[0_0_50px_-12px_rgba(59,130,246,0.3)] ring-1 ring-slate-800 group">
           {isBlockedByGoogle ? (
-            <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-slate-950/90 backdrop-blur-xl p-8 text-center animate-in fade-in zoom-in duration-500">
-              <div className="relative mb-8">
-                <Monitor size={80} className="text-blue-500/20" />
-                <AlertCircle size={40} className="text-blue-500 absolute -bottom-2 -right-2 animate-pulse" />
+            <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-slate-950/60 backdrop-blur-md p-8 text-center animate-in fade-in zoom-in duration-500">
+              <div className="relative mb-6">
+                <Monitor size={60} className="text-blue-500/20" />
+                <AlertCircle size={30} className="text-blue-500 absolute -bottom-1 -right-1 animate-pulse" />
               </div>
-              <h3 className="text-white text-2xl font-black mb-4">Akses Video Terbatas</h3>
-              <p className="text-slate-400 text-sm md:text-base max-w-md mb-10 leading-relaxed font-medium">
-                Pemutar video diblokir oleh sistem keamanan browser atau sandbox. <br/>
-                Klik tombol di bawah untuk menonton di tab baru atau ganti server.
+              <h3 className="text-white text-xl font-black mb-3">Gangguan Koneksi</h3>
+              <p className="text-slate-400 text-xs md:text-sm max-w-md mb-8 leading-relaxed font-medium">
+                Gagal memuat video secara otomatis. <br/>
+                Coba ganti server atau tonton di tab baru.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 w-full max-w-sm">
-                <a 
-                  href={currentVideoSource?.videoPath} 
-                  target="_blank" 
-                  rel="noreferrer"
-                  className="flex-1 flex items-center justify-center gap-3 bg-blue-600 hover:bg-blue-500 text-white px-8 py-4 rounded-2xl font-black transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-blue-600/30"
-                >
-                  <ExternalLink size={20} />
-                  BUKA DI TAB BARU
-                </a>
+              <div className="flex flex-col sm:flex-row gap-3 w-full max-w-sm">
                 <button 
                   onClick={() => {
                     setIsBlockedByGoogle(false);
                     const nextCdn = (selectedCdnIndex + 1) % currentEpisode.cdnList.length;
                     setSelectedCdnIndex(nextCdn);
                   }}
-                  className="px-8 py-4 bg-slate-800 text-slate-300 rounded-2xl font-bold hover:bg-slate-700 transition-all"
+                  className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-xl font-black hover:bg-blue-500 transition-all shadow-lg"
                 >
                   Ganti Server
                 </button>
+                <a 
+                  href={currentVideoSource?.videoPath} 
+                  target="_blank" 
+                  rel="noreferrer"
+                  className="flex-1 flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-white px-6 py-3 rounded-xl font-bold transition-all"
+                >
+                  <ExternalLink size={16} />
+                  Tab Baru
+                </a>
               </div>
+              <button 
+                onClick={() => setIsBlockedByGoogle(false)}
+                className="mt-6 text-slate-500 text-[10px] font-bold uppercase tracking-widest hover:text-white transition-colors"
+              >
+                Tetap Gunakan Pemutar Ini
+              </button>
             </div>
           ) : (
             <video 
