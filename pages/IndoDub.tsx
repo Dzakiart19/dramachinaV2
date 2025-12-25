@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { apiService } from '../services/api';
 import { Drama } from '../types';
 import MovieCard from '../components/MovieCard';
-import { AlertCircle, RefreshCcw, ChevronRight, LayoutDashboard } from 'lucide-react';
+import { Loader2, AlertCircle, RefreshCcw, ChevronRight, LayoutDashboard } from 'lucide-react';
 
 const IndoDub: React.FC = () => {
   const [dramas, setDramas] = useState<Drama[]>([]);
@@ -85,7 +85,7 @@ const IndoDub: React.FC = () => {
         <AlertCircle size={48} className="text-red-500 mb-4" />
         <p className="text-slate-400 mb-6">{error}</p>
         <button 
-          onClick={() => loadIndoDub(1)}
+          onClick={loadIndoDub}
           className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-8 py-4 rounded-2xl font-bold transition-all"
         >
           <RefreshCcw size={20} />
@@ -126,7 +126,7 @@ const IndoDub: React.FC = () => {
               if (p < 1) return null;
               return (
                 <button
-                  key={`page-${p}`}
+                  key={p}
                   onClick={() => loadIndoDub(p)}
                   className={`w-14 h-14 rounded-2xl font-black transition-all ${
                     page === p 
@@ -141,8 +141,7 @@ const IndoDub: React.FC = () => {
 
             <button 
               onClick={() => loadIndoDub(page + 1)}
-              disabled={dramas.length === 0}
-              className="p-4 bg-slate-900 border border-slate-800 rounded-2xl text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-orange-600 transition-all"
+              className="p-4 bg-slate-900 border border-slate-800 rounded-2xl text-white hover:bg-orange-600 transition-all"
             >
               <ChevronRight size={20} />
             </button>
@@ -150,17 +149,7 @@ const IndoDub: React.FC = () => {
         </>
       ) : (
         <div className="text-center py-20">
-          <p className="text-slate-500 text-lg">
-            {page > 1 ? 'Tidak ada drama di halaman ini. Coba halaman sebelumnya.' : 'Belum ada drama sulih suara'}
-          </p>
-          {page > 1 && (
-            <button 
-              onClick={() => loadIndoDub(page - 1)}
-              className="mt-6 text-orange-500 hover:text-orange-400 font-semibold transition-colors"
-            >
-              ← Kembali ke halaman {page - 1}
-            </button>
-          )}
+          <p className="text-slate-500 text-lg">Belum ada drama sulih suara</p>
         </div>
       )}
     </div>
