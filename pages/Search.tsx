@@ -194,7 +194,7 @@ const Search: React.FC = () => {
               <h2 className="text-2xl font-bold text-white">
                 Hasil Pencarian {query && <span className="text-blue-400">"{query}"</span>}
               </h2>
-              <span className="text-slate-500 text-sm">{results.length} hasil</span>
+              <span className="text-slate-500 text-sm">{allResults.length} hasil</span>
             </div>
 
             {searched && allResults && allResults.length > 0 ? (
