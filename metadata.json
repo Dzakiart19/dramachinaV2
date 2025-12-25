@@ -1,0 +1,8 @@
+{
+  "name": "Dzeck Stream",
+  "description": "A premium Chinese drama streaming platform with Indonesian dub support, featuring latest releases, trending shows, and high-quality video playback.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
