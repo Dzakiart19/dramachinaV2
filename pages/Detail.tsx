@@ -41,7 +41,23 @@ const Detail: React.FC<DetailProps> = ({ bookId }) => {
     );
   }
 
-  if (!drama) return <div className="p-20 text-center">Drama not found.</div>;
+  if (!drama) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[70vh] px-6 text-center">
+        <div className="bg-red-500/10 p-6 rounded-full mb-6 border border-red-500/20">
+          <Play size={48} className="text-red-500 rotate-45" />
+        </div>
+        <h2 className="text-2xl font-black text-white mb-2">Drama Tidak Ditemukan</h2>
+        <p className="text-slate-400 max-w-sm mb-10">Data drama mungkin telah dihapus atau server sedang mengalami gangguan koneksi.</p>
+        <button 
+          onClick={() => window.location.reload()} 
+          className="bg-white text-black px-10 py-4 rounded-2xl font-black transition-all hover:scale-105 active:scale-95 shadow-xl"
+        >
+          COBA LAGI
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="pb-20">
