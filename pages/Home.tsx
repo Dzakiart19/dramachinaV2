@@ -274,42 +274,48 @@ const Home: React.FC = () => {
             </a>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-8">
-            {latest.slice(0, 12).map((drama) => (
+            {latest.slice((page - 1) * 12, page * 12).map((drama) => (
               <MovieCard key={drama.bookId} drama={drama} />
             ))}
           </div>
 
           {/* Numerical Pagination */}
-          <div className="flex items-center justify-center gap-2 mt-16">
-            <button 
-              onClick={() => changePage(page - 1)}
-              disabled={page === 1}
-              className="p-4 bg-slate-900 border border-slate-800 rounded-2xl text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-blue-600 transition-all"
-            >
-              <ChevronRight size={20} className="rotate-180" />
-            </button>
-            
-            {[page - 1, page, page + 1].filter(p => p >= 1).map(p => (
-              <button
-                key={`page-${p}`}
-                onClick={() => changePage(p)}
-                className={`w-14 h-14 rounded-2xl font-black transition-all ${
-                  page === p 
-                  ? 'bg-blue-600 text-white shadow-2xl shadow-blue-600/40' 
-                  : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white'
-                }`}
-              >
-                {p}
-              </button>
-            ))}
+          {(() => {
+            const totalPages = Math.ceil(latest.length / 12);
+            return (
+              <div className="flex items-center justify-center gap-2 mt-16">
+                <button 
+                  onClick={() => changePage(page - 1)}
+                  disabled={page === 1}
+                  className="p-4 bg-slate-900 border border-slate-800 rounded-2xl text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-blue-600 transition-all"
+                >
+                  <ChevronRight size={20} className="rotate-180" />
+                </button>
+                
+                {[page - 1, page, page + 1].filter(p => p >= 1 && p <= totalPages).map(p => (
+                  <button
+                    key={`page-${p}`}
+                    onClick={() => changePage(p)}
+                    className={`w-14 h-14 rounded-2xl font-black transition-all ${
+                      page === p 
+                      ? 'bg-blue-600 text-white shadow-2xl shadow-blue-600/40' 
+                      : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    {p}
+                  </button>
+                ))}
 
-            <button 
-              onClick={() => changePage(page + 1)}
-              className="p-4 bg-slate-900 border border-slate-800 rounded-2xl text-white hover:bg-blue-600 transition-all"
-            >
-              <ChevronRight size={20} />
-            </button>
-          </div>
+                <button 
+                  onClick={() => changePage(page + 1)}
+                  disabled={page >= totalPages}
+                  className="p-4 bg-slate-900 border border-slate-800 rounded-2xl text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-blue-600 transition-all"
+                >
+                  <ChevronRight size={20} />
+                </button>
+              </div>
+            );
+          })()}
         </section>
       )}
 
