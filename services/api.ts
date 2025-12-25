@@ -4,12 +4,13 @@ import { Drama, Episode, VIPResponse } from '../types';
 /**
  * Multi-proxy fallback system to handle 403 blocks or rate limits.
  * We rotate through different services to ensure the app stays functional.
+ * Proxy order matters for reliability with certain datasets.
  */
 const PROXIES = [
+  (url: string) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
   (url: string) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
   (url: string) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
   (url: string) => `https://thingproxy.freeboard.io/fetch/${url}`,
-  (url: string) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
 ];
 
 const TARGET_BASE_URL = 'https://dramabox.sansekai.my.id/api';
