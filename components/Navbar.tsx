@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Search, Home, TrendingUp, Globe, Menu, X, MonitorPlay } from 'lucide-react';
+import { Search, Home, TrendingUp, Globe, Menu, X, MonitorPlay, Crown, Sparkles, Flame, BookMarked } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 
 const Navbar: React.FC = () => {
@@ -8,10 +8,13 @@ const Navbar: React.FC = () => {
   const location = useLocation();
 
   const navLinks = [
-    { label: 'Home', icon: Home, path: '/' },
-    { label: 'Search', icon: Search, path: '/search' },
-    { label: 'Trending', icon: TrendingUp, path: '/trending' },
+    { label: 'Latest', icon: Home, path: '/' },
+    { label: 'VIP', icon: Crown, path: '/vip' },
+    { label: 'Trending', icon: Flame, path: '/trending' },
     { label: 'Indo Dub', icon: Globe, path: '/dub' },
+    { label: 'For You', icon: Sparkles, path: '/foryou' },
+    { label: 'Search', icon: Search, path: '/search' },
+    { label: 'Popular', icon: BookMarked, path: '/popular' },
   ];
 
   const isActive = (path: string) => location.pathname === path;

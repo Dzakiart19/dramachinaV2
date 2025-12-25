@@ -2,12 +2,15 @@
 import React from 'react';
 import { HashRouter, Routes, Route, useParams } from 'react-router-dom';
 import Layout from './components/Layout';
-import Home from './pages/Home';
-import Detail from './pages/Detail';
-import Player from './pages/Player';
-import Search from './pages/Search';
+import Latest from './pages/Latest';
+import VIP from './pages/VIP';
 import Trending from './pages/Trending';
 import IndoDub from './pages/IndoDub';
+import Search from './pages/Search';
+import ForYou from './pages/ForYou';
+import PopularSearch from './pages/PopularSearch';
+import Detail from './pages/Detail';
+import Player from './pages/Player';
 
 // Helper component to pass params to pages
 const DetailPageWrapper = () => {
@@ -25,12 +28,15 @@ const App: React.FC = () => {
     <HashRouter>
       <Layout>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/detail/:id" element={<DetailPageWrapper />} />
-          <Route path="/player/:bookId/:episodeId" element={<PlayerPageWrapper />} />
-          <Route path="/search" element={<Search />} />
+          <Route path="/" element={<Latest />} />
+          <Route path="/vip" element={<VIP />} />
           <Route path="/trending" element={<Trending />} />
           <Route path="/dub" element={<IndoDub />} />
+          <Route path="/search" element={<Search />} />
+          <Route path="/foryou" element={<ForYou />} />
+          <Route path="/popular" element={<PopularSearch />} />
+          <Route path="/detail/:id" element={<DetailPageWrapper />} />
+          <Route path="/player/:bookId/:episodeId" element={<PlayerPageWrapper />} />
         </Routes>
       </Layout>
     </HashRouter>
