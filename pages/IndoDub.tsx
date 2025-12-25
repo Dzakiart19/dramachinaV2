@@ -146,27 +146,27 @@ const IndoDub: React.FC = () => {
 
       {displayedDramas.length > 0 ? (
         <>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3 md:gap-4 lg:gap-6">
             {displayedDramas.map((drama) => (
               <MovieCard key={drama.bookId} drama={drama} />
             ))}
           </div>
 
           {/* Numerical Pagination */}
-          <div className="flex items-center justify-center gap-2 mt-16 pb-12">
+          <div className="flex items-center justify-center gap-1 sm:gap-2 mt-8 sm:mt-16 pb-8 sm:pb-12 flex-wrap">
             <button 
               onClick={() => changePage(page - 1)}
               disabled={page === 1}
-              className="p-4 bg-slate-900 border border-slate-800 rounded-2xl text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-orange-600 transition-all"
+              className="p-2 sm:p-4 bg-slate-900 border border-slate-800 rounded-lg sm:rounded-2xl text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-orange-600 transition-all"
             >
-              <ChevronRight size={20} className="rotate-180" />
+              <ChevronRight size={16} className="rotate-180 sm:w-5 sm:h-5" />
             </button>
             
             {[page - 1, page, page + 1].filter(p => p >= 1 && p <= totalPages).map(p => (
               <button
                 key={`indodub-page-${p}`}
                 onClick={() => changePage(p)}
-                className={`w-14 h-14 rounded-2xl font-black transition-all ${
+                className={`w-10 h-10 sm:w-14 sm:h-14 rounded-lg sm:rounded-2xl font-black text-sm sm:text-base transition-all ${
                   page === p 
                   ? 'bg-orange-600 text-white shadow-2xl shadow-orange-600/40' 
                   : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white'
@@ -179,9 +179,9 @@ const IndoDub: React.FC = () => {
             <button 
               onClick={() => changePage(page + 1)}
               disabled={page >= totalPages}
-              className="p-4 bg-slate-900 border border-slate-800 rounded-2xl text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-orange-600 transition-all"
+              className="p-2 sm:p-4 bg-slate-900 border border-slate-800 rounded-lg sm:rounded-2xl text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-orange-600 transition-all"
             >
-              <ChevronRight size={20} />
+              <ChevronRight size={16} className="sm:w-5 sm:h-5" />
             </button>
           </div>
         </>

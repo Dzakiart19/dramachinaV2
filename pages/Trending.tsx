@@ -22,7 +22,9 @@ const Trending: React.FC = () => {
       }
       
       // Remove duplicates by bookId
-      const uniqueDramas = Array.from(new Map(data.map(d => [d.bookId, d])).values());
+      const dramatMap = new Map<string, Drama>();
+      data.forEach(d => dramatMap.set(d.bookId, d));
+      const uniqueDramas = Array.from(dramatMap.values());
       setDramas(uniqueDramas);
     } catch (err) {
       console.error('Failed to load trending:', err);
@@ -110,7 +112,7 @@ const Trending: React.FC = () => {
       </div>
 
       {dramas.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 pb-12">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3 md:gap-4 lg:gap-6 pb-8 sm:pb-12">
           {dramas.map((drama) => (
             <MovieCard key={drama.bookId} drama={drama} />
           ))}

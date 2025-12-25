@@ -112,12 +112,12 @@ const VIP: React.FC = () => {
       </div>
 
       {vipData.columnVoList.length > 1 && (
-        <div className="flex gap-2 mb-12 overflow-x-auto pb-2">
+        <div className="flex gap-2 mb-8 sm:mb-12 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0">
           {vipData.columnVoList.map((col, idx) => (
             <button
               key={idx}
               onClick={() => setSelectedCategory(idx)}
-              className={`px-6 py-3 rounded-xl font-bold whitespace-nowrap transition-colors ${
+              className={`px-3 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl font-bold whitespace-nowrap transition-colors text-xs sm:text-base ${
                 selectedCategory === idx
                   ? 'bg-yellow-600 text-white'
                   : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
@@ -130,7 +130,7 @@ const VIP: React.FC = () => {
       )}
 
       {dramas.length > 0 ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
           {dramas.filter(d => d && d.bookId).map((drama) => (
             <MovieCard key={drama.bookId} drama={drama} />
           ))}

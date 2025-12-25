@@ -133,28 +133,31 @@ const Latest: React.FC = () => {
 
       {displayedDramas.length > 0 ? (
         <>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 mb-12">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3 md:gap-4 mb-8 sm:mb-12">
             {displayedDramas.map((drama) => (
               <MovieCard key={drama.bookId} drama={drama} />
             ))}
           </div>
 
           {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-3 mt-12 flex-wrap">
+            <div className="flex items-center justify-center gap-2 sm:gap-3 mt-8 sm:mt-12 flex-wrap pb-8">
               <button
                 onClick={() => changePage(page - 1)}
                 disabled={page === 1}
-                className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 disabled:bg-slate-900 disabled:text-slate-600 text-white font-bold py-3 px-6 rounded-xl transition-colors"
+                className="flex items-center gap-1 sm:gap-2 bg-slate-800 hover:bg-slate-700 disabled:bg-slate-900 disabled:text-slate-600 text-white font-bold py-2 sm:py-3 px-3 sm:px-6 rounded-lg sm:rounded-xl transition-colors text-xs sm:text-base"
               >
-                ← Sebelumnya
+                <ChevronRight size={16} className="rotate-180" /> <span className="hidden sm:inline">Sebelumnya</span>
               </button>
 
-              <div className="flex gap-2 flex-wrap justify-center">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+              <div className="flex gap-1 sm:gap-2 flex-wrap justify-center">
+                {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                  const p = Math.max(1, page - 2 + i);
+                  return p <= totalPages ? p : null;
+                }).filter(Boolean).map((p) => (
                   <button
                     key={p}
                     onClick={() => changePage(p)}
-                    className={`font-bold py-2 px-4 rounded-lg transition-colors ${
+                    className={`font-bold py-2 px-2 sm:px-4 rounded-lg text-xs sm:text-base transition-colors ${
                       p === page
                         ? 'bg-blue-600 text-white'
                         : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
@@ -168,9 +171,9 @@ const Latest: React.FC = () => {
               <button
                 onClick={() => changePage(page + 1)}
                 disabled={page >= totalPages}
-                className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 disabled:bg-slate-900 disabled:text-slate-600 text-white font-bold py-3 px-6 rounded-xl transition-colors"
+                className="flex items-center gap-1 sm:gap-2 bg-slate-800 hover:bg-slate-700 disabled:bg-slate-900 disabled:text-slate-600 text-white font-bold py-2 sm:py-3 px-3 sm:px-6 rounded-lg sm:rounded-xl transition-colors text-xs sm:text-base"
               >
-                Selanjutnya <ChevronRight size={18} />
+                <span className="hidden sm:inline">Selanjutnya</span> <ChevronRight size={16} />
               </button>
             </div>
           )}

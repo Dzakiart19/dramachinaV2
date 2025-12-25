@@ -13,13 +13,37 @@ const PopularSearch: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await apiService.getPopularSearch().catch(() => []);
+      const rawData = await apiService.getPopularSearch().catch(() => null);
       
-      if (!Array.isArray(data) || data.length === 0) {
+      let data = [];
+      
+      // Handle various response formats
+      if (Array.isArray(rawData)) {
+        data = rawData;
+      } else if (rawData && typeof rawData === 'object') {
+        if (Array.isArray(rawData.data)) {
+          data = rawData.data;
+        } else if (Array.isArray(rawData.list)) {
+          data = rawData.list;
+        } else if (typeof rawData === 'string') {
+          // Try parsing if it's a stringified array
+          try {
+            const parsed = JSON.parse(rawData);
+            data = Array.isArray(parsed) ? parsed : [];
+          } catch {
+            data = [];
+          }
+        }
+      }
+      
+      // Filter only string values
+      const validSearches = data.filter(item => typeof item === 'string' && item.trim().length > 0);
+      
+      if (!validSearches || validSearches.length === 0) {
         throw new Error('Tidak ada pencarian populer ditemukan');
       }
 
-      setSearches(data);
+      setSearches(validSearches);
     } catch (err) {
       console.error('Failed to load popular search:', err);
       setError('Gagal memuat pencarian populer. Silakan coba lagi.');
@@ -110,12 +134,12 @@ const PopularSearch: React.FC = () => {
         <p className="text-slate-400">Temukan apa yang sedang trending sekarang</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         {searches.map((search, idx) => (
           <button
-            key={idx}
+            key={`search-${idx}`}
             onClick={() => handleSearch(search)}
-            className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 p-6 hover:from-green-900/50 hover:to-emerald-900/50 transition-all duration-300 border border-slate-700 hover:border-green-500/50"
+            className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 p-4 sm:p-6 hover:from-green-900/50 hover:to-emerald-900/50 transition-all duration-300 border border-slate-700 hover:border-green-500/50"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-green-500/0 to-emerald-500/0 group-hover:from-green-500/10 group-hover:to-emerald-500/10 transition-all duration-300"></div>
             

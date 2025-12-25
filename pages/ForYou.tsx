@@ -20,7 +20,9 @@ const ForYou: React.FC = () => {
       }
 
       // Remove duplicates by bookId
-      const uniqueDramas = Array.from(new Map(data.map(d => [d.bookId, d])).values());
+      const dramaMaps = new Map<string, Drama>();
+      data.forEach(d => dramaMaps.set(d.bookId, d));
+      const uniqueDramas = Array.from(dramaMaps.values());
       setDramas(uniqueDramas);
     } catch (err) {
       console.error('Failed to load for you:', err);
@@ -108,7 +110,7 @@ const ForYou: React.FC = () => {
         <p className="text-slate-400">Rekomendasi pilihan spesial: {dramas.length} drama</p>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
         {dramas.filter(d => d && d.bookId).map((drama) => (
           <MovieCard key={drama.bookId} drama={drama} />
         ))}
