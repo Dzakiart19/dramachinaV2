@@ -91,30 +91,30 @@ const Search: React.FC = () => {
   const totalPages = Math.ceil(allResults.length / itemsPerPage);
 
   return (
-    <div className="container mx-auto px-4 py-12 min-h-screen">
+    <div className="container mx-auto px-4 md:px-10 py-12 min-h-screen">
       {/* Search Bar */}
       <div className="max-w-3xl mx-auto mb-16">
-        <h1 className="text-3xl md:text-4xl font-black text-white text-center mb-8">
-          Cari drama <span className="text-blue-500">favorit</span> Anda
+        <h1 className="text-3xl md:text-5xl font-black text-white text-center mb-8 uppercase tracking-tighter">
+          Find Your <span className="text-red-600">Drama</span>
         </h1>
 
-        <form onSubmit={handleFormSubmit} className="relative">
+        <form onSubmit={handleFormSubmit} className="relative group">
           <input 
             autoFocus
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Cari berdasarkan judul, penulis, atau kata kunci..."
-            className="w-full bg-slate-900 border-2 border-slate-800 rounded-2xl py-5 px-6 pl-14 pr-32 text-white focus:outline-none focus:border-blue-500 transition-all text-lg shadow-xl"
+            placeholder="Cari judul atau kata kunci..."
+            className="w-full bg-zinc-900 border border-zinc-800 group-hover:border-zinc-700 rounded-md py-4 px-6 pl-14 pr-32 text-white focus:outline-none focus:border-red-600 transition-all text-lg shadow-2xl"
           />
           
-          <SearchIcon className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" size={24} />
+          <SearchIcon className="absolute left-5 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" size={24} />
           
           {query && (
             <button 
               type="button"
               onClick={clearSearch}
-              className="absolute right-20 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors z-10"
+              className="absolute right-20 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors z-10"
               aria-label="Clear search"
             >
               <X size={20} />
@@ -124,24 +124,21 @@ const Search: React.FC = () => {
           <button 
             type="submit"
             disabled={!query.trim()}
-            className="absolute right-3 top-1/2 -translate-y-1/2 bg-blue-600 hover:bg-blue-500 disabled:bg-slate-600 text-white font-bold px-6 py-3 rounded-xl transition-colors z-10"
+            className="absolute right-2 top-1/2 -translate-y-1/2 bg-red-600 hover:bg-red-700 disabled:bg-zinc-800 text-white font-bold px-6 py-2 rounded-md transition-all z-10 shadow-lg"
           >
-            Cari
+            Search
           </button>
         </form>
 
         {!searched && popularSearches && popularSearches.length > 0 && (
-          <div className="mt-8 flex flex-wrap justify-center gap-2">
-            <span className="text-slate-500 flex items-center gap-1 text-sm">
-              <TrendingUp size={16} /> Populer:
-            </span>
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
             {popularSearches && Array.isArray(popularSearches) && popularSearches.slice(0, 6).map((tag, i) => (
               typeof tag === 'string' ? (
                 <button
                   key={`popular-${i}`}
                   type="button"
                   onClick={() => handlePopularClick(tag)}
-                  className="bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white px-3 py-1 rounded-full text-sm border border-slate-700 transition-colors"
+                  className="bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white px-4 py-1.5 rounded-full text-sm border border-zinc-800 transition-all"
                 >
                   {tag}
                 </button>
@@ -154,113 +151,67 @@ const Search: React.FC = () => {
       {/* Results */}
       <div className="min-h-[40vh]">
         {loading ? (
-          <div className="flex flex-col items-center justify-center min-h-[50vh] bg-transparent p-6 overflow-hidden">
-            <div className="relative group scale-75 md:scale-100 mb-12">
-              <div className="absolute inset-[-40px] bg-blue-600/20 blur-[60px] rounded-full animate-pulse"></div>
-              
-              <div className="relative w-32 h-32">
-                <div className="absolute inset-0 border-[3px] border-slate-800 rounded-full"></div>
-                <div className="absolute inset-0 border-[3px] border-t-blue-500 border-r-indigo-500 rounded-full animate-spin"></div>
-                
-                <div className="absolute inset-0 m-auto w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center shadow-2xl border border-white/5">
-                   <SearchIcon className="text-blue-500 animate-pulse" size={24} />
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-col items-center gap-4 max-w-sm w-full">
-               <div className="space-y-1 text-center">
-                  <h2 className="text-2xl font-black text-white tracking-tighter uppercase italic bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
-                    Mencari Koleksi...
-                  </h2>
-               </div>
-               
-               <div className="relative w-full bg-slate-900 h-1.5 rounded-full overflow-hidden border border-white/5 max-w-[200px]">
-                  <div className="absolute inset-y-0 left-0 bg-gradient-to-r from-blue-600 to-indigo-600 w-full -translate-x-[100%] animate-[progress_3s_ease-in-out_infinite]"></div>
-               </div>
-            </div>
-
-            <style>{`
-              @keyframes progress {
-                0% { transform: translateX(-100%); }
-                50% { transform: translateX(0%); }
-                100% { transform: translateX(100%); }
-              }
-            `}</style>
+          <div className="flex flex-col items-center justify-center min-h-[40vh]">
+            <div className="w-12 h-12 border-4 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+            <p className="mt-6 text-red-600 font-bold tracking-widest uppercase animate-pulse">Searching...</p>
           </div>
         ) : searched ? (
           <div>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 border-b border-slate-800 pb-4 gap-4">
-              <h2 className="text-2xl font-bold text-white">
-                Hasil Pencarian {query && <span className="text-blue-400">"{query}"</span>}
+            <div className="flex items-center justify-between mb-8 border-b border-zinc-900 pb-4">
+              <h2 className="text-xl font-bold text-white uppercase tracking-tight">
+                Search Results {query && <span className="text-zinc-500 ml-2">"{query}"</span>}
               </h2>
-              <span className="text-slate-500 text-sm">{allResults.length} hasil</span>
+              <span className="text-zinc-600 text-sm font-medium">{allResults.length} Found</span>
             </div>
 
             {searched && allResults && allResults.length > 0 ? (
               <>
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-2">
-                  <span className="text-slate-500 text-sm">Halaman {page} dari {totalPages}</span>
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3 md:gap-4 lg:gap-6 mb-8 sm:mb-12">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6 mb-16">
                   {displayedResults.map((drama, idx) => (
                     <MovieCard key={`${drama.bookId}-${idx}`} drama={drama} />
                   ))}
                 </div>
 
                 {totalPages > 1 && (
-                  <div className="flex items-center justify-center gap-1 sm:gap-2 mt-8 sm:mt-16 pb-8 sm:pb-12 flex-wrap">
+                  <div className="flex items-center justify-center gap-4 mb-12">
                     <button 
                       onClick={() => changePage(page - 1)}
                       disabled={page === 1}
-                      className="flex items-center gap-1 sm:gap-2 bg-slate-800 hover:bg-slate-700 disabled:bg-slate-900 disabled:text-slate-600 text-white font-bold py-2 sm:py-3 px-3 sm:px-6 rounded-lg sm:rounded-xl transition-colors text-xs sm:text-base"
+                      className="bg-zinc-800 hover:bg-zinc-700 disabled:opacity-30 text-white p-3 rounded-full transition-all"
                     >
-                      <ChevronRight size={16} className="rotate-180" /> <span className="hidden sm:inline">Sebelumnya</span>
+                      <ChevronRight size={24} className="rotate-180" />
                     </button>
-
-                    <div className="flex gap-1 sm:gap-2 flex-wrap justify-center max-w-4xl">
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                        <button
-                          key={p}
-                          onClick={() => changePage(p)}
-                          className={`font-bold py-2 px-2 sm:px-3 md:px-4 rounded-lg text-[10px] sm:text-xs md:text-base transition-colors ${
-                            p === page
-                              ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/40'
-                              : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                          }`}
-                        >
-                          {p}
-                        </button>
-                      ))}
+                    <div className="flex gap-2">
+                        <span className="text-white font-bold">{page}</span>
+                        <span className="text-zinc-600">/</span>
+                        <span className="text-zinc-600">{totalPages}</span>
                     </div>
-
                     <button 
                       onClick={() => changePage(page + 1)}
                       disabled={page >= totalPages}
-                      className="flex items-center gap-1 sm:gap-2 bg-slate-800 hover:bg-slate-700 disabled:bg-slate-900 disabled:text-slate-600 text-white font-bold py-2 sm:py-3 px-3 sm:px-6 rounded-lg sm:rounded-xl transition-colors text-xs sm:text-base"
+                      className="bg-zinc-800 hover:bg-zinc-700 disabled:opacity-30 text-white p-3 rounded-full transition-all"
                     >
-                      <span className="hidden sm:inline">Selanjutnya</span> <ChevronRight size={16} />
+                      <ChevronRight size={24} />
                     </button>
                   </div>
                 )}
               </>
-            ) : searched && allResults && allResults.length === 0 ? (
-              <div className="text-center py-20">
-                <p className="text-slate-500 text-xl mb-4">Tidak ada drama yang sesuai dengan pencarian Anda.</p>
+            ) : (
+              <div className="text-center py-40">
+                <p className="text-zinc-600 text-xl font-medium mb-4">No dramas found for your search.</p>
                 <button 
                   onClick={clearSearch}
-                  className="text-blue-500 hover:text-blue-400 font-semibold transition-colors"
+                  className="text-red-600 hover:text-red-500 font-bold uppercase tracking-wider transition-colors"
                 >
-                  Coba cari drama lain
+                  Try another search
                 </button>
               </div>
-            ) : null}
+            )}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-20 opacity-40">
-            <SearchIcon size={80} className="text-slate-700 mb-4" />
-            <p className="text-slate-600 font-medium text-xl">Masukkan judul untuk menjelajahi koleksi kami</p>
+          <div className="flex flex-col items-center justify-center py-40 opacity-20">
+            <SearchIcon size={100} className="text-zinc-700 mb-6" />
+            <p className="text-zinc-700 font-bold text-2xl uppercase tracking-tighter">Enter a title to explore</p>
           </div>
         )}
       </div>

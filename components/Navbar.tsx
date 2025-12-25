@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { Search, Home, TrendingUp, Globe, Menu, X, MonitorPlay, Crown, Sparkles, Flame, BookMarked } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, Menu, X } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 
 const Navbar: React.FC = () => {
