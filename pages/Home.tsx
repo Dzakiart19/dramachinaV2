@@ -53,12 +53,16 @@ const Home: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center h-[70vh] gap-4">
+      <div className="flex flex-col items-center justify-center h-[80vh] gap-8">
         <div className="relative">
-          <Loader2 className="animate-spin text-blue-500" size={56} />
-          <div className="absolute inset-0 bg-blue-500/20 blur-xl rounded-full animate-pulse"></div>
+          <div className="w-24 h-24 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin"></div>
+          <div className="absolute inset-0 bg-blue-500/10 blur-3xl rounded-full animate-pulse"></div>
+          <LayoutDashboard className="absolute inset-0 m-auto text-blue-500 animate-pulse" size={32} />
         </div>
-        <p className="text-slate-400 font-medium animate-pulse tracking-wide">Tunggu sebentar maaf agak lama karena pakai gratisan 😅</p>
+        <div className="text-center space-y-2">
+          <h2 className="text-2xl font-black text-white tracking-tight">Menyiapkan Sinema...</h2>
+          <p className="text-slate-500 font-medium animate-pulse">Sedang mengambil drama terbaik untuk Anda</p>
+        </div>
       </div>
     );
   }
@@ -129,44 +133,45 @@ const Home: React.FC = () => {
 
       {/* Hero Section */}
       {featured && (
-        <section className="relative h-[65vh] md:h-[85vh] w-full overflow-hidden">
+        <section className="relative h-[70vh] md:h-[90vh] w-full overflow-hidden">
           <div className="absolute inset-0">
             <img 
               src={featured.coverWap || featured.cover} 
               alt={featured.bookName}
-              className="w-full h-full object-cover object-top scale-105 animate-[subtle-zoom_20s_infinite_alternate]"
+              className="w-full h-full object-cover object-center scale-105 animate-[subtle-zoom_30s_infinite_alternate]"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/60 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/40 to-transparent" />
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-slate-950/20" />
           </div>
 
-          <div className="absolute inset-0 flex items-center">
-            <div className="container mx-auto px-4 md:px-12">
-              <div className="max-w-2xl">
-                <div className="flex items-center gap-2 mb-4">
-                  <span className="bg-blue-600 text-white text-[10px] md:text-xs font-bold px-2 py-1 rounded-md shadow-lg shadow-blue-600/20">VIP CHOICE</span>
-                  <span className="text-blue-400 text-[10px] md:text-xs font-bold uppercase tracking-[0.2em]">Paling Populer</span>
+          <div className="absolute inset-0 flex items-end pb-24 md:pb-32">
+            <div className="container mx-auto px-6 md:px-12">
+              <div className="max-w-3xl">
+                <div className="flex items-center gap-3 mb-6">
+                  <span className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[10px] md:text-xs font-black px-3 py-1.5 rounded-full shadow-2xl shadow-blue-600/40 tracking-wider">PREMIUM SELECTION</span>
+                  <span className="text-white/60 text-[10px] md:text-xs font-bold uppercase tracking-[0.3em]">Trending Now</span>
                 </div>
-                <h1 className="text-4xl md:text-7xl font-black text-white mb-6 drop-shadow-2xl line-clamp-2 leading-tight">
+                <h1 className="text-5xl md:text-8xl font-black text-white mb-8 drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)] line-clamp-2 leading-[0.9] tracking-tighter">
                   {featured.bookName}
                 </h1>
-                <p className="text-slate-300 text-sm md:text-lg mb-10 line-clamp-3 md:line-clamp-4 max-w-xl leading-relaxed">
+                <p className="text-slate-200 text-base md:text-xl mb-12 line-clamp-3 md:line-clamp-4 max-w-2xl leading-relaxed font-medium drop-shadow-md">
                   {featured.introduction}
                 </p>
-                <div className="flex flex-wrap gap-4">
+                <div className="flex flex-wrap gap-5">
                   <a 
                     href={`#/detail/${featured.bookId}`}
-                    className="flex items-center gap-3 bg-white text-slate-950 px-8 py-4 rounded-2xl font-black hover:bg-blue-50 transition-all shadow-2xl hover:scale-105 active:scale-95"
+                    className="flex items-center gap-4 bg-blue-600 text-white px-10 py-5 rounded-2xl font-black hover:bg-blue-500 transition-all shadow-[0_20px_40px_-10px_rgba(37,99,235,0.5)] hover:scale-105 active:scale-95 group"
                   >
-                    <Play size={22} fill="currentColor" />
-                    NONTON SEKARANG
+                    <Play size={24} fill="currentColor" className="group-hover:scale-110 transition-transform" />
+                    MULAI MENONTON
                   </a>
                   <a 
                     href={`#/detail/${featured.bookId}`}
-                    className="flex items-center gap-3 bg-slate-800/40 backdrop-blur-xl text-white px-8 py-4 rounded-2xl font-bold hover:bg-slate-700/60 transition-all border border-slate-700/50"
+                    className="flex items-center gap-4 bg-white/10 backdrop-blur-2xl text-white px-10 py-5 rounded-2xl font-black hover:bg-white/20 transition-all border border-white/20 hover:scale-105 active:scale-95"
                   >
-                    <Info size={22} />
-                    INFO DETAIL
+                    <Info size={24} />
+                    DETAIL DRAMA
                   </a>
                 </div>
               </div>

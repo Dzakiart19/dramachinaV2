@@ -212,24 +212,25 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
         {/* Enhanced Player Container */}
         <div className="relative aspect-video w-full bg-slate-950 rounded-[2rem] overflow-hidden shadow-[0_0_50px_-12px_rgba(59,130,246,0.3)] ring-1 ring-slate-800 group">
           {isBlockedByGoogle ? (
-            <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-slate-950/60 backdrop-blur-md p-8 text-center animate-in fade-in zoom-in duration-500">
-              <div className="relative mb-6">
-                <Monitor size={60} className="text-blue-500/20" />
-                <AlertCircle size={30} className="text-blue-500 absolute -bottom-1 -right-1 animate-pulse" />
+            <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-slate-950/80 backdrop-blur-2xl p-8 text-center animate-in fade-in zoom-in duration-700">
+              <div className="relative mb-8">
+                <div className="absolute inset-0 bg-blue-500/20 blur-3xl rounded-full animate-pulse"></div>
+                <Monitor size={70} className="text-blue-500/30 relative z-10" />
+                <AlertCircle size={35} className="text-blue-500 absolute -bottom-2 -right-2 animate-bounce shadow-2xl" />
               </div>
-              <h3 className="text-white text-xl font-black mb-3">Gangguan Koneksi</h3>
-              <p className="text-slate-400 text-xs md:text-sm max-w-md mb-8 leading-relaxed font-medium">
+              <h3 className="text-white text-2xl font-black mb-4 tracking-tight">Gangguan Koneksi</h3>
+              <p className="text-slate-400 text-sm md:text-base max-w-md mb-10 leading-relaxed font-medium">
                 Gagal memuat video secara otomatis. <br/>
-                Coba ganti server atau tonton di tab baru.
+                Coba ganti server atau gunakan opsi di bawah.
               </p>
-              <div className="flex flex-col sm:flex-row gap-3 w-full max-w-sm">
+              <div className="flex flex-col sm:flex-row gap-4 w-full max-w-sm">
                 <button 
                   onClick={() => {
                     setIsBlockedByGoogle(false);
                     const nextCdn = (selectedCdnIndex + 1) % currentEpisode.cdnList.length;
                     setSelectedCdnIndex(nextCdn);
                   }}
-                  className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-xl font-black hover:bg-blue-500 transition-all shadow-lg"
+                  className="flex-1 px-8 py-4 bg-blue-600 text-white rounded-2xl font-black hover:bg-blue-500 transition-all shadow-[0_15px_30px_-10px_rgba(37,99,235,0.4)] hover:scale-105 active:scale-95"
                 >
                   Ganti Server
                 </button>
@@ -237,17 +238,17 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
                   href={currentVideoSource?.videoPath} 
                   target="_blank" 
                   rel="noreferrer"
-                  className="flex-1 flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-white px-6 py-3 rounded-xl font-bold transition-all"
+                  className="flex-1 flex items-center justify-center gap-2 bg-white/10 backdrop-blur-xl border border-white/10 hover:bg-white/20 text-white px-8 py-4 rounded-2xl font-black transition-all hover:scale-105 active:scale-95"
                 >
-                  <ExternalLink size={16} />
+                  <ExternalLink size={20} />
                   Tab Baru
                 </a>
               </div>
               <button 
                 onClick={() => setIsBlockedByGoogle(false)}
-                className="mt-6 text-slate-500 text-[10px] font-bold uppercase tracking-widest hover:text-white transition-colors"
+                className="mt-8 text-slate-500 text-xs font-black uppercase tracking-[0.3em] hover:text-white transition-all hover:tracking-[0.4em]"
               >
-                Tetap Gunakan Pemutar Ini
+                TETAP GUNAKAN PEMUTAR INI
               </button>
             </div>
           ) : (
