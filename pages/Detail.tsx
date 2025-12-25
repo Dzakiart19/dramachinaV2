@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { apiService } from '../services/api';
 import { Drama, Episode } from '../types';
-import { Play, Star, Eye, Calendar, Tag, ChevronLeft, Loader2, List, LayoutDashboard } from 'lucide-react';
+import { Play, Star, Eye, Calendar, Tag, ChevronLeft, Loader2, List, LayoutDashboard, AlertCircle } from 'lucide-react';
 
 interface DetailProps {
   bookId: string;
