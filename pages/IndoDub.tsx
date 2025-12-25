@@ -9,13 +9,16 @@ const IndoDub: React.FC = () => {
   const [dramas, setDramas] = useState<Drama[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
 
-  const loadIndoDub = async () => {
+  const loadIndoDub = async (p: number = 1) => {
     setLoading(true);
     setError(null);
+    setPage(p);
     try {
-      const data = await apiService.getIndoDubDramas('terpopuler', 1);
+      const data = await apiService.getIndoDubDramas('terpopuler', p);
       setDramas(Array.isArray(data) ? data : []);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
       console.error('Failed to load indo dub:', err);
       setError('Gagal memuat drama sulih suara Indonesia. Silakan coba lagi.');
@@ -26,7 +29,7 @@ const IndoDub: React.FC = () => {
   };
 
   useEffect(() => {
-    loadIndoDub();
+    loadIndoDub(1);
   }, []);
 
   if (loading) {
@@ -102,11 +105,48 @@ const IndoDub: React.FC = () => {
       </div>
 
       {dramas.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
-          {dramas.map((drama) => (
-            <MovieCard key={drama.bookId} drama={drama} />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+            {dramas.map((drama) => (
+              <MovieCard key={drama.bookId} drama={drama} />
+            ))}
+          </div>
+
+          {/* Numerical Pagination */}
+          <div className="flex items-center justify-center gap-2 mt-16 pb-12">
+            <button 
+              onClick={() => loadIndoDub(page - 1)}
+              disabled={page === 1}
+              className="p-4 bg-slate-900 border border-slate-800 rounded-2xl text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-orange-600 transition-all"
+            >
+              <ChevronRight size={20} className="rotate-180" />
+            </button>
+            
+            {[page - 1, page, page + 1].map(p => {
+              if (p < 1) return null;
+              return (
+                <button
+                  key={p}
+                  onClick={() => loadIndoDub(p)}
+                  className={`w-14 h-14 rounded-2xl font-black transition-all ${
+                    page === p 
+                    ? 'bg-orange-600 text-white shadow-2xl shadow-orange-600/40' 
+                    : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white'
+                  }`}
+                >
+                  {p}
+                </button>
+              );
+            })}
+
+            <button 
+              onClick={() => loadIndoDub(page + 1)}
+              className="p-4 bg-slate-900 border border-slate-800 rounded-2xl text-white hover:bg-orange-600 transition-all"
+            >
+              <ChevronRight size={20} />
+            </button>
+          </div>
+        </>
       ) : (
         <div className="text-center py-20">
           <p className="text-slate-500 text-lg">Belum ada drama sulih suara</p>

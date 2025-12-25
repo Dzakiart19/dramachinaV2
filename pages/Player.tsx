@@ -148,16 +148,18 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
     const cdn = currentEpisode.cdnList[index];
     const domain = cdn?.cdnDomain?.toLowerCase() || '';
     
-    // Detect language/dub type from domain or position
-    if (domain.includes('dub') || domain.includes('indo')) return 'Sulih Suara Indonesia';
+    // Improved detection for Indo Dub
+    const isIndo = domain.includes('dub') || domain.includes('indo') || domain.includes('id');
+    if (isIndo) return 'Indo Dub';
     if (index === 0) return 'Server 1';
-    if (index === 1) return 'Sulih Suara';
+    if (index === 1) return 'Server 2';
     return `Server ${index + 1}`;
   };
 
   const nextEpisode = useMemo(() => {
     if (!currentEpisode || episodes.length === 0) return null;
     const currentIndex = episodes.findIndex(e => e.chapterId === currentEpisode.chapterId);
+    // Find next episode with "Sulih Suara" or "Dub" if we are in Indo Dub mode
     return currentIndex !== -1 && currentIndex < episodes.length - 1 ? episodes[currentIndex + 1] : null;
   }, [episodes, currentEpisode]);
 
@@ -166,6 +168,21 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
     const currentIndex = episodes.findIndex(e => e.chapterId === currentEpisode.chapterId);
     return currentIndex > 0 ? episodes[currentIndex - 1] : null;
   }, [episodes, currentEpisode]);
+
+  // Handle auto-next episode when current one ends
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const handleEnded = () => {
+      if (nextEpisode) {
+        window.location.href = `#/player/${bookId}/${nextEpisode.chapterId}`;
+      }
+    };
+
+    video.addEventListener('ended', handleEnded);
+    return () => video.removeEventListener('ended', handleEnded);
+  }, [nextEpisode, bookId]);
 
   if (loading) {
     return (

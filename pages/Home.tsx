@@ -8,10 +8,26 @@ import { ChevronRight, Play, Info, Loader2, AlertCircle, RefreshCcw, LayoutDashb
 const Home: React.FC = () => {
   const [vipData, setVipData] = useState<VIPResponse | null>(null);
   const [latest, setLatest] = useState<Drama[]>([]);
+  const [page, setPage] = useState(1);
   const [forYou, setForYou] = useState<Drama[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showGreeting, setShowGreeting] = useState(false);
+
+  const changePage = async (newPage: number) => {
+    if (newPage < 1) return;
+    setLoading(true);
+    setPage(newPage);
+    try {
+      const data = await apiService.getLatestDramas(newPage);
+      setLatest(Array.isArray(data) ? data : []);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (e) {
+      console.error('Page change error:', e);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -20,7 +36,7 @@ const Home: React.FC = () => {
     try {
       // Load all data in parallel for much faster initial load
       const [latestData, vip, recommended] = await Promise.all([
-        apiService.getLatestDramas().catch(() => []),
+        apiService.getLatestDramas(page).catch(() => []),
         apiService.getVIPDramas().catch(() => null),
         apiService.getForYouDramas().catch(() => []),
       ]);
@@ -259,6 +275,41 @@ const Home: React.FC = () => {
             {latest.slice(0, 12).map((drama) => (
               <MovieCard key={drama.bookId} drama={drama} />
             ))}
+          </div>
+
+          {/* Numerical Pagination */}
+          <div className="flex items-center justify-center gap-2 mt-16">
+            <button 
+              onClick={() => changePage(page - 1)}
+              disabled={page === 1}
+              className="p-4 bg-slate-900 border border-slate-800 rounded-2xl text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-blue-600 transition-all"
+            >
+              <ChevronRight size={20} className="rotate-180" />
+            </button>
+            
+            {[page - 1, page, page + 1].map(p => {
+              if (p < 1) return null;
+              return (
+                <button
+                  key={p}
+                  onClick={() => changePage(p)}
+                  className={`w-14 h-14 rounded-2xl font-black transition-all ${
+                    page === p 
+                    ? 'bg-blue-600 text-white shadow-2xl shadow-blue-600/40' 
+                    : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white'
+                  }`}
+                >
+                  {p}
+                </button>
+              );
+            })}
+
+            <button 
+              onClick={() => changePage(page + 1)}
+              className="p-4 bg-slate-900 border border-slate-800 rounded-2xl text-white hover:bg-blue-600 transition-all"
+            >
+              <ChevronRight size={20} />
+            </button>
           </div>
         </section>
       )}

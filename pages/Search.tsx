@@ -11,6 +11,7 @@ const Search: React.FC = () => {
   const [popularSearches, setPopularSearches] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     loadPopularSearches();
@@ -26,15 +27,19 @@ const Search: React.FC = () => {
     }
   };
 
-  const handleSearch = async (searchQuery: string) => {
+  const handleSearch = async (searchQuery: string, p: number = 1) => {
     const trimmedQuery = searchQuery.trim();
     if (!trimmedQuery) return;
 
     setLoading(true);
     setSearched(true);
+    setPage(p);
     try {
-      const data = await apiService.searchDramas(trimmedQuery);
+      const targetUrl = `https://dramabox.sansekai.my.id/api/dramabox/search?query=${encodeURIComponent(trimmedQuery)}&page=${p}`;
+      const res = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`);
+      const data = await res.json();
       setResults(Array.isArray(data) ? data : []);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (error) {
       console.error('Search error:', error);
       setResults([]);
@@ -165,11 +170,48 @@ const Search: React.FC = () => {
             </div>
 
             {results && results.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
-                {results.map((drama) => (
-                  <MovieCard key={drama.bookId} drama={drama} />
-                ))}
-              </div>
+              <>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+                  {results.map((drama) => (
+                    <MovieCard key={drama.bookId} drama={drama} />
+                  ))}
+                </div>
+
+                {/* Numerical Pagination */}
+                <div className="flex items-center justify-center gap-2 mt-16 pb-12">
+                  <button 
+                    onClick={() => handleSearch(query, page - 1)}
+                    disabled={page === 1}
+                    className="p-4 bg-slate-900 border border-slate-800 rounded-2xl text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-blue-600 transition-all"
+                  >
+                    <ChevronRight size={20} className="rotate-180" />
+                  </button>
+                  
+                  {[page - 1, page, page + 1].map(p => {
+                    if (p < 1) return null;
+                    return (
+                      <button
+                        key={p}
+                        onClick={() => handleSearch(query, p)}
+                        className={`w-14 h-14 rounded-2xl font-black transition-all ${
+                          page === p 
+                          ? 'bg-blue-600 text-white shadow-2xl shadow-blue-600/40' 
+                          : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        {p}
+                      </button>
+                    );
+                  })}
+
+                  <button 
+                    onClick={() => handleSearch(query, page + 1)}
+                    className="p-4 bg-slate-900 border border-slate-800 rounded-2xl text-white hover:bg-blue-600 transition-all"
+                  >
+                    <ChevronRight size={20} />
+                  </button>
+                </div>
+              </>
             ) : (
               <div className="text-center py-20">
                 <p className="text-slate-500 text-xl mb-4">Tidak ada drama yang sesuai dengan pencarian Anda.</p>
