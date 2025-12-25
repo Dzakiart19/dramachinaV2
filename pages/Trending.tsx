@@ -16,7 +16,9 @@ const Trending: React.FC = () => {
     setError(null);
     setPage(p);
     try {
+      console.log('Loading trending page:', p);
       const data = await apiService.getTrendingDramas(p);
+      console.log('Received data for page', p, ':', data?.length || 0, 'items');
       setDramas(Array.isArray(data) ? data : []);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {

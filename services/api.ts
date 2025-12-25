@@ -6,10 +6,10 @@ import { Drama, Episode, VIPResponse } from '../types';
  * We rotate through different services to ensure the app stays functional.
  */
 const PROXIES = [
-  (url: string) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
   (url: string) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
   (url: string) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
   (url: string) => `https://thingproxy.freeboard.io/fetch/${url}`,
+  (url: string) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
 ];
 
 const TARGET_BASE_URL = 'https://dramabox.sansekai.my.id/api';
@@ -25,8 +25,14 @@ const fetchWithProxy = async (path: string, skipCache: boolean = false) => {
   if (!skipCache && apiCache.has(path)) {
     const cached = apiCache.get(path)!;
     if (Date.now() - cached.timestamp < CACHE_TTL) {
+      console.log('Using cached data for:', path);
       return cached.data;
     }
+  }
+  
+  // Clear cache if skipCache is true (for pagination)
+  if (skipCache) {
+    apiCache.delete(path);
   }
 
   let lastError: any = null;
@@ -46,6 +52,7 @@ const fetchWithProxy = async (path: string, skipCache: boolean = false) => {
       if (typeof data !== 'object' || data === null) throw new Error('Invalid JSON');
       
       controller.abort(); // Cancel other requests once we have data
+      console.log('Fetching fresh data for:', path);
       apiCache.set(path, { data, timestamp: Date.now() });
       return data;
     } catch (e) {
@@ -78,19 +85,23 @@ export const apiService = {
   },
 
   async getLatestDramas(page: number = 1): Promise<Drama[]> {
-    return fetchWithProxy(`/dramabox/latest?page=${page}`, page > 1);
+    // For pagination, always skip cache to ensure fresh data
+    return fetchWithProxy(`/dramabox/latest?page=${page}`, true);
   },
 
   async getTrendingDramas(page: number = 1): Promise<Drama[]> {
-    return fetchWithProxy(`/dramabox/trending?page=${page}`, page > 1);
+    // For pagination, always skip cache to ensure fresh data
+    return fetchWithProxy(`/dramabox/trending?page=${page}`, true);
   },
 
   async getIndoDubDramas(classify: 'terpopuler' | 'terbaru' = 'terbaru', page: number = 1): Promise<Drama[]> {
-    return fetchWithProxy(`/dramabox/dubindo?classify=${classify}&page=${page}`);
+    // Always fetch fresh for pagination endpoints
+    return fetchWithProxy(`/dramabox/dubindo?classify=${classify}&page=${page}`, true);
   },
 
   async searchDramas(query: string, page: number = 1): Promise<Drama[]> {
-    return fetchWithProxy(`/dramabox/search?query=${encodeURIComponent(query)}&page=${page}`);
+    // Always fetch fresh for pagination endpoints  
+    return fetchWithProxy(`/dramabox/search?query=${encodeURIComponent(query)}&page=${page}`, true);
   },
 
   async getDramaDetail(bookId: string): Promise<{ data: { book: Drama } }> {
