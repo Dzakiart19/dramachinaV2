@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { apiService } from '../services/api';
 import { Drama } from '../types';
 import MovieCard from '../components/MovieCard';
-import { Loader2, AlertCircle, RefreshCcw, ChevronRight, LayoutDashboard } from 'lucide-react';
+import { AlertCircle, RefreshCcw, ChevronRight, LayoutDashboard } from 'lucide-react';
 
 const IndoDub: React.FC = () => {
   const [dramas, setDramas] = useState<Drama[]>([]);

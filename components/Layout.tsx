@@ -15,8 +15,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       </main>
       <footer className="bg-slate-950 py-10 border-t border-slate-800 text-slate-500 text-sm text-center">
         <div className="container mx-auto px-4">
-          <p className="mb-2">© 2024 dzeckyete</p>
-          <p>dzeck</p>
+          <p className="mb-2">© 2024 Dzeck Stream. All rights reserved.</p>
+          <p className="text-xs text-slate-600">Streaming drama terlengkap di Asia Tenggara</p>
         </div>
       </footer>
     </div>
