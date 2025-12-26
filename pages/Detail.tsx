@@ -75,50 +75,50 @@ const Detail: React.FC<DetailProps> = ({ bookId }) => {
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,transparent,rgba(0,0,0,0.4))]" />
         </div>
         
-        <div className="absolute top-8 left-6 md:left-16 z-20">
-           <a href="#/" className="group flex items-center gap-2 text-white hover:text-white transition-all bg-black/40 backdrop-blur-2xl px-6 py-2.5 rounded-full border border-white/10 hover:border-white/30 hover:bg-black/60 shadow-2xl">
-             <ChevronLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
-             <span className="text-xs font-black uppercase tracking-widest">Back to Browse</span>
-           </a>
-        </div>
+          <div className="absolute top-4 left-4 md:top-8 md:left-16 z-20">
+             <a href="#/" className="group flex items-center gap-2 text-white hover:text-white transition-all bg-black/40 backdrop-blur-2xl px-4 py-2 md:px-6 md:py-2.5 rounded-full border border-white/10 hover:border-white/30 hover:bg-black/60 shadow-2xl">
+               <ChevronLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> 
+               <span className="text-[10px] md:text-xs font-black uppercase tracking-widest">Back to Browse</span>
+             </a>
+          </div>
 
-        <div className="absolute bottom-20 left-6 md:left-16 max-w-5xl z-10 animate-in slide-in-from-bottom-10 duration-1000">
-           <div className="flex items-center gap-3 mb-6">
-             <div className="h-0.5 w-12 bg-red-600"></div>
-             <span className="text-red-600 text-xs font-black uppercase tracking-[0.4em]">DZECK ORIGINALS</span>
-           </div>
-           <h1 className="text-5xl md:text-8xl font-black text-white mb-8 uppercase tracking-tighter leading-[0.9] drop-shadow-[0_0_30px_rgba(0,0,0,0.5)]">
-             {drama.bookName}
-           </h1>
-           
-           <div className="flex flex-wrap items-center gap-6 mb-10">
-              <div className="flex items-center gap-2 text-green-500 font-black tracking-widest text-sm">
-                <Star size={20} fill="currentColor" />
-                <span>98% MATCH</span>
-              </div>
-              <div className="text-zinc-200 font-black text-sm tracking-widest">2024</div>
-              <div className="bg-white/10 backdrop-blur-md border border-white/20 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-[0.2em] text-white">4K ULTRA HD</div>
-              <div className="text-zinc-300 font-black text-sm tracking-widest border-l border-zinc-700 pl-6">{drama.chapterCount} EPISODES</div>
-           </div>
-
-           {episodes.length > 0 && (
-             <div className="flex gap-4">
-               <a 
-                 href={`#/player/${bookId}/${episodes[0].chapterId}`}
-                 className="flex items-center justify-center gap-4 bg-white hover:bg-zinc-200 text-black font-black px-12 md:px-16 py-4 md:py-5 rounded-md transition-all scale-100 hover:scale-105 active:scale-95 uppercase tracking-[0.2em] text-sm shadow-[0_20px_40px_rgba(0,0,0,0.4)]"
-               >
-                 <Play size={24} fill="currentColor" />
-                 Play Now
-               </a>
-               <button 
-                 onClick={() => document.getElementById('synopsis-section')?.scrollIntoView({ behavior: 'smooth' })}
-                 className="flex items-center justify-center gap-4 bg-zinc-500/20 hover:bg-zinc-500/40 backdrop-blur-2xl text-white font-black px-12 md:px-16 py-4 md:py-5 rounded-md transition-all uppercase tracking-[0.2em] text-sm border border-white/10 active:scale-95 shadow-2xl"
-               >
-                 Episodes & Info
-               </button>
+          <div className="absolute bottom-10 md:bottom-20 left-4 md:left-16 right-4 max-w-5xl z-10 animate-in slide-in-from-bottom-10 duration-1000">
+             <div className="flex items-center gap-3 mb-4 md:mb-6">
+               <div className="h-0.5 w-8 md:w-12 bg-red-600"></div>
+               <span className="text-red-600 text-[10px] font-black uppercase tracking-[0.4em]">DZECK ORIGINALS</span>
              </div>
-           )}
-        </div>
+             <h1 className="text-3xl md:text-8xl font-black text-white mb-6 md:mb-8 uppercase tracking-tighter leading-[0.9] drop-shadow-[0_0_30px_rgba(0,0,0,0.5)]">
+               {drama.bookName}
+             </h1>
+             
+             <div className="flex flex-wrap items-center gap-4 md:gap-6 mb-8 md:mb-10">
+                <div className="flex items-center gap-2 text-green-500 font-black tracking-widest text-[10px] md:text-sm">
+                  <Star size={16} md:size={20} fill="currentColor" />
+                  <span>98% MATCH</span>
+                </div>
+                <div className="text-zinc-200 font-black text-[10px] md:text-sm tracking-widest">2024</div>
+                <div className="bg-white/10 backdrop-blur-md border border-white/20 px-1.5 py-0.5 rounded text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] text-white">4K ULTRA HD</div>
+                <div className="text-zinc-300 font-black text-[10px] md:text-sm tracking-widest border-l border-zinc-700 pl-4 md:pl-6">{drama.chapterCount} EPISODES</div>
+             </div>
+
+             {episodes.length > 0 && (
+               <div className="flex flex-col sm:flex-row gap-4">
+                 <a 
+                   href={`#/player/${bookId}/${episodes[0].chapterId}`}
+                   className="flex items-center justify-center gap-4 bg-white hover:bg-zinc-200 text-black font-black px-10 md:px-16 py-3.5 md:py-5 rounded-md transition-all scale-100 hover:scale-105 active:scale-95 uppercase tracking-[0.2em] text-[12px] md:text-sm shadow-[0_20px_40px_rgba(0,0,0,0.4)]"
+                 >
+                   <Play size={20} md:size={24} fill="currentColor" />
+                   Play Now
+                 </a>
+                 <button 
+                   onClick={() => document.getElementById('synopsis-section')?.scrollIntoView({ behavior: 'smooth' })}
+                   className="flex items-center justify-center gap-4 bg-zinc-500/20 hover:bg-zinc-500/40 backdrop-blur-2xl text-white font-black px-10 md:px-16 py-3.5 md:py-5 rounded-md transition-all uppercase tracking-[0.2em] text-[12px] md:text-sm border border-white/10 active:scale-95 shadow-2xl"
+                 >
+                   Episodes & Info
+                 </button>
+               </div>
+             )}
+          </div>
       </div>
 
       <div className="container mx-auto px-4 md:px-16 mt-20 relative z-10">
@@ -157,7 +157,7 @@ const Detail: React.FC<DetailProps> = ({ bookId }) => {
                 </div>
                 <span className="text-zinc-600 font-bold uppercase tracking-[0.2em] text-[10px] bg-zinc-900/50 px-3 py-1 rounded-full border border-zinc-800">{episodes.length} EPISODES TOTAL</span>
               </div>
-              <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-3">
+              <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2 md:gap-3">
                 {episodes.map((ep, idx) => (
                   <a 
                     key={ep.chapterId}

@@ -108,8 +108,11 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
 
     const handleError = (e: any) => {
       console.error("Video error detected", e);
+      // Logic for automatic switch if Server 1 fails
       if (isServer1 && currentEpisode && currentEpisode.cdnList.length > 1) {
+        console.log("Switching to Server 2 due to playback error");
         setSelectedCdnIndex(1);
+        setIsBlockedByGoogle(false);
       } else {
         setIsBlockedByGoogle(true);
       }
@@ -273,7 +276,7 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
               <p className="text-zinc-400 text-sm max-w-md mb-10 font-medium leading-relaxed">
                 Gagal memuat video. Sumber video mungkin sedang sibuk atau diblokir. Silakan coba ganti server atau gunakan link eksternal.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 w-full max-w-sm">
+              <div className="flex flex-col sm:flex-row gap-4 w-full max-w-sm mx-auto">
                 <button 
                   onClick={() => {
                     setIsBlockedByGoogle(false);
@@ -341,7 +344,7 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
                   </div>
                   <span className="text-zinc-600 font-black text-[9px] uppercase tracking-[0.2em] bg-zinc-900/80 px-3 py-1 rounded-full border border-zinc-800">{episodes.length} ITEMS</span>
                 </div>
-                <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12 gap-2">
+                <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2">
                   {episodes.map((ep) => (
                     <a 
                       key={ep.chapterId}
