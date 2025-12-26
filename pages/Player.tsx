@@ -93,17 +93,15 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
     connectionTimeoutRef.current = window.setTimeout(() => {
       // Check if video is stuck in initial state
       if (video.networkState === 3 || (video.readyState === 0 && !video.paused)) {
-        // We will no longer force the block overlay, just log it
-        console.warn("Potential video block detected, but allowing manual play.");
+        console.warn("Potential video block detected, triggering fallback.");
+        setIsBlockedByGoogle(true);
       }
-    }, 8000); // Increase timeout to 8 seconds
+    }, 6000); // 6 seconds is enough to know it's failing
 
     const handleError = (e: any) => {
       console.error("Video error detected", e);
-      // Only show block if it's a fatal network error and we haven't loaded anything
-      if (video.readyState === 0) {
-        setIsBlockedByGoogle(true);
-      }
+      // Always show error overlay if the native video element reports an error
+      setIsBlockedByGoogle(true);
     };
 
     video.addEventListener('error', handleError);
@@ -121,7 +119,18 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
         hls.on(window.Hls.Events.ERROR, (event: any, data: any) => {
           if (data.fatal) {
             console.error("HLS fatal error:", data.type);
-            // Don't immediately block, let the user try to play or change server
+            setIsBlockedByGoogle(true);
+            switch (data.type) {
+              case window.Hls.ErrorTypes.NETWORK_ERROR:
+                hls.startLoad();
+                break;
+              case window.Hls.ErrorTypes.MEDIA_ERROR:
+                hls.recoverMediaError();
+                break;
+              default:
+                hls.destroy();
+                break;
+            }
           }
         });
         return () => {
@@ -244,11 +253,14 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
         {/* Video Player */}
         <div className="relative aspect-video w-full bg-zinc-950 rounded-md overflow-hidden shadow-2xl ring-1 ring-zinc-800 group">
           {isBlockedByGoogle ? (
-            <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/90 backdrop-blur-xl p-8 text-center">
-              <ShieldAlert size={60} className="text-red-600 mb-6" />
+            <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/95 backdrop-blur-2xl p-8 text-center border border-red-900/50">
+              <div className="relative mb-6">
+                <ShieldAlert size={60} className="text-red-600 animate-pulse" />
+                <div className="absolute inset-0 bg-red-600/20 blur-2xl rounded-full"></div>
+              </div>
               <h3 className="text-white text-2xl font-black mb-4 uppercase tracking-tighter">Playback Error</h3>
-              <p className="text-zinc-500 text-sm max-w-md mb-10 font-medium">
-                Gagal memuat video. Coba ganti server atau buka di tab baru.
+              <p className="text-zinc-400 text-sm max-w-md mb-10 font-medium leading-relaxed">
+                Gagal memuat video. Sumber video mungkin sedang sibuk atau diblokir. Silakan coba ganti server atau gunakan link eksternal.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 w-full max-w-sm">
                 <button 
@@ -257,7 +269,7 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
                     const nextCdn = (selectedCdnIndex + 1) % currentEpisode.cdnList.length;
                     setSelectedCdnIndex(nextCdn);
                   }}
-                  className="flex-1 px-8 py-3 bg-red-600 text-white rounded-md font-bold hover:bg-red-700 transition-all shadow-lg uppercase tracking-widest"
+                  className="flex-1 px-8 py-4 bg-red-600 text-white rounded-md font-black hover:bg-red-700 transition-all shadow-[0_0_20px_rgba(220,38,38,0.4)] uppercase tracking-widest active:scale-95"
                 >
                   Switch Server
                 </button>
@@ -265,7 +277,7 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
                   href={currentVideoSource?.videoPath} 
                   target="_blank" 
                   rel="noreferrer"
-                  className="flex-1 flex items-center justify-center gap-2 bg-zinc-800 text-white px-8 py-3 rounded-md font-bold transition-all hover:bg-zinc-700 uppercase tracking-widest"
+                  className="flex-1 flex items-center justify-center gap-2 bg-zinc-800 text-white px-8 py-4 rounded-md font-black transition-all hover:bg-zinc-700 border border-zinc-700 uppercase tracking-widest active:scale-95"
                 >
                   External
                 </a>
