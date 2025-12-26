@@ -60,11 +60,21 @@ const AdminPanel: React.FC = () => {
           {/* Card 3 */}
           <div className="bg-zinc-900/40 p-8 rounded-xl border border-zinc-800 hover:border-red-600/30 transition-all group">
             <div className="flex items-center justify-between mb-6">
-              <Clock className="text-zinc-500 group-hover:scale-110 transition-transform" size={32} />
-              <span className="text-[10px] font-black bg-zinc-800 text-zinc-500 px-2 py-1 rounded uppercase tracking-widest">Active</span>
+              <Globe className="text-zinc-500 group-hover:scale-110 transition-transform" size={32} />
+              <span className="text-[10px] font-black bg-zinc-800 text-zinc-500 px-2 py-1 rounded uppercase tracking-widest">Analytics</span>
             </div>
-            <h3 className="text-zinc-500 text-xs font-black uppercase tracking-[0.2em] mb-1">Platform Status</h3>
-            <p className="text-3xl font-black text-green-500 uppercase">Operational</p>
+            <h3 className="text-zinc-500 text-xs font-black uppercase tracking-[0.2em] mb-1">Device Breakdown</h3>
+            <div className="flex gap-4">
+              <div>
+                <p className="text-2xl font-black text-white">{(stats.devices?.mobile || 0).toLocaleString()}</p>
+                <p className="text-[10px] font-black text-zinc-600 uppercase">Mobile</p>
+              </div>
+              <div className="w-px h-10 bg-zinc-800 self-center"></div>
+              <div>
+                <p className="text-2xl font-black text-white">{(stats.devices?.desktop || 0).toLocaleString()}</p>
+                <p className="text-[10px] font-black text-zinc-600 uppercase">Desktop</p>
+              </div>
+            </div>
           </div>
         </div>
 

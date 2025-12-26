@@ -10,17 +10,21 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   useEffect(() => {
     // Analytics tracking (Unique daily visitor per browser)
     try {
-      const stats = JSON.parse(localStorage.getItem('dzeck_stats') || '{"total":0,"daily":{}}');
+      const stats = JSON.parse(localStorage.getItem('dzeck_stats') || '{"total":0,"daily":{},"devices":{"mobile":0,"desktop":0}}');
       const lastVisit = localStorage.getItem('dzeck_last_session');
       const today = new Date().toISOString().split('T')[0];
       
-      // Only count if this is a new day for this visitor
+      // Device detection
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const deviceType = isMobile ? 'mobile' : 'desktop';
+
       if (lastVisit !== today) {
-        // Increment total unique visits
         stats.total = (stats.total || 0) + 1;
-        
-        // Increment daily unique visits
         stats.daily[today] = (stats.daily[today] || 0) + 1;
+        
+        // Track device stats
+        if (!stats.devices) stats.devices = { mobile: 0, desktop: 0 };
+        stats.devices[deviceType] = (stats.devices[deviceType] || 0) + 1;
         
         localStorage.setItem('dzeck_stats', JSON.stringify(stats));
         localStorage.setItem('dzeck_last_session', today);
