@@ -11,6 +11,7 @@ export interface Drama {
   viewCount?: number;
   followCount?: number;
   playCount?: string;
+  previewVideo?: string;
 }
 
 export interface VideoPath {
