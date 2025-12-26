@@ -15,9 +15,19 @@ declare global {
   }
 }
 
+import { historyService } from '../services/history';
+
 const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
   const [drama, setDrama] = useState<Drama | null>(null);
   const [episodes, setEpisodes] = useState<Episode[]>([]);
+  // ... existing states ...
+
+  // Save to history when content is loaded and valid
+  useEffect(() => {
+    if (drama && currentEpisode) {
+      historyService.saveProgress(drama, currentEpisode);
+    }
+  }, [drama, currentEpisode]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [videoError, setVideoError] = useState(false);

@@ -2,14 +2,27 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { apiService } from '../services/api';
 import { Drama } from '../types';
 import MovieCard from '../components/MovieCard';
-import { ChevronRight, Loader2, AlertCircle, RefreshCcw, LayoutDashboard } from 'lucide-react';
+import { ChevronRight, Loader2, AlertCircle, RefreshCcw, LayoutDashboard, PlayCircle, X, Clock } from 'lucide-react';
+import { historyService, WatchHistoryItem } from '../services/history';
 
 const Latest: React.FC = () => {
   const [latest, setLatest] = useState<Drama[]>([]);
+  const [history, setHistory] = useState<WatchHistoryItem[]>([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const itemsPerPage = 12;
+
+  useEffect(() => {
+    setHistory(historyService.getHistory());
+  }, []);
+
+  const removeHistory = (e: React.MouseEvent, bookId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    historyService.removeFromHistory(bookId);
+    setHistory(historyService.getHistory());
+  };
 
   const changePage = (newPage: number) => {
     if (newPage < 1) return;
@@ -87,6 +100,63 @@ const Latest: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 md:px-16 py-20 relative z-10">
+      {/* Continue Watching Section */}
+      {history.length > 0 && (
+        <div className="mb-24 animate-in fade-in slide-in-from-left-10 duration-1000">
+          <div className="flex items-center justify-between mb-10 border-b border-zinc-900/50 pb-6">
+            <div className="flex items-center gap-4">
+              <div className="h-6 w-1.5 bg-red-600 rounded-full"></div>
+              <h3 className="text-2xl font-black text-white uppercase tracking-tighter flex items-center gap-3">
+                Continue <span className="text-zinc-700">Watching</span>
+                <Clock size={20} className="text-red-600 animate-pulse ml-2" />
+              </h3>
+            </div>
+            <button 
+              onClick={() => { localStorage.removeItem('dzeck_watch_history'); setHistory([]); }}
+              className="text-[10px] font-black text-zinc-600 uppercase tracking-widest hover:text-red-500 transition-colors"
+            >
+              Clear All
+            </button>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-6 gap-y-12">
+            {history.map((item) => (
+              <a 
+                key={item.bookId}
+                href={`#/player/${item.bookId}/${item.episodeId}`}
+                className="group relative block aspect-video rounded-xl overflow-hidden bg-zinc-900 border border-white/5 hover:border-red-600/50 hover:scale-105 transition-all duration-500 shadow-2xl"
+              >
+                <img src={item.cover} alt={item.bookName} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+                
+                {/* Progress bar simulation */}
+                <div className="absolute bottom-0 left-0 w-full h-1 bg-zinc-800">
+                  <div className="h-full bg-red-600 w-2/3 shadow-[0_0_10px_rgba(220,38,38,0.8)]"></div>
+                </div>
+
+                <div className="absolute inset-0 flex flex-col justify-end p-4">
+                  <div className="flex items-center justify-between mb-1">
+                    <h4 className="text-white font-black text-[10px] md:text-xs uppercase tracking-tighter line-clamp-1">{item.bookName}</h4>
+                    <button 
+                      onClick={(e) => removeHistory(e, item.bookId)}
+                      className="text-white/40 hover:text-white p-1"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                  <p className="text-red-500 font-black text-[8px] uppercase tracking-widest">Episode {item.episodeName}</p>
+                </div>
+
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white border border-white/20">
+                    <PlayCircle size={24} fill="currentColor" />
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="mb-20">
         <div className="flex items-center gap-3 mb-4">
           <div className="h-1 w-12 bg-red-600 rounded-full"></div>
