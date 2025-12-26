@@ -90,7 +90,7 @@ const Latest: React.FC = () => {
       <div className="mb-20">
         <div className="flex items-center gap-3 mb-4">
           <div className="h-1 w-12 bg-red-600 rounded-full"></div>
-          <span className="text-red-600 text-xs font-black uppercase tracking-[0.5em] animate-pulse">New Arrival</span>
+          <span className="text-red-600 text-xs font-black uppercase tracking-[0.5em] animate-pulse">Fresh Releases</span>
         </div>
         <h1 className="text-4xl md:text-7xl font-black text-white uppercase tracking-tighter leading-none mb-6 drop-shadow-2xl">
           LATEST <span className="text-zinc-700">COLLECTION</span>
@@ -105,44 +105,46 @@ const Latest: React.FC = () => {
         </div>
       </div>
 
-      {displayedDramas.length > 0 ? (
-        <>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-6 gap-y-12 mb-24 animate-in fade-in slide-in-from-bottom-5 duration-700">
-            {displayedDramas.map((drama) => (
-              <MovieCard key={drama.bookId} drama={drama} />
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-6 gap-y-12 mb-24 animate-in fade-in slide-in-from-bottom-5 duration-700">
+        {displayedDramas.map((drama) => (
+          <MovieCard key={drama.bookId} drama={drama} />
+        ))}
+      </div>
+
+      {/* Modern Pagination UI */}
+      {totalPages > 1 && (
+        <div className="flex flex-wrap items-center justify-center gap-3 mt-20 pt-10 border-t border-zinc-900/50">
+          <button
+            onClick={() => changePage(page - 1)}
+            disabled={page === 1}
+            className="group relative flex items-center justify-center bg-[#141414] hover:bg-red-600 disabled:opacity-20 text-white w-12 h-12 rounded-full transition-all duration-500 border border-zinc-800 hover:border-red-500 disabled:cursor-not-allowed active:scale-90"
+          >
+            <ChevronRight size={20} className="rotate-180 group-hover:-translate-x-1 transition-transform" />
+          </button>
+          
+          <div className="flex flex-wrap justify-center gap-2">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+              <button
+                key={p}
+                onClick={() => changePage(p)}
+                className={`w-10 h-10 md:w-12 md:h-12 rounded-full font-black text-xs transition-all duration-500 flex items-center justify-center border ${
+                  page === p 
+                    ? 'bg-red-600 border-red-500 text-white shadow-[0_0_20px_rgba(220,38,38,0.4)] scale-110' 
+                    : 'bg-[#141414] border-zinc-800 text-zinc-500 hover:border-red-600/50 hover:text-white'
+                }`}
+              >
+                {p.toString().padStart(2, '0')}
+              </button>
             ))}
           </div>
 
-          {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-8 mt-20 pt-10 border-t border-zinc-900/50">
-              <button
-                onClick={() => changePage(page - 1)}
-                disabled={page === 1}
-                className="group relative flex items-center justify-center bg-[#141414] hover:bg-red-600 disabled:opacity-20 text-white w-14 h-14 rounded-full transition-all duration-500 border border-zinc-800 hover:border-red-500 disabled:cursor-not-allowed active:scale-90"
-              >
-                <ChevronRight size={24} className="rotate-180 group-hover:-translate-x-1 transition-transform" />
-              </button>
-
-              <div className="flex items-center gap-4 bg-[#141414] px-8 py-3 rounded-full border border-zinc-800 shadow-2xl">
-                <span className="text-white font-black text-lg tracking-tighter">{page.toString().padStart(2, '0')}</span>
-                <div className="h-6 w-[1px] bg-zinc-800"></div>
-                <span className="text-zinc-600 font-black text-lg tracking-tighter">{totalPages.toString().padStart(2, '0')}</span>
-              </div>
-
-              <button
-                onClick={() => changePage(page + 1)}
-                disabled={page >= totalPages}
-                className="group relative flex items-center justify-center bg-[#141414] hover:bg-red-600 disabled:opacity-20 text-white w-14 h-14 rounded-full transition-all duration-500 border border-zinc-800 hover:border-red-500 disabled:cursor-not-allowed active:scale-90"
-              >
-                <ChevronRight size={24} className="group-hover:translate-x-1 transition-transform" />
-              </button>
-            </div>
-          )}
-        </>
-      ) : (
-        <div className="flex flex-col items-center justify-center py-40 bg-[#0a0a0a]/50 rounded-2xl border border-zinc-900/50 border-dashed">
-          <Loader2 className="w-12 h-12 text-zinc-800 animate-spin mb-6" />
-          <p className="text-zinc-600 text-sm font-black uppercase tracking-widest">Awaiting Content...</p>
+          <button
+            onClick={() => changePage(page + 1)}
+            disabled={page >= totalPages}
+            className="group relative flex items-center justify-center bg-[#141414] hover:bg-red-600 disabled:opacity-20 text-white w-12 h-12 rounded-full transition-all duration-500 border border-zinc-800 hover:border-red-500 disabled:cursor-not-allowed active:scale-90"
+          >
+            <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
+          </button>
         </div>
       )}
     </div>
