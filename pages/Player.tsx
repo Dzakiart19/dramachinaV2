@@ -332,25 +332,31 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
                 )}
               </div>
 
-              {/* Episode Selection */}
-              <div>
-                <div className="flex items-center justify-between mb-6 border-b border-zinc-900 pb-3">
-                  <h3 className="text-xl font-black text-white uppercase tracking-tight">Select Episode</h3>
-                  <span className="text-zinc-600 font-bold text-[10px] uppercase tracking-[0.2em]">{episodes.length} Episodes</span>
+              {/* Episode Selection revamped for compact grid */}
+              <div className="bg-[#0a0a0a]/80 backdrop-blur-3xl p-6 rounded-xl border border-white/5 shadow-2xl">
+                <div className="flex items-center justify-between mb-8 border-b border-zinc-900/50 pb-4">
+                  <div className="flex items-end gap-3">
+                    <h3 className="text-xl font-black text-white uppercase tracking-tighter">Episodes</h3>
+                    <span className="text-red-600 font-black uppercase tracking-[0.2em] text-[8px] mb-1">Collection</span>
+                  </div>
+                  <span className="text-zinc-600 font-black text-[9px] uppercase tracking-[0.2em] bg-zinc-900/80 px-3 py-1 rounded-full border border-zinc-800">{episodes.length} ITEMS</span>
                 </div>
-                <div className="grid grid-cols-6 sm:grid-cols-10 md:grid-cols-12 lg:grid-cols-[repeat(auto-fill,minmax(45px,1fr))] gap-1.5">
+                <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12 gap-2">
                   {episodes.map((ep) => (
                     <a 
                       key={ep.chapterId}
                       href={`#/player/${bookId}/${ep.chapterId}`}
-                      className={`flex flex-col items-center justify-center py-1.5 rounded-md border transition-all duration-300 font-black ${
+                      className={`flex flex-col items-center justify-center aspect-square rounded-lg border transition-all duration-500 font-black relative overflow-hidden group ${
                         ep.chapterId === episodeId 
-                          ? 'bg-red-600 border-red-600 text-white shadow-lg scale-110 z-10' 
-                          : 'bg-zinc-900 border-zinc-800 text-zinc-500 hover:border-zinc-600 hover:text-white'
+                          ? 'bg-red-600 border-red-500 text-white shadow-[0_0_20px_rgba(220,38,38,0.4)] scale-105 z-10' 
+                          : 'bg-[#141414] border-zinc-800/50 text-zinc-500 hover:border-red-600/50 hover:text-white hover:bg-red-600/5'
                       }`}
                     >
-                      <span className="text-[7px] opacity-50 mb-0">EP</span>
-                      <span className="text-sm">{ep.chapterName}</span>
+                      <span className={`text-[8px] uppercase tracking-widest mb-0.5 ${ep.chapterId === episodeId ? 'text-red-200' : 'text-zinc-700 group-hover:text-red-400'}`}>EP</span>
+                      <span className="text-sm md:text-base tracking-tighter">{ep.chapterName}</span>
+                      {ep.chapterId === episodeId && (
+                        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-white/40 animate-pulse"></div>
+                      )}
                     </a>
                   ))}
                 </div>

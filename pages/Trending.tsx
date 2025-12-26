@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { apiService } from '../services/api';
 import { Drama } from '../types';
 import MovieCard from '../components/MovieCard';
-import { AlertCircle, RefreshCcw, LayoutDashboard, ChevronRight } from 'lucide-react';
+import { AlertCircle, RefreshCcw, LayoutDashboard, ChevronRight, TrendingUp } from 'lucide-react';
 
 const Trending: React.FC = () => {
   const [dramas, setDramas] = useState<Drama[]>([]);
@@ -81,44 +81,55 @@ const Trending: React.FC = () => {
   const displayedDramas = dramas.slice(startIdx, endIdx).filter(d => d && d.bookId);
 
   return (
-    <div className="container mx-auto px-4 md:px-10 py-12">
-      <div className="mb-12 border-l-4 border-red-600 pl-4">
-        <h1 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tight mb-2">
-          Trending <span className="text-gray-400 font-light">Now</span>
+    <div className="container mx-auto px-4 md:px-16 py-20 relative z-10">
+      <div className="mb-20">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="h-1 w-12 bg-red-600 rounded-full"></div>
+          <span className="text-red-600 text-xs font-black uppercase tracking-[0.5em] animate-pulse">Now Trending</span>
+        </div>
+        <h1 className="text-4xl md:text-7xl font-black text-white uppercase tracking-tighter leading-none mb-6 drop-shadow-2xl">
+          POPULAR <span className="text-zinc-700">STREAMS</span>
         </h1>
-        <p className="text-gray-500 font-medium">Drama terpopuler minggu ini • {dramas.length} Judul</p>
+        <div className="flex items-center gap-6">
+           <p className="text-zinc-500 font-bold uppercase tracking-widest text-[10px] flex items-center gap-2">
+             <TrendingUp size={14} className="text-red-600" />
+             {dramas.length} TITLES TRENDING
+           </p>
+           <div className="h-4 w-[1px] bg-zinc-800"></div>
+           <p className="text-zinc-500 font-bold uppercase tracking-widest text-[10px]">TOP RATED CONTENT</p>
+        </div>
       </div>
 
       {displayedDramas.length > 0 ? (
         <>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6 mb-16">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-6 gap-y-12 mb-24 animate-in fade-in slide-in-from-bottom-5 duration-700">
             {displayedDramas.map((drama) => (
               <MovieCard key={drama.bookId} drama={drama} />
             ))}
           </div>
 
           {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-4 mt-12">
+            <div className="flex items-center justify-center gap-8 mt-20 pt-10 border-t border-zinc-900/50">
               <button
                 onClick={() => changePage(page - 1)}
                 disabled={page === 1}
-                className="bg-zinc-800 hover:bg-zinc-700 disabled:opacity-30 text-white p-3 rounded-full transition-all"
+                className="group relative flex items-center justify-center bg-[#141414] hover:bg-red-600 disabled:opacity-20 text-white w-14 h-14 rounded-full transition-all duration-500 border border-zinc-800 hover:border-red-500 disabled:cursor-not-allowed active:scale-90"
               >
-                <ChevronRight size={24} className="rotate-180" />
+                <ChevronRight size={24} className="rotate-180 group-hover:-translate-x-1 transition-transform" />
               </button>
 
-              <div className="flex gap-2">
-                <span className="text-white font-bold">{page}</span>
-                <span className="text-zinc-600">/</span>
-                <span className="text-zinc-600">{totalPages}</span>
+              <div className="flex items-center gap-4 bg-[#141414] px-8 py-3 rounded-full border border-zinc-800 shadow-2xl">
+                <span className="text-white font-black text-lg tracking-tighter">{page.toString().padStart(2, '0')}</span>
+                <div className="h-6 w-[1px] bg-zinc-800"></div>
+                <span className="text-zinc-600 font-black text-lg tracking-tighter">{totalPages.toString().padStart(2, '0')}</span>
               </div>
 
               <button
                 onClick={() => changePage(page + 1)}
                 disabled={page >= totalPages}
-                className="bg-zinc-800 hover:bg-zinc-700 disabled:opacity-30 text-white p-3 rounded-full transition-all"
+                className="group relative flex items-center justify-center bg-[#141414] hover:bg-red-600 disabled:opacity-20 text-white w-14 h-14 rounded-full transition-all duration-500 border border-zinc-800 hover:border-red-500 disabled:cursor-not-allowed active:scale-90"
               >
-                <ChevronRight size={24} />
+                <ChevronRight size={24} className="group-hover:translate-x-1 transition-transform" />
               </button>
             </div>
           )}

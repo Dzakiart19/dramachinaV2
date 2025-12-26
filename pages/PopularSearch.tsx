@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { apiService } from '../services/api';
 import { useNavigate } from 'react-router-dom';
-import { AlertCircle, RefreshCcw, LayoutDashboard, Search as SearchIcon, TrendingUp } from 'lucide-react';
+import { AlertCircle, Search as SearchIcon, TrendingUp } from 'lucide-react';
 
 const PopularSearch: React.FC = () => {
   const [searches, setSearches] = useState<string[]>([]);
@@ -62,39 +62,50 @@ const PopularSearch: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 md:px-12 py-12 bg-black min-h-screen">
-      <div className="mb-12 border-l-4 border-red-600 pl-4">
-        <h1 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tighter mb-2">
-          Popular <span className="text-zinc-600">Search</span>
+    <div className="container mx-auto px-4 md:px-16 py-20 bg-black min-h-screen relative z-10">
+      <div className="mb-20">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="h-1 w-12 bg-red-600 rounded-full"></div>
+          <span className="text-red-600 text-xs font-black uppercase tracking-[0.5em] animate-pulse">Trending</span>
+        </div>
+        <h1 className="text-4xl md:text-7xl font-black text-white uppercase tracking-tighter leading-none mb-6 drop-shadow-2xl">
+          POPULAR <span className="text-zinc-700">TOPICS</span>
         </h1>
-        <p className="text-zinc-500 font-medium">Temukan apa yang sedang trending saat ini</p>
+        <p className="text-zinc-500 font-bold uppercase tracking-widest text-[10px] flex items-center gap-2">
+          <TrendingUp size={14} className="text-red-600" />
+          WHAT EVERYONE IS WATCHING RIGHT NOW
+        </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 animate-in fade-in slide-in-from-bottom-5 duration-1000">
         {searches.map((search, idx) => (
           <button
             key={`search-${idx}`}
             onClick={() => handleSearch(search)}
-            className="group relative flex items-center justify-between p-6 bg-zinc-900/50 border border-zinc-800 rounded-md hover:bg-zinc-800 hover:border-zinc-700 transition-all duration-300"
+            className="group relative flex items-center justify-between p-8 bg-[#0a0a0a]/80 backdrop-blur-2xl border border-zinc-800/50 rounded-xl hover:bg-[#141414] hover:border-red-600/30 transition-all duration-500 shadow-2xl overflow-hidden active:scale-95"
           >
-            <div className="flex items-center gap-6">
-              <span className="text-3xl font-black text-zinc-800 group-hover:text-red-600 transition-colors italic">
-                {idx + 1}
+            <div className="flex items-center gap-8 relative z-10">
+              <span className="text-5xl font-black text-zinc-900 group-hover:text-red-600 transition-all duration-500 italic drop-shadow-[0_0_10px_rgba(220,38,38,0.2)]">
+                {(idx + 1).toString().padStart(2, '0')}
               </span>
               <div className="text-left">
-                <p className="text-lg font-bold text-white group-hover:text-red-500 transition-colors uppercase tracking-tight">
+                <p className="text-lg md:text-xl font-black text-zinc-100 group-hover:text-white transition-colors uppercase tracking-tighter leading-tight mb-2">
                   {search}
                 </p>
                 <div className="flex items-center gap-2">
-                  <TrendingUp className="text-green-500" size={12} />
-                  <span className="text-[10px] text-zinc-600 font-black uppercase tracking-widest">Rising Search</span>
+                  <div className="h-1.5 w-1.5 rounded-full bg-green-500"></div>
+                  <span className="text-[9px] text-zinc-600 font-black uppercase tracking-widest group-hover:text-zinc-400 transition-colors">Rising Search</span>
                 </div>
               </div>
             </div>
             
-            <SearchIcon className="text-zinc-700 group-hover:text-white transition-colors" size={20} />
+            <div className="bg-zinc-800/50 p-3 rounded-full group-hover:bg-red-600 group-hover:text-white transition-all duration-500 relative z-10">
+              <SearchIcon className="text-zinc-600 group-hover:text-white" size={18} />
+            </div>
             
-            <div className="absolute left-0 top-0 bottom-0 w-1 bg-red-600 scale-y-0 group-hover:scale-y-100 transition-transform duration-300 origin-top" />
+            <div className="absolute right-0 bottom-0 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity duration-500">
+              <TrendingUp size={120} />
+            </div>
           </button>
         ))}
       </div>
