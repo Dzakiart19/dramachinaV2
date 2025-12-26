@@ -7,6 +7,8 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
+  const backgroundImage = 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=2000&auto=format&fit=crop';
+
   useEffect(() => {
     // Analytics tracking (Unique daily visitor per browser)
     try {
@@ -35,23 +37,38 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-black">
-      <Navbar />
-      <main className="flex-grow pt-16 md:pt-20">
-        {children}
-      </main>
-      <footer className="bg-black py-16 border-t border-zinc-900 text-zinc-500 text-sm">
-        <div className="container mx-auto px-4 md:px-10">
-          <div className="flex gap-10 mb-10">
-            <span className="hover:underline cursor-pointer">Audio & Subtitle</span>
-            <span className="hover:underline cursor-pointer">Pusat Bantuan</span>
-            <span className="hover:underline cursor-pointer">Syarat Penggunaan</span>
-            <span className="hover:underline cursor-pointer">Privasi</span>
+    <div className="min-h-screen flex flex-col bg-black relative">
+      {/* Cinematic Background Image */}
+      <div 
+        className="fixed inset-0 z-0 opacity-20 pointer-events-none"
+        style={{
+          backgroundImage: `url(${backgroundImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed'
+        }}
+      />
+      {/* Gradient Overlay for better readability */}
+      <div className="fixed inset-0 z-0 bg-gradient-to-b from-black/80 via-black/50 to-black pointer-events-none" />
+      
+      <div className="relative z-10 flex flex-col min-h-screen">
+        <Navbar />
+        <main className="flex-grow pt-16 md:pt-20">
+          {children}
+        </main>
+        <footer className="bg-black/80 backdrop-blur-md py-16 border-t border-zinc-900 text-zinc-500 text-sm relative z-10">
+          <div className="container mx-auto px-4 md:px-10">
+            <div className="flex gap-10 mb-10">
+              <span className="hover:underline cursor-pointer">Audio & Subtitle</span>
+              <span className="hover:underline cursor-pointer">Pusat Bantuan</span>
+              <span className="hover:underline cursor-pointer">Syarat Penggunaan</span>
+              <span className="hover:underline cursor-pointer">Privasi</span>
+            </div>
+            <p className="mb-2 text-zinc-600">© 2024 DZECK STREAM Entertainment</p>
+            <p className="text-xs text-zinc-700 uppercase tracking-widest font-bold">Premium Asian Drama Streaming</p>
           </div>
-          <p className="mb-2 text-zinc-600">© 2024 DZECK STREAM Entertainment</p>
-          <p className="text-xs text-zinc-700 uppercase tracking-widest font-bold">Premium Asian Drama Streaming</p>
-        </div>
-      </footer>
+        </footer>
+      </div>
     </div>
   );
 };
