@@ -89,19 +89,30 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
     
     // Reset state when source changes
     setIsBlockedByGoogle(false);
+
+    // AUTO-SWITCH logic for Server 1 if it's consistently failing
+    const isServer1 = selectedCdnIndex === 0;
     
     connectionTimeoutRef.current = window.setTimeout(() => {
       // Check if video is stuck in initial state
       if (video.networkState === 3 || (video.readyState === 0 && !video.paused)) {
         console.warn("Potential video block detected, triggering fallback.");
-        setIsBlockedByGoogle(true);
+        if (isServer1 && currentEpisode && currentEpisode.cdnList.length > 1) {
+          console.log("Auto-switching from failing Server 1 to Server 2");
+          setSelectedCdnIndex(1);
+        } else {
+          setIsBlockedByGoogle(true);
+        }
       }
-    }, 6000); // 6 seconds is enough to know it's failing
+    }, 5000); // 5 seconds for Server 1 is plenty to know it's dead
 
     const handleError = (e: any) => {
       console.error("Video error detected", e);
-      // Always show error overlay if the native video element reports an error
-      setIsBlockedByGoogle(true);
+      if (isServer1 && currentEpisode && currentEpisode.cdnList.length > 1) {
+        setSelectedCdnIndex(1);
+      } else {
+        setIsBlockedByGoogle(true);
+      }
     };
 
     video.addEventListener('error', handleError);
