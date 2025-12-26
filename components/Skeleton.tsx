@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const Skeleton = ({ className = "" }: { className?: string }) => (
+export const Skeleton = ({ className = "" }: { className?: string, key?: any }) => (
   <div className={`bg-zinc-900 animate-pulse rounded-md ${className}`} />
 );
 
