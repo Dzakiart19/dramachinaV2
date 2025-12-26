@@ -197,7 +197,12 @@ types.ts             ✅ TypeScript types
 - Lucide React (Icons)
 - HLS.js (Video streaming)
 
-## ✅ Checklist - ALL COMPLETE
+### ✅ Auto-Play Preview (26 Dec 2025)
+- Menambahkan cuplikan video singkat saat pengguna menahan kursor di atas kartu drama (hover).
+- Video preview muncul setelah delay 800ms untuk menghindari gangguan saat scrolling.
+- Dilengkapi dengan tombol toggle suara (mute/unmute).
+- Integrasi ke `MovieCard.tsx` dengan transisi halus.
+- Menggunakan `previewVideo` property di interface `Drama`.
 - ✅ 9 dedicated pages (one per API)
 - ✅ Each API has dedicated page
 - ✅ Unique gradient loading states
