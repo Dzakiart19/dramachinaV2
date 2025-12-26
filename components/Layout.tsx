@@ -38,34 +38,64 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   return (
     <div className="min-h-screen flex flex-col bg-black relative">
-      {/* Cinematic Background Image */}
+      {/* Cinematic Background Image with improved layering */}
       <div 
-        className="fixed inset-0 z-0 opacity-60 pointer-events-none block"
+        className="fixed inset-0 z-0 pointer-events-none block"
         style={{
           backgroundImage: `url(${astronautBg})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          backgroundAttachment: 'scroll'
+          backgroundAttachment: 'fixed'
         }}
-      />
-      {/* Gradient Overlay for better readability */}
-      <div className="fixed inset-0 z-0 bg-gradient-to-b from-black/60 via-transparent to-black pointer-events-none" />
+      >
+        <div className="absolute inset-0 bg-black/60" />
+      </div>
+      
+      {/* Dynamic Gradient Overlays for Depth */}
+      <div className="fixed inset-0 z-0 bg-gradient-to-b from-black via-transparent to-black pointer-events-none" />
+      <div className="fixed inset-0 z-0 bg-[radial-gradient(circle_at_50%_50%,rgba(220,38,38,0.05),transparent_70%)] pointer-events-none" />
       
       <div className="relative z-10 flex flex-col min-h-screen">
         <Navbar />
         <main className="flex-grow pt-16 md:pt-20">
-          {children}
+          <div className="animate-in fade-in duration-1000">
+            {children}
+          </div>
         </main>
-        <footer className="bg-black/80 backdrop-blur-md py-16 border-t border-zinc-900 text-zinc-500 text-sm relative z-10">
-          <div className="container mx-auto px-4 md:px-10">
-            <div className="flex gap-10 mb-10">
-              <span className="hover:underline cursor-pointer">Audio & Subtitle</span>
-              <span className="hover:underline cursor-pointer">Pusat Bantuan</span>
-              <span className="hover:underline cursor-pointer">Syarat Penggunaan</span>
-              <span className="hover:underline cursor-pointer">Privasi</span>
+        <footer className="bg-[#0f0f0f]/90 backdrop-blur-2xl py-20 border-t border-zinc-900/50 text-zinc-500 text-sm relative z-10">
+          <div className="container mx-auto px-4 md:px-12">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
+              <div className="space-y-4">
+                <h4 className="text-white font-black text-xs uppercase tracking-[0.2em]">Navigation</h4>
+                <div className="flex flex-col gap-2">
+                  <span className="hover:text-white transition-colors cursor-pointer">Audio & Subtitle</span>
+                  <span className="hover:text-white transition-colors cursor-pointer">Pusat Bantuan</span>
+                  <span className="hover:text-white transition-colors cursor-pointer">Investor Relations</span>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <h4 className="text-white font-black text-xs uppercase tracking-[0.2em]">Legal</h4>
+                <div className="flex flex-col gap-2">
+                  <span className="hover:text-white transition-colors cursor-pointer">Syarat Penggunaan</span>
+                  <span className="hover:text-white transition-colors cursor-pointer">Privasi</span>
+                  <span className="hover:text-white transition-colors cursor-pointer">Cookie Preferences</span>
+                </div>
+              </div>
             </div>
-            <p className="mb-2 text-zinc-600">© 2024 DZECK STREAM Entertainment</p>
-            <p className="text-xs text-zinc-700 uppercase tracking-widest font-bold">Premium Asian Drama Streaming</p>
+            <div className="flex flex-col md:flex-row justify-between items-end gap-6 pt-8 border-t border-zinc-900/50">
+              <div>
+                <p className="mb-2 text-zinc-600 font-medium">© 2024 DZECK STREAM Entertainment</p>
+                <p className="text-[10px] text-zinc-700 uppercase tracking-[0.3em] font-black">Premium Asian Drama Streaming</p>
+              </div>
+              <div className="flex gap-4">
+                <div className="w-8 h-8 rounded-full border border-zinc-800 flex items-center justify-center hover:bg-white/5 transition-colors cursor-pointer">
+                  <span className="text-[10px] font-black">FB</span>
+                </div>
+                <div className="w-8 h-8 rounded-full border border-zinc-800 flex items-center justify-center hover:bg-white/5 transition-colors cursor-pointer">
+                  <span className="text-[10px] font-black">IG</span>
+                </div>
+              </div>
+            </div>
           </div>
         </footer>
       </div>
