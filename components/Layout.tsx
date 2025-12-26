@@ -40,12 +40,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     <div className="min-h-screen flex flex-col bg-black relative">
       {/* Cinematic Background Image */}
       <div 
-        className="fixed inset-0 z-0 opacity-60 pointer-events-none"
+        className="fixed inset-0 z-0 opacity-60 pointer-events-none block"
         style={{
           backgroundImage: `url(${astronautBg})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          backgroundAttachment: 'fixed'
+          backgroundAttachment: 'scroll'
         }}
       />
       {/* Gradient Overlay for better readability */}
