@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Navbar from './Navbar';
 
 interface LayoutProps {
@@ -7,6 +7,24 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
+  useEffect(() => {
+    // Analytics tracking
+    try {
+      const stats = JSON.parse(localStorage.getItem('dzeck_stats') || '{"total":0,"daily":{},"unique":[]}');
+      const today = new Date().toISOString().split('T')[0];
+      
+      // Increment total
+      stats.total = (stats.total || 0) + 1;
+      
+      // Increment daily
+      stats.daily[today] = (stats.daily[today] || 0) + 1;
+      
+      localStorage.setItem('dzeck_stats', JSON.stringify(stats));
+    } catch (e) {
+      console.error('Stats tracking failed', e);
+    }
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col bg-black">
       <Navbar />
