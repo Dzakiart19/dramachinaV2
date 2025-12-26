@@ -4,6 +4,7 @@ import { Drama } from '../types';
 import MovieCard from '../components/MovieCard';
 import { ChevronRight, Loader2, AlertCircle, RefreshCcw, LayoutDashboard, PlayCircle, X, Clock } from 'lucide-react';
 import { historyService, WatchHistoryItem } from '../services/history';
+import { MovieCardSkeleton, Skeleton } from '../components/Skeleton';
 
 const Latest: React.FC = () => {
   const [latest, setLatest] = useState<Drama[]>([]);
@@ -27,7 +28,6 @@ const Latest: React.FC = () => {
   const changePage = (newPage: number) => {
     if (newPage < 1) return;
     setPage(newPage);
-    // Instant scroll without delay
     requestAnimationFrame(() => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
@@ -38,7 +38,6 @@ const Latest: React.FC = () => {
     setError(null);
     
     try {
-      // Load first 5 pages in parallel for instant display
       const promises = Array.from({ length: 5 }, (_, i) => 
         apiService.getLatestDramas(i + 1).catch(() => [])
       );
@@ -46,7 +45,6 @@ const Latest: React.FC = () => {
       const results = await Promise.all(promises);
       const allLatest: Drama[] = results.flat();
 
-      // Remove duplicates by bookId
       const dramaMaps = new Map<string, Drama>();
       allLatest.forEach(d => dramaMaps.set(d.bookId, d));
       const uniqueDramas = Array.from(dramaMaps.values());
@@ -71,9 +69,20 @@ const Latest: React.FC = () => {
 
   if (loading && latest.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[90vh] bg-black">
-        <div className="w-16 h-16 border-4 border-red-600 border-t-transparent rounded-full animate-spin shadow-[0_0_20px_rgba(220,38,38,0.5)]"></div>
-        <p className="mt-6 text-red-600 font-bold tracking-[0.3em] uppercase animate-pulse">DZECK STREAM</p>
+      <div className="container mx-auto px-4 md:px-16 py-20 bg-black min-h-screen">
+        <div className="mb-20 space-y-4">
+          <Skeleton className="h-1 w-12" />
+          <Skeleton className="h-16 w-1/2" />
+          <div className="flex gap-4">
+            <Skeleton className="h-4 w-32" />
+            <Skeleton className="h-4 w-32" />
+          </div>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-6 gap-y-12">
+          {Array.from({ length: 12 }).map((_, i) => (
+            <MovieCardSkeleton key={i} />
+          ))}
+        </div>
       </div>
     );
   }
@@ -100,7 +109,6 @@ const Latest: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 md:px-16 py-20 relative z-10">
-      {/* Continue Watching Section */}
       {history.length > 0 && (
         <div className="mb-24 animate-in fade-in slide-in-from-left-10 duration-1000">
           <div className="flex items-center justify-between mb-10 border-b border-zinc-900/50 pb-6">
@@ -128,7 +136,6 @@ const Latest: React.FC = () => {
                 <img src={item.cover} alt={item.bookName} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
                 
-                {/* Progress bar simulation */}
                 <div className="absolute bottom-0 left-0 w-full h-1 bg-zinc-800">
                   <div className="h-full bg-red-600 w-2/3 shadow-[0_0_10px_rgba(220,38,38,0.8)]"></div>
                 </div>
@@ -181,7 +188,6 @@ const Latest: React.FC = () => {
         ))}
       </div>
 
-      {/* Modern Pagination UI */}
       {totalPages > 1 && (
         <div className="flex flex-wrap items-center justify-center gap-3 mt-20 pt-10 border-t border-zinc-900/50">
           <button

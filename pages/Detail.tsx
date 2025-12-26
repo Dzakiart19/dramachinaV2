@@ -1,8 +1,8 @@
-
 import React, { useEffect, useState } from 'react';
 import { apiService } from '../services/api';
 import { Drama, Episode } from '../types';
-import { Play, Star, Eye, Calendar, Tag, ChevronLeft, Loader2, List, LayoutDashboard, AlertCircle } from 'lucide-react';
+import { Play, Star, ChevronLeft, AlertCircle } from 'lucide-react';
+import { PageHeroSkeleton, Skeleton } from '../components/Skeleton';
 
 interface DetailProps {
   bookId: string;
@@ -36,9 +36,23 @@ const Detail: React.FC<DetailProps> = ({ bookId }) => {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[90vh] bg-black">
-        <div className="w-16 h-16 border-4 border-red-600 border-t-transparent rounded-full animate-spin shadow-[0_0_20px_rgba(220,38,38,0.5)]"></div>
-        <p className="mt-6 text-red-600 font-bold tracking-[0.3em] uppercase animate-pulse">DZECK STREAM</p>
+      <div className="bg-black min-h-screen">
+        <PageHeroSkeleton />
+        <div className="container mx-auto px-4 md:px-16 grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-16 mt-8 md:mt-0">
+          <div className="md:col-span-8 space-y-12">
+            <Skeleton className="h-6 w-40" />
+            <Skeleton className="h-40 w-full" />
+            <Skeleton className="h-6 w-40" />
+            <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2">
+              {Array.from({ length: 12 }).map((_, i) => (
+                <Skeleton key={i} className="h-12 w-full" />
+              ))}
+            </div>
+          </div>
+          <div className="md:col-span-4">
+            <Skeleton className="h-80 w-full" />
+          </div>
+        </div>
       </div>
     );
   }
@@ -61,7 +75,6 @@ const Detail: React.FC<DetailProps> = ({ bookId }) => {
 
   return (
     <div className="pb-20 bg-black">
-      {/* Hero Banner with Enhanced Cinematic Depth */}
       <div className="relative h-[65vh] md:h-[90vh] w-full overflow-hidden">
         <div className="absolute inset-0">
           <img 
@@ -69,61 +82,59 @@ const Detail: React.FC<DetailProps> = ({ bookId }) => {
             alt={drama.bookName}
             className="w-full h-full object-cover scale-105"
           />
-          {/* Multi-layered overlays for Netflix aesthetic */}
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-r from-black via-black/30 to-transparent" />
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,transparent,rgba(0,0,0,0.4))]" />
         </div>
         
-          <div className="absolute top-4 left-4 md:top-8 md:left-16 z-20">
-             <a href="#/" className="group flex items-center gap-2 text-white hover:text-white transition-all bg-black/40 backdrop-blur-2xl px-4 py-2 md:px-6 md:py-2.5 rounded-full border border-white/10 hover:border-white/30 hover:bg-black/60 shadow-2xl">
-               <ChevronLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> 
-               <span className="text-[10px] md:text-xs font-black uppercase tracking-widest">Back to Browse</span>
-             </a>
-          </div>
+        <div className="absolute top-4 left-4 md:top-8 md:left-16 z-20">
+           <a href="#/" className="group flex items-center gap-2 text-white hover:text-white transition-all bg-black/40 backdrop-blur-2xl px-4 py-2 md:px-6 md:py-2.5 rounded-full border border-white/10 hover:border-white/30 hover:bg-black/60 shadow-2xl">
+             <ChevronLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> 
+             <span className="text-[10px] md:text-xs font-black uppercase tracking-widest">Back to Browse</span>
+           </a>
+        </div>
 
-          <div className="absolute bottom-10 md:bottom-20 left-4 md:left-16 right-4 max-w-5xl z-10 animate-in slide-in-from-bottom-10 duration-1000">
-             <div className="flex items-center gap-3 mb-4 md:mb-6">
-               <div className="h-0.5 w-8 md:w-12 bg-red-600"></div>
-               <span className="text-red-600 text-[10px] font-black uppercase tracking-[0.4em]">DZECK ORIGINALS</span>
-             </div>
-             <h1 className="text-3xl md:text-8xl font-black text-white mb-6 md:mb-8 uppercase tracking-tighter leading-[0.9] drop-shadow-[0_0_30px_rgba(0,0,0,0.5)]">
-               {drama.bookName}
-             </h1>
-             
-             <div className="flex flex-wrap items-center gap-4 md:gap-6 mb-8 md:mb-10">
-                <div className="flex items-center gap-2 text-green-500 font-black tracking-widest text-[10px] md:text-sm">
-                  <Star size={16} md:size={20} fill="currentColor" />
-                  <span>98% MATCH</span>
-                </div>
-                <div className="text-zinc-200 font-black text-[10px] md:text-sm tracking-widest">2024</div>
-                <div className="bg-white/10 backdrop-blur-md border border-white/20 px-1.5 py-0.5 rounded text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] text-white">4K ULTRA HD</div>
-                <div className="text-zinc-300 font-black text-[10px] md:text-sm tracking-widest border-l border-zinc-700 pl-4 md:pl-6">{drama.chapterCount} EPISODES</div>
-             </div>
+        <div className="absolute bottom-10 md:bottom-20 left-4 md:left-16 right-4 max-w-5xl z-10 animate-in slide-in-from-bottom-10 duration-1000">
+           <div className="flex items-center gap-3 mb-4 md:mb-6">
+             <div className="h-0.5 w-8 md:w-12 bg-red-600"></div>
+             <span className="text-red-600 text-[10px] font-black uppercase tracking-[0.4em]">DZECK ORIGINALS</span>
+           </div>
+           <h1 className="text-3xl md:text-8xl font-black text-white mb-6 md:mb-8 uppercase tracking-tighter leading-[0.9] drop-shadow-[0_0_30px_rgba(0,0,0,0.5)]">
+             {drama.bookName}
+           </h1>
+           
+           <div className="flex flex-wrap items-center gap-4 md:gap-6 mb-8 md:mb-10">
+              <div className="flex items-center gap-2 text-green-500 font-black tracking-widest text-[10px] md:text-sm">
+                <Star size={16} fill="currentColor" />
+                <span>98% MATCH</span>
+              </div>
+              <div className="text-zinc-200 font-black text-[10px] md:text-sm tracking-widest">2024</div>
+              <div className="bg-white/10 backdrop-blur-md border border-white/20 px-1.5 py-0.5 rounded text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] text-white">4K ULTRA HD</div>
+              <div className="text-zinc-300 font-black text-[10px] md:text-sm tracking-widest border-l border-zinc-700 pl-4 md:pl-6">{drama.chapterCount} EPISODES</div>
+           </div>
 
-             {episodes.length > 0 && (
-               <div className="flex flex-col sm:flex-row gap-4">
-                 <a 
-                   href={`#/player/${bookId}/${episodes[0].chapterId}`}
-                   className="flex items-center justify-center gap-4 bg-white hover:bg-zinc-200 text-black font-black px-10 md:px-16 py-3.5 md:py-5 rounded-md transition-all scale-100 hover:scale-105 active:scale-95 uppercase tracking-[0.2em] text-[12px] md:text-sm shadow-[0_20px_40px_rgba(0,0,0,0.4)]"
-                 >
-                   <Play size={20} md:size={24} fill="currentColor" />
-                   Play Now
-                 </a>
-                 <button 
-                   onClick={() => document.getElementById('synopsis-section')?.scrollIntoView({ behavior: 'smooth' })}
-                   className="flex items-center justify-center gap-4 bg-zinc-500/20 hover:bg-zinc-500/40 backdrop-blur-2xl text-white font-black px-10 md:px-16 py-3.5 md:py-5 rounded-md transition-all uppercase tracking-[0.2em] text-[12px] md:text-sm border border-white/10 active:scale-95 shadow-2xl"
-                 >
-                   Episodes & Info
-                 </button>
-               </div>
-             )}
-          </div>
+           {episodes.length > 0 && (
+             <div className="flex flex-col sm:flex-row gap-4">
+               <a 
+                 href={`#/player/${bookId}/${episodes[0].chapterId}`}
+                 className="flex items-center justify-center gap-4 bg-white hover:bg-zinc-200 text-black font-black px-10 md:px-16 py-3.5 md:py-5 rounded-md transition-all scale-100 hover:scale-105 active:scale-95 uppercase tracking-[0.2em] text-[12px] md:text-sm shadow-[0_20px_40px_rgba(0,0,0,0.4)]"
+               >
+                 <Play size={20} fill="currentColor" />
+                 Play Now
+               </a>
+               <button 
+                 onClick={() => document.getElementById('synopsis-section')?.scrollIntoView({ behavior: 'smooth' })}
+                 className="flex items-center justify-center gap-4 bg-zinc-500/20 hover:bg-zinc-500/40 backdrop-blur-2xl text-white font-black px-10 md:px-16 py-3.5 md:py-5 rounded-md transition-all uppercase tracking-[0.2em] text-[12px] md:text-sm border border-white/10 active:scale-95 shadow-2xl"
+               >
+                 Episodes & Info
+               </button>
+             </div>
+           )}
+        </div>
       </div>
 
       <div className="container mx-auto px-4 md:px-16 mt-20 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
-          {/* Main Content */}
           <div className="lg:col-span-8">
             <div className="mb-20" id="synopsis-section">
               <div className="flex items-center gap-4 mb-8">
@@ -148,7 +159,6 @@ const Detail: React.FC<DetailProps> = ({ bookId }) => {
               </div>
             )}
 
-            {/* Episode List revamped */}
             <div className="mt-20">
               <div className="flex items-center justify-between mb-10 border-b border-zinc-900/50 pb-6">
                 <div className="flex items-end gap-4">
@@ -158,7 +168,7 @@ const Detail: React.FC<DetailProps> = ({ bookId }) => {
                 <span className="text-zinc-600 font-bold uppercase tracking-[0.2em] text-[10px] bg-zinc-900/50 px-3 py-1 rounded-full border border-zinc-800">{episodes.length} EPISODES TOTAL</span>
               </div>
               <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2 md:gap-3">
-                {episodes.map((ep, idx) => (
+                {episodes.map((ep) => (
                   <a 
                     key={ep.chapterId}
                     href={`#/player/${bookId}/${ep.chapterId}`}
@@ -172,7 +182,6 @@ const Detail: React.FC<DetailProps> = ({ bookId }) => {
             </div>
           </div>
 
-          {/* Sidebar revamped */}
           <div className="lg:col-span-4">
              <div className="bg-[#0a0a0a]/50 backdrop-blur-2xl p-10 rounded-xl border border-white/5 sticky top-32">
                <h3 className="text-white font-black uppercase tracking-[0.3em] mb-10 text-xs border-b border-zinc-900 pb-4">Production Info</h3>
