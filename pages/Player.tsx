@@ -1,8 +1,8 @@
-
-import React, { useEffect, useState, useMemo, useRef } from 'react';
+import React, { useEffect, useState, useMemo, useRef, useCallback } from 'react';
 import { apiService } from '../services/api';
 import { Episode, Drama } from '../types';
 import { ChevronLeft, ChevronRight, Settings, Loader2, AlertCircle, RefreshCcw, ExternalLink, Play, Monitor, ShieldAlert } from 'lucide-react';
+import { historyService } from '../services/history';
 
 interface PlayerProps {
   bookId: string;
@@ -15,19 +15,9 @@ declare global {
   }
 }
 
-import { historyService } from '../services/history';
-
 const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
   const [drama, setDrama] = useState<Drama | null>(null);
   const [episodes, setEpisodes] = useState<Episode[]>([]);
-  // ... existing states ...
-
-  // Save to history when content is loaded and valid
-  useEffect(() => {
-    if (drama && currentEpisode) {
-      historyService.saveProgress(drama, currentEpisode);
-    }
-  }, [drama, currentEpisode]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [videoError, setVideoError] = useState(false);
@@ -37,14 +27,24 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const connectionTimeoutRef = useRef<number | null>(null);
 
-  const loadContent = async () => {
+  const currentEpisode = useMemo(() => {
+    if (!episodes || episodes.length === 0) return null;
+    return episodes.find(ep => ep.chapterId === episodeId) || episodes[0];
+  }, [episodes, episodeId]);
+
+  useEffect(() => {
+    if (drama && currentEpisode) {
+      historyService.saveProgress(drama, currentEpisode);
+    }
+  }, [drama, currentEpisode]);
+
+  const loadContent = useCallback(async () => {
     setLoading(true);
     setError(null);
     setVideoError(false);
     setIsBlockedByGoogle(false);
     
     try {
-      // Parallel loading of detail and episodes
       const [dramaData, epsData] = await Promise.all([
         apiService.getDramaDetail(bookId).catch(() => null),
         apiService.getAllEpisodes(bookId).catch(() => [])
@@ -56,30 +56,19 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
       
       if (epsData && Array.isArray(epsData) && epsData.length > 0) {
         setEpisodes(epsData);
-        // Pre-fetch video source for the current episode to speed up loading
-        const initialEp = epsData.find(ep => ep.chapterId === episodeId) || epsData[0];
-        if (initialEp && initialEp.cdnList && initialEp.cdnList.length > 0) {
-           // We could trigger a hidden pre-fetch here if needed
-        }
       } else {
         throw new Error("Daftar episode tidak ditemukan.");
       }
     } catch (err: any) {
       setError(err.message || "Gagal memuat data video.");
     } finally {
-      // Small delay removed to make it faster
       setLoading(false);
     }
-  };
+  }, [bookId]);
 
   useEffect(() => {
     loadContent();
-  }, [bookId]);
-
-  const currentEpisode = useMemo(() => {
-    if (!episodes || episodes.length === 0) return null;
-    return episodes.find(ep => ep.chapterId === episodeId) || episodes[0];
-  }, [episodes, episodeId]);
+  }, [loadContent]);
 
   const currentVideoSource = useMemo(() => {
     if (!currentEpisode || !currentEpisode.cdnList || currentEpisode.cdnList.length === 0) return null;
@@ -94,17 +83,12 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
     const video = videoRef.current;
     const url = currentVideoSource.videoPath;
     
-    // Set a timeout to detect if the connection is refused by Google/Sandbox
     if (connectionTimeoutRef.current) window.clearTimeout(connectionTimeoutRef.current);
-    
-    // Reset state when source changes
     setIsBlockedByGoogle(false);
 
-    // AUTO-SWITCH logic for Server 1 if it's consistently failing
     const isServer1 = selectedCdnIndex === 0;
     
     connectionTimeoutRef.current = window.setTimeout(() => {
-      // Check if video is stuck in initial state
       if (video.networkState === 3 || (video.readyState === 0 && !video.paused)) {
         console.warn("Potential video block detected, triggering fallback.");
         if (isServer1 && currentEpisode && currentEpisode.cdnList.length > 1) {
@@ -114,11 +98,10 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
           setIsBlockedByGoogle(true);
         }
       }
-    }, 5000); // 5 seconds for Server 1 is plenty to know it's dead
+    }, 5000);
 
     const handleError = (e: any) => {
       console.error("Video error detected", e);
-      // Logic for automatic switch if Server 1 fails
       if (isServer1 && currentEpisode && currentEpisode.cdnList.length > 1) {
         console.log("Switching to Server 2 due to playback error");
         setSelectedCdnIndex(1);
@@ -175,7 +158,7 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
       video.removeEventListener('error', handleError);
       if (connectionTimeoutRef.current) window.clearTimeout(connectionTimeoutRef.current);
     };
-  }, [currentVideoSource, loading]);
+  }, [currentVideoSource, loading, selectedCdnIndex, currentEpisode]);
 
   const availableQualities = useMemo(() => {
     if (!currentEpisode || !currentEpisode.cdnList || currentEpisode.cdnList.length === 0) return [];
@@ -187,8 +170,6 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
     if (!currentEpisode || !currentEpisode.cdnList) return 'Server';
     const cdn = currentEpisode.cdnList[index];
     const domain = cdn?.cdnDomain?.toLowerCase() || '';
-    
-    // Improved detection for Indo Dub
     const isIndo = domain.includes('dub') || domain.includes('indo') || domain.includes('id');
     if (isIndo) return 'Indo Dub';
     if (index === 0) return 'Server 1';
@@ -199,7 +180,6 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
   const nextEpisode = useMemo(() => {
     if (!currentEpisode || episodes.length === 0) return null;
     const currentIndex = episodes.findIndex(e => e.chapterId === currentEpisode.chapterId);
-    // Find next episode with "Sulih Suara" or "Dub" if we are in Indo Dub mode
     return currentIndex !== -1 && currentIndex < episodes.length - 1 ? episodes[currentIndex + 1] : null;
   }, [episodes, currentEpisode]);
 
@@ -209,17 +189,14 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
     return currentIndex > 0 ? episodes[currentIndex - 1] : null;
   }, [episodes, currentEpisode]);
 
-  // Handle auto-next episode when current one ends
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-
     const handleEnded = () => {
       if (nextEpisode) {
-        window.location.href = `#/player/${bookId}/${nextEpisode.chapterId}`;
+        window.location.hash = `/player/${bookId}/${nextEpisode.chapterId}`;
       }
     };
-
     video.addEventListener('ended', handleEnded);
     return () => video.removeEventListener('ended', handleEnded);
   }, [nextEpisode, bookId]);
@@ -249,7 +226,6 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
   return (
     <div className="bg-black min-h-screen pb-20">
       <div className="container mx-auto py-8 px-4 md:px-12 max-w-7xl">
-        {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
           <div className="flex items-start gap-4">
             <a href={`#/detail/${bookId}`} className="mt-1 p-3 bg-zinc-900 border border-zinc-800 rounded-md text-white hover:bg-zinc-800 transition-all">
@@ -274,7 +250,6 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
           </div>
         </div>
 
-        {/* Video Player */}
         <div className="relative aspect-video w-full bg-zinc-950 rounded-md overflow-hidden shadow-2xl ring-1 ring-zinc-800 group">
           {isBlockedByGoogle ? (
             <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/95 backdrop-blur-2xl p-8 text-center border border-red-900/50">
@@ -290,7 +265,7 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
                 <button 
                   onClick={() => {
                     setIsBlockedByGoogle(false);
-                    const nextCdn = (selectedCdnIndex + 1) % currentEpisode.cdnList.length;
+                    const nextCdn = (selectedCdnIndex + 1) % (currentEpisode.cdnList?.length || 1);
                     setSelectedCdnIndex(nextCdn);
                   }}
                   className="flex-1 px-8 py-4 bg-red-600 text-white rounded-md font-black hover:bg-red-700 transition-all shadow-[0_0_20px_rgba(220,38,38,0.4)] uppercase tracking-widest active:scale-95"
@@ -322,10 +297,8 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
           )}
         </div>
 
-        {/* Controls */}
         <div className="mt-10 grid grid-cols-1 lg:grid-cols-12 gap-8">
            <div className="lg:col-span-8 space-y-8">
-              {/* Navigation */}
               <div className="flex flex-wrap gap-4">
                 {prevEpisode && (
                   <a 
@@ -345,7 +318,6 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
                 )}
               </div>
 
-              {/* Episode Selection revamped for compact grid */}
               <div className="bg-[#0a0a0a]/80 backdrop-blur-3xl p-6 rounded-xl border border-white/5 shadow-2xl">
                 <div className="flex items-center justify-between mb-8 border-b border-zinc-900/50 pb-4">
                   <div className="flex items-end gap-3">
@@ -376,16 +348,14 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
               </div>
            </div>
 
-           {/* Settings Sidebar */}
            <div className="lg:col-span-4 space-y-6">
               <div className="bg-zinc-900/50 p-6 rounded-md border border-zinc-800">
                 <h4 className="text-zinc-500 font-black text-[10px] uppercase tracking-[0.2em] mb-4">Video Settings</h4>
-                
                 <div className="space-y-6">
                   <div>
                     <span className="text-white text-sm font-bold block mb-3">Server Selector</span>
                     <div className="flex flex-wrap gap-2">
-                      {currentEpisode.cdnList.map((_, idx) => (
+                      {currentEpisode.cdnList?.map((_, idx) => (
                         <button
                           key={idx}
                           onClick={() => { setSelectedCdnIndex(idx); setIsBlockedByGoogle(false); }}
@@ -400,7 +370,6 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
                       ))}
                     </div>
                   </div>
-
                   <div>
                     <span className="text-white text-sm font-bold block mb-3">Resolution</span>
                     <div className="flex flex-wrap gap-2">

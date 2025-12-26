@@ -1,4 +1,4 @@
-import { Drama, Episode } from './types';
+import { Drama, Episode } from '../types';
 
 export interface WatchHistoryItem {
   bookId: string;
