@@ -43,7 +43,7 @@ const AdminPanel: React.FC = () => {
               <Activity className="text-red-600 group-hover:scale-110 transition-transform" size={32} />
               <span className="text-[10px] font-black bg-red-600/10 text-red-600 px-2 py-1 rounded uppercase tracking-widest">Real-time</span>
             </div>
-            <h3 className="text-zinc-500 text-xs font-black uppercase tracking-[0.2em] mb-1">Visits Today</h3>
+            <h3 className="text-zinc-500 text-xs font-black uppercase tracking-[0.2em] mb-1">Unique Visits Today</h3>
             <p className="text-5xl font-black tabular-nums">{visitsToday.toLocaleString()}</p>
           </div>
 
@@ -53,7 +53,7 @@ const AdminPanel: React.FC = () => {
               <BarChart3 className="text-white group-hover:scale-110 transition-transform" size={32} />
               <span className="text-[10px] font-black bg-white/10 text-white px-2 py-1 rounded uppercase tracking-widest">Lifetime</span>
             </div>
-            <h3 className="text-zinc-500 text-xs font-black uppercase tracking-[0.2em] mb-1">Total Visits</h3>
+            <h3 className="text-zinc-500 text-xs font-black uppercase tracking-[0.2em] mb-1">Total Unique Visits</h3>
             <p className="text-5xl font-black tabular-nums">{totalVisits.toLocaleString()}</p>
           </div>
 

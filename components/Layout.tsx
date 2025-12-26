@@ -8,18 +8,23 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   useEffect(() => {
-    // Analytics tracking
+    // Analytics tracking (Unique daily visitor per browser)
     try {
-      const stats = JSON.parse(localStorage.getItem('dzeck_stats') || '{"total":0,"daily":{},"unique":[]}');
+      const stats = JSON.parse(localStorage.getItem('dzeck_stats') || '{"total":0,"daily":{}}');
+      const lastVisit = localStorage.getItem('dzeck_last_session');
       const today = new Date().toISOString().split('T')[0];
       
-      // Increment total
-      stats.total = (stats.total || 0) + 1;
-      
-      // Increment daily
-      stats.daily[today] = (stats.daily[today] || 0) + 1;
-      
-      localStorage.setItem('dzeck_stats', JSON.stringify(stats));
+      // Only count if this is a new day for this visitor
+      if (lastVisit !== today) {
+        // Increment total unique visits
+        stats.total = (stats.total || 0) + 1;
+        
+        // Increment daily unique visits
+        stats.daily[today] = (stats.daily[today] || 0) + 1;
+        
+        localStorage.setItem('dzeck_stats', JSON.stringify(stats));
+        localStorage.setItem('dzeck_last_session', today);
+      }
     } catch (e) {
       console.error('Stats tracking failed', e);
     }
