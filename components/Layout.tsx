@@ -1,14 +1,13 @@
 
 import React, { useEffect } from 'react';
 import Navbar from './Navbar';
+import astronautBg from '../attached_assets/stock_images/elegant_cinematic_as_af8fdd35.jpg';
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const backgroundImage = 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=2000&auto=format&fit=crop';
-
   useEffect(() => {
     // Analytics tracking (Unique daily visitor per browser)
     try {
@@ -40,16 +39,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     <div className="min-h-screen flex flex-col bg-black relative">
       {/* Cinematic Background Image */}
       <div 
-        className="fixed inset-0 z-0 opacity-20 pointer-events-none"
+        className="fixed inset-0 z-0 opacity-40 pointer-events-none"
         style={{
-          backgroundImage: `url(${backgroundImage})`,
+          backgroundImage: `url(${astronautBg})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundAttachment: 'fixed'
         }}
       />
       {/* Gradient Overlay for better readability */}
-      <div className="fixed inset-0 z-0 bg-gradient-to-b from-black/80 via-black/50 to-black pointer-events-none" />
+      <div className="fixed inset-0 z-0 bg-gradient-to-b from-black/70 via-black/30 to-black pointer-events-none" />
       
       <div className="relative z-10 flex flex-col min-h-screen">
         <Navbar />
