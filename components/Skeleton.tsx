@@ -16,17 +16,14 @@ export const MovieCardSkeleton = () => (
 
 export const PageLoading = () => (
   <div className="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center">
-    <div className="relative mb-8">
-      <div className="w-20 h-20 border-2 border-red-600/20 rounded-full"></div>
-      <div className="absolute inset-0 w-20 h-20 border-t-2 border-red-600 rounded-full animate-spin"></div>
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-12 h-12 border-2 border-zinc-800 rounded-full animate-pulse"></div>
-      </div>
-    </div>
-    <div className="flex flex-col items-center">
-      <h2 className="text-white font-black text-2xl tracking-[0.5em] uppercase animate-pulse">DZECK</h2>
-      <div className="mt-4 h-0.5 w-32 bg-zinc-900 overflow-hidden rounded-full">
-        <div className="h-full bg-red-600 animate-loading-bar origin-left"></div>
+    <div className="flex flex-col items-center animate-pulse">
+      <h2 className="text-white font-black text-6xl tracking-[0.5em] uppercase drop-shadow-[0_0_30px_rgba(220,38,38,0.5)]">
+        DZECK
+      </h2>
+      <div className="mt-8 flex gap-2">
+        <div className="w-2 h-2 bg-red-600 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+        <div className="w-2 h-2 bg-red-600 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+        <div className="w-2 h-2 bg-red-600 rounded-full animate-bounce"></div>
       </div>
     </div>
   </div>
