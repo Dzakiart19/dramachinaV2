@@ -39,19 +39,27 @@ const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
       fetch(targetUrl, { signal: controller.signal, headers: { 'Accept': 'application/json' } }).then(async r => {
         if (!r.ok) throw new Error('Direct failed');
         const text = await r.text();
-        try { return JSON.parse(text); } catch (e) { throw new Error('Invalid JSON direct'); }
+        try {
+          const d = JSON.parse(text);
+          if (d && (d.data || Array.isArray(d) || d.columnVoList)) return d;
+          throw new Error('Invalid data structure');
+        } catch (e) { throw new Error('Invalid JSON direct'); }
       }),
       // 2. AllOrigins
       fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`, { signal: controller.signal }).then(async r => {
         if (!r.ok) throw new Error('Proxy 1 failed');
         const d = await r.json();
-        return JSON.parse(d.contents);
+        const content = JSON.parse(d.contents);
+        if (content && (content.data || Array.isArray(content) || content.columnVoList)) return content;
+        throw new Error('Invalid content structure');
       }),
       // 3. CorsProxy.io
       fetch(`https://corsproxy.io/?${encodeURIComponent(targetUrl)}`, { signal: controller.signal }).then(async r => {
         if (!r.ok) throw new Error('Proxy 2 failed');
         const text = await r.text();
-        return JSON.parse(text);
+        const content = JSON.parse(text);
+        if (content && (content.data || Array.isArray(content) || content.columnVoList)) return content;
+        throw new Error('Invalid content structure');
       })
     ];
 
