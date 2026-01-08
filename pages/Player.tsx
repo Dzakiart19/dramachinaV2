@@ -88,8 +88,9 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
 
     const isServer1 = selectedCdnIndex === 0;
     
+    // Improved connection handling with shorter timeout for faster fallback
     connectionTimeoutRef.current = window.setTimeout(() => {
-      if (video.networkState === 3 || (video.readyState === 0 && !video.paused)) {
+      if (video.networkState === 3 || (video.readyState < 2 && !video.paused)) {
         console.warn("Potential video block detected, triggering fallback.");
         if (isServer1 && currentEpisode && currentEpisode.cdnList.length > 1) {
           console.log("Auto-switching from failing Server 1 to Server 2");

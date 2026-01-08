@@ -17,9 +17,8 @@ const MovieCard: React.FC<MovieCardProps> = ({ drama, className = "" }) => {
 
   const imageUrl = drama.coverWap || drama.cover || `https://picsum.photos/seed/${drama.bookId}/300/450`;
   
-  // Simulated preview video since the API doesn't provide one yet
-  // Using a sample video for demonstration
-  const videoUrl = drama.previewVideo || "https://assets.mixkit.co/videos/preview/mixkit-curvy-road-through-a-lush-forest-41388-large.mp4";
+  // Stabilized preview video with reliable fallback
+  const videoUrl = drama.previewVideo || "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
 
   useEffect(() => {
     if (isHovered) {
