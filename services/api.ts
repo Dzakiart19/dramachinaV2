@@ -32,6 +32,23 @@ const fetchWithProxy = async (path: string) => {
 
   let lastError: any = null;
 
+  // Try direct fetch first for speed and bypass proxies if possible
+  try {
+    const res = await fetch(targetUrl, {
+      method: 'GET',
+      headers: { 'Accept': 'application/json' }
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (typeof data === 'object' && data !== null) {
+        apiCache.set(path, { data, timestamp: Date.now() });
+        return data;
+      }
+    }
+  } catch (e) {
+    console.warn('Direct fetch failed, falling back to proxies...');
+  }
+
   // Try top 3 proxies in parallel for speed, use the first successful one
   const controller = new AbortController();
   const promises = PROXIES.map(async (getProxiedUrl) => {
