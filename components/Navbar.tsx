@@ -33,8 +33,9 @@ const Navbar: React.FC = () => {
       <div className="container mx-auto px-4 md:px-12 flex items-center justify-between">
         <div className="flex items-center gap-10 lg:gap-16">
           {/* Logo */}
-          <a href="#/" className="flex items-center gap-2 group shrink-0">
-            <span className="text-3xl md:text-4xl font-black tracking-tighter text-red-600 drop-shadow-[0_0_20px_rgba(220,38,38,0.6)] transition-all duration-500 group-hover:scale-105 group-hover:drop-shadow-[0_0_30px_rgba(220,38,38,0.8)]">
+          <a href="#/" className="flex items-center gap-3 group shrink-0">
+            <img src="/logo.png" alt="DZECK" className="w-8 h-8 md:w-10 md:h-10 object-contain drop-shadow-[0_0_8px_rgba(220,38,38,0.5)] transition-all duration-500 group-hover:scale-110" />
+            <span className="text-3xl md:text-4xl font-black tracking-tighter text-red-600 drop-shadow-[0_0_20px_rgba(220,38,38,0.6)] transition-all duration-500 group-hover:drop-shadow-[0_0_30px_rgba(220,38,38,0.8)]">
               DZECK
             </span>
           </a>
