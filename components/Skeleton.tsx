@@ -1,11 +1,11 @@
 import React from 'react';
 
 export const Skeleton = ({ className = "" }: { className?: string, key?: any }) => (
-  <div className={`bg-zinc-900/50 animate-pulse rounded-md border border-white/5 ${className}`} />
+  <div className={`bg-zinc-900/50 animate-pulse animate-shimmer rounded-md border border-white/5 ${className}`} />
 );
 
 export const MovieCardSkeleton = () => (
-  <div className="w-full space-y-3">
+  <div className="w-full space-y-3 animate-in fade-in duration-500">
     <Skeleton className="aspect-[2/3] w-full rounded-xl" />
     <div className="space-y-2 px-1">
       <Skeleton className="h-4 w-3/4" />

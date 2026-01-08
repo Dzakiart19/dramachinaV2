@@ -30,16 +30,16 @@ const AppContent = () => {
   return (
     <Layout>
       <Suspense fallback={
-        <div className="container mx-auto px-4 md:px-16 py-20 bg-black min-h-screen animate-pulse">
+        <div className="container mx-auto px-4 md:px-16 py-20 bg-black min-h-screen animate-in fade-in duration-700">
           <div className="mb-20 space-y-4">
-            <div className="h-1 w-12 bg-zinc-900 rounded-full" />
-            <div className="h-16 w-1/2 bg-zinc-900 rounded-md" />
+            <div className="h-1 w-12 bg-zinc-900 rounded-full animate-shimmer overflow-hidden" />
+            <div className="h-16 w-1/2 bg-zinc-900 rounded-md animate-shimmer overflow-hidden" />
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-6 gap-y-12">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="space-y-4">
-                <div className="aspect-[2/3] w-full bg-zinc-900 rounded-xl" />
-                <div className="h-4 w-3/4 bg-zinc-900 rounded" />
+            {Array.from({ length: 12 }).map((_, i) => (
+              <div key={i} className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500" style={{ animationDelay: `${i * 50}ms` }}>
+                <div className="aspect-[2/3] w-full bg-zinc-900 rounded-xl animate-shimmer overflow-hidden" />
+                <div className="h-4 w-3/4 bg-zinc-900 rounded animate-shimmer overflow-hidden" />
               </div>
             ))}
           </div>
