@@ -118,12 +118,14 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
       enableWorker: true,
       lowLatencyMode: true,
       backBufferLength: 90,
-      maxBufferLength: 60,
+      maxBufferLength: 120, // Doubled for extreme stability
       maxMaxBufferLength: 600,
-      maxBufferSize: 60 * 1000 * 1000,
-      maxBufferHole: 0.5,
-      nudgeOffset: 0.1,
-      nudgeMaxRetries: 10,
+      maxBufferSize: 100 * 1024 * 1024, // 100MB buffer
+      maxBufferHole: 1,
+      nudgeOffset: 0.2,
+      nudgeMaxRetries: 20,
+      manifestLoadingMaxRetry: 5,
+      levelLoadingMaxRetry: 5,
     };
 
     if (url.includes('.m3u8')) {

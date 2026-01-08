@@ -30,23 +30,30 @@ const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
       }
     }
 
-    // Try top 2 proxies in parallel + direct fetch
+    // Use a single, reliable proxy that handles CORS and retries better
+    const PROXY_URL = 'https://api.allorigins.win/raw?url=';
     const controller = new AbortController();
+    
     const fetchPromises = [
+      // 1. Direct fetch (best if works)
       fetch(targetUrl, { signal: controller.signal, headers: { 'Accept': 'application/json' } }).then(async r => {
         if (!r.ok) throw new Error('Direct failed');
         const d = await r.json();
         if (!d || typeof d !== 'object') throw new Error('Invalid JSON');
         return d;
       }),
-      fetch(PROXIES[0](targetUrl), { signal: controller.signal }).then(async r => {
+      // 2. Reliable Proxy (AllOrigins)
+      fetch(`${PROXY_URL}${encodeURIComponent(targetUrl)}`, { signal: controller.signal }).then(async r => {
         if (!r.ok) throw new Error('Proxy 1 failed');
         const d = await r.json();
+        if (!d || typeof d !== 'object') throw new Error('Invalid JSON');
         return d;
       }),
-      fetch(PROXIES[1](targetUrl), { signal: controller.signal }).then(async r => {
+      // 3. Alternative Proxy (CorsProxy.io)
+      fetch(`https://corsproxy.io/?${encodeURIComponent(targetUrl)}`, { signal: controller.signal }).then(async r => {
         if (!r.ok) throw new Error('Proxy 2 failed');
         const d = await r.json();
+        if (!d || typeof d !== 'object') throw new Error('Invalid JSON');
         return d;
       })
     ];
