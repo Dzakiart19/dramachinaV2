@@ -36,6 +36,17 @@
         * {
             transition: background-color 0.3s ease, border-color 0.3s ease;
         }
+        @keyframes loading-bar {
+            0% { transform: scaleX(0); }
+            50% { transform: scaleX(0.5); }
+            100% { transform: scaleX(1); }
+        }
+        .animate-loading-bar {
+            animation: loading-bar 2s infinite ease-in-out;
+        }
+        .animate-spin-slow {
+            animation: spin 3s linear infinite;
+        }
     </style>
 </head>
 <body>
