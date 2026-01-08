@@ -29,7 +29,22 @@ const PlayerPageWrapper = () => {
 const AppContent = () => {
   return (
     <Layout>
-      <Suspense fallback={null}>
+      <Suspense fallback={
+        <div className="container mx-auto px-4 md:px-16 py-20 bg-black min-h-screen animate-pulse">
+          <div className="mb-20 space-y-4">
+            <div className="h-1 w-12 bg-zinc-900 rounded-full" />
+            <div className="h-16 w-1/2 bg-zinc-900 rounded-md" />
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-6 gap-y-12">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="space-y-4">
+                <div className="aspect-[2/3] w-full bg-zinc-900 rounded-xl" />
+                <div className="h-4 w-3/4 bg-zinc-900 rounded" />
+              </div>
+            ))}
+          </div>
+        </div>
+      }>
         <Routes>
           <Route path="/" element={<Latest />} />
           <Route path="/vip" element={<VIP />} />
