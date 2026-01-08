@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import Navbar from './Navbar';
 // @ts-ignore
-import astronautBg from '../attached_assets/stock_images/elegant_cinematic_as_af8fdd35.jpg';
+import astronautBg from '../assets/stock_images/elegant_cinematic_as_af8fdd35.jpg';
 
 interface LayoutProps {
   children: React.ReactNode;
