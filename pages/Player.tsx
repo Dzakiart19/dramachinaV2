@@ -114,14 +114,21 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
 
     video.addEventListener('error', handleError);
 
+    const hlsConfig = {
+      enableWorker: true,
+      lowLatencyMode: true,
+      backBufferLength: 90,
+      maxBufferLength: 60,
+      maxMaxBufferLength: 600,
+      maxBufferSize: 60 * 1000 * 1000,
+      maxBufferHole: 0.5,
+      nudgeOffset: 0.1,
+      nudgeMaxRetries: 10,
+    };
+
     if (url.includes('.m3u8')) {
       if (window.Hls && window.Hls.isSupported()) {
-        const hls = new window.Hls({
-          enableWorker: true,
-          lowLatencyMode: true,
-          backBufferLength: 90,
-          maxBufferLength: 30,
-        });
+        const hls = new window.Hls(hlsConfig);
         hls.loadSource(url);
         hls.attachMedia(video);
         hls.on(window.Hls.Events.ERROR, (event: any, data: any) => {

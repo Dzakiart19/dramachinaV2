@@ -19,76 +19,58 @@ const TARGET_BASE_URL = 'https://dramabox.sansekai.my.id/api';
 const apiCache = new Map<string, {data: any, timestamp: number}>();
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
-const fetchWithProxy = async (path: string) => {
-  const targetUrl = `${TARGET_BASE_URL}${path}`;
-  
-  // Return cached data if available and fresh
-  if (apiCache.has(path)) {
-    const cached = apiCache.get(path)!;
-    if (Date.now() - cached.timestamp < CACHE_TTL) {
-      return cached.data;
-    }
-  }
-
-  let lastError: any = null;
-
-  // Try direct fetch first for speed and bypass proxies if possible
-  try {
-    const res = await fetch(targetUrl, {
-      method: 'GET',
-      headers: { 'Accept': 'application/json' }
-    });
-    if (res.ok) {
-      const data = await res.json();
-      if (typeof data === 'object' && data !== null) {
-        apiCache.set(path, { data, timestamp: Date.now() });
-        return data;
+  const fetchWithProxy = async (path: string) => {
+    const targetUrl = `${TARGET_BASE_URL}${path}`;
+    
+    // Return cached data if available and fresh
+    if (apiCache.has(path)) {
+      const cached = apiCache.get(path)!;
+      if (Date.now() - cached.timestamp < CACHE_TTL) {
+        return cached.data;
       }
     }
-  } catch (e) {
-    console.warn('Direct fetch failed, falling back to proxies...');
-  }
 
-  // Try top 3 proxies in parallel for speed, use the first successful one
-  const controller = new AbortController();
-  const promises = PROXIES.map(async (getProxiedUrl) => {
-    const proxiedUrl = getProxiedUrl(targetUrl);
+    // Try top 2 proxies in parallel + direct fetch
+    const controller = new AbortController();
+    const fetchPromises = [
+      fetch(targetUrl, { signal: controller.signal, headers: { 'Accept': 'application/json' } }).then(async r => {
+        if (!r.ok) throw new Error('Direct failed');
+        const d = await r.json();
+        if (!d || typeof d !== 'object') throw new Error('Invalid JSON');
+        return d;
+      }),
+      fetch(PROXIES[0](targetUrl), { signal: controller.signal }).then(async r => {
+        if (!r.ok) throw new Error('Proxy 1 failed');
+        const d = await r.json();
+        return d;
+      }),
+      fetch(PROXIES[1](targetUrl), { signal: controller.signal }).then(async r => {
+        if (!r.ok) throw new Error('Proxy 2 failed');
+        const d = await r.json();
+        return d;
+      })
+    ];
+
     try {
-      const res = await fetch(proxiedUrl, {
-        signal: controller.signal,
-        method: 'GET',
-        headers: { 'Accept': 'application/json' }
-      });
-      if (!res.ok) throw new Error('Proxy error');
-      const data = await res.json();
-      if (typeof data !== 'object' || data === null) throw new Error('Invalid JSON');
-      
-      controller.abort(); // Cancel other requests once we have data
+      const data = await Promise.any(fetchPromises);
+      controller.abort();
       apiCache.set(path, { data, timestamp: Date.now() });
       return data;
-    } catch (e) {
-      throw e;
+    } catch (error) {
+      // Final sequential fallback
+      for (const getProxiedUrl of PROXIES.slice(2)) {
+        try {
+          const res = await fetch(getProxiedUrl(targetUrl));
+          if (res.ok) {
+            const data = await res.json();
+            apiCache.set(path, { data, timestamp: Date.now() });
+            return data;
+          }
+        } catch (e) { continue; }
+      }
+      throw new Error('All connection attempts failed');
     }
-  });
-
-  try {
-    return await Promise.any(promises);
-  } catch (error) {
-    // Fallback to sequential if parallel fails (legacy behavior)
-    console.warn('Parallel fetch failed, retrying sequentially...', error);
-    for (const getProxiedUrl of PROXIES) {
-      try {
-        const res = await fetch(getProxiedUrl(targetUrl));
-        if (res.ok) {
-          const data = await res.json();
-          apiCache.set(path, { data, timestamp: Date.now() });
-          return data;
-        }
-      } catch (e) { continue; }
-    }
-    throw new Error('All connection attempts failed');
-  }
-};
+  };
 
 export const apiService = {
   async getVIPDramas(): Promise<VIPResponse> {
