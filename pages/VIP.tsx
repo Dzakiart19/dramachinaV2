@@ -3,6 +3,7 @@ import { apiService } from '../services/api';
 import { Drama, VIPResponse } from '../types';
 import MovieCard from '../components/MovieCard';
 import { AlertCircle, RefreshCcw, LayoutDashboard, ChevronRight } from 'lucide-react';
+import { PageLoading, Skeleton, MovieCardSkeleton } from '../components/Skeleton';
 
 const VIP: React.FC = () => {
   const [vipData, setVipData] = useState<VIPResponse | null>(null);
@@ -48,12 +49,7 @@ const VIP: React.FC = () => {
   }, []);
 
   if (loading && !vipData) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[90vh] bg-black">
-        <div className="w-16 h-16 border-4 border-red-600 border-t-transparent rounded-full animate-spin shadow-[0_0_20px_rgba(220,38,38,0.5)]"></div>
-        <p className="mt-6 text-red-600 font-bold tracking-[0.3em] uppercase animate-pulse">DZECK STREAM</p>
-      </div>
-    );
+    return <PageLoading />;
   }
 
   if (error || !vipData) {

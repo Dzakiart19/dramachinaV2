@@ -4,6 +4,7 @@ import { apiService } from '../services/api';
 import { Drama } from '../types';
 import MovieCard from '../components/MovieCard';
 import { Loader2, AlertCircle, RefreshCcw, ChevronRight, LayoutDashboard } from 'lucide-react';
+import { PageLoading } from '../components/Skeleton';
 
 const IndoDub: React.FC = () => {
   const [allDramas, setAllDramas] = useState<Drama[]>([]);
@@ -71,12 +72,7 @@ const IndoDub: React.FC = () => {
   }, []);
 
   if (loading && allDramas.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[90vh] bg-black">
-        <div className="w-16 h-16 border-4 border-red-600 border-t-transparent rounded-full animate-spin shadow-[0_0_20px_rgba(220,38,38,0.5)]"></div>
-        <p className="mt-6 text-red-600 font-bold tracking-[0.3em] uppercase animate-pulse">DZECK STREAM</p>
-      </div>
-    );
+    return <PageLoading />;
   }
 
   if (error) {

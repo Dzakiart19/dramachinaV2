@@ -3,6 +3,7 @@ import { apiService } from '../services/api';
 import { Episode, Drama } from '../types';
 import { ChevronLeft, ChevronRight, Settings, Loader2, AlertCircle, RefreshCcw, ExternalLink, Play, Monitor, ShieldAlert } from 'lucide-react';
 import { historyService } from '../services/history';
+import { PageLoading } from '../components/Skeleton';
 
 interface PlayerProps {
   bookId: string;
@@ -212,12 +213,7 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
   }, [nextEpisode, bookId]);
 
   if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[90vh] bg-black">
-        <div className="w-16 h-16 border-4 border-red-600 border-t-transparent rounded-full animate-spin shadow-[0_0_20px_rgba(220,38,38,0.5)]"></div>
-        <p className="mt-6 text-red-600 font-bold tracking-[0.3em] uppercase animate-pulse">DZECK STREAM</p>
-      </div>
-    );
+    return <PageLoading />;
   }
 
   if (error || !currentEpisode) {
