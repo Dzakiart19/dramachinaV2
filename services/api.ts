@@ -35,26 +35,23 @@ const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
     const controller = new AbortController();
     
     const fetchPromises = [
-      // 1. Direct fetch (best if works)
+      // 1. Direct fetch
       fetch(targetUrl, { signal: controller.signal, headers: { 'Accept': 'application/json' } }).then(async r => {
         if (!r.ok) throw new Error('Direct failed');
-        const d = await r.json();
-        if (!d || typeof d !== 'object') throw new Error('Invalid JSON');
-        return d;
+        const text = await r.text();
+        try { return JSON.parse(text); } catch (e) { throw new Error('Invalid JSON direct'); }
       }),
-      // 2. Reliable Proxy (AllOrigins)
-      fetch(`${PROXY_URL}${encodeURIComponent(targetUrl)}`, { signal: controller.signal }).then(async r => {
+      // 2. AllOrigins
+      fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`, { signal: controller.signal }).then(async r => {
         if (!r.ok) throw new Error('Proxy 1 failed');
         const d = await r.json();
-        if (!d || typeof d !== 'object') throw new Error('Invalid JSON');
-        return d;
+        return JSON.parse(d.contents);
       }),
-      // 3. Alternative Proxy (CorsProxy.io)
+      // 3. CorsProxy.io
       fetch(`https://corsproxy.io/?${encodeURIComponent(targetUrl)}`, { signal: controller.signal }).then(async r => {
         if (!r.ok) throw new Error('Proxy 2 failed');
-        const d = await r.json();
-        if (!d || typeof d !== 'object') throw new Error('Invalid JSON');
-        return d;
+        const text = await r.text();
+        return JSON.parse(text);
       })
     ];
 
