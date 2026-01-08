@@ -41,7 +41,8 @@ const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
         const text = await r.text();
         try {
           const d = JSON.parse(text);
-          if (d && (d.data || Array.isArray(d) || d.columnVoList)) return d;
+          // Allow both object with data and direct data structures
+          if (d && (d.data || d.book || Array.isArray(d) || d.columnVoList)) return d;
           throw new Error('Invalid data structure');
         } catch (e) { throw new Error('Invalid JSON direct'); }
       }),
@@ -50,7 +51,7 @@ const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
         if (!r.ok) throw new Error('Proxy 1 failed');
         const d = await r.json();
         const content = JSON.parse(d.contents);
-        if (content && (content.data || Array.isArray(content) || content.columnVoList)) return content;
+        if (content && (content.data || content.book || Array.isArray(content) || content.columnVoList)) return content;
         throw new Error('Invalid content structure');
       }),
       // 3. CorsProxy.io
@@ -58,7 +59,7 @@ const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
         if (!r.ok) throw new Error('Proxy 2 failed');
         const text = await r.text();
         const content = JSON.parse(text);
-        if (content && (content.data || Array.isArray(content) || content.columnVoList)) return content;
+        if (content && (content.data || content.book || Array.isArray(content) || content.columnVoList)) return content;
         throw new Error('Invalid content structure');
       })
     ];

@@ -21,8 +21,15 @@ const Detail: React.FC<DetailProps> = ({ bookId }) => {
           apiService.getDramaDetail(bookId),
           apiService.getAllEpisodes(bookId).catch(() => [])
         ]);
-        if (detailData && detailData.data) {
-          setDrama(detailData.data.book);
+        
+        console.log('Detail API Response:', detailData);
+        
+        if (detailData) {
+          // Handle various response formats
+          const book = detailData.data?.book || detailData.book || detailData;
+          if (book && (book.bookId || book.id)) {
+            setDrama(book);
+          }
         }
         setEpisodes(epsData);
       } catch (error) {
