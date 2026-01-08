@@ -1,6 +1,7 @@
 
 import React, { useEffect } from 'react';
 import Navbar from './Navbar';
+import { Link } from 'react-router-dom';
 // @ts-ignore
 import astronautBg from '../assets/stock_images/elegant_cinematic_as_af8fdd35.jpg';
 
@@ -68,17 +69,17 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <div className="space-y-4">
                 <h4 className="text-white font-black text-xs uppercase tracking-[0.2em]">Navigation</h4>
                 <div className="flex flex-col gap-2">
-                  <span className="hover:text-white transition-colors cursor-pointer">Audio & Subtitle</span>
-                  <span className="hover:text-white transition-colors cursor-pointer">Pusat Bantuan</span>
-                  <span className="hover:text-white transition-colors cursor-pointer">Investor Relations</span>
+                  <Link to="/help" className="hover:text-white transition-colors cursor-pointer">Audio & Subtitle</Link>
+                  <Link to="/help" className="hover:text-white transition-colors cursor-pointer">Pusat Bantuan</Link>
+                  <Link to="/help" className="hover:text-white transition-colors cursor-pointer">Investor Relations</Link>
                 </div>
               </div>
               <div className="space-y-4">
                 <h4 className="text-white font-black text-xs uppercase tracking-[0.2em]">Legal</h4>
                 <div className="flex flex-col gap-2">
-                  <span className="hover:text-white transition-colors cursor-pointer">Syarat Penggunaan</span>
-                  <span className="hover:text-white transition-colors cursor-pointer">Privasi</span>
-                  <span className="hover:text-white transition-colors cursor-pointer">Cookie Preferences</span>
+                  <Link to="/terms" className="hover:text-white transition-colors cursor-pointer">Syarat Penggunaan</Link>
+                  <Link to="/privacy" className="hover:text-white transition-colors cursor-pointer">Privasi</Link>
+                  <Link to="/help" className="hover:text-white transition-colors cursor-pointer">Cookie Preferences</Link>
                 </div>
               </div>
             </div>

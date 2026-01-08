@@ -15,6 +15,9 @@ const PopularSearch = lazy(() => import('./pages/PopularSearch'));
 const Detail = lazy(() => import('./pages/Detail'));
 const Player = lazy(() => import('./pages/Player'));
 const AdminPanel = lazy(() => import('./pages/AdminPanel'));
+const HelpCenter = lazy(() => import('./pages/HelpCenter'));
+const Privacy = lazy(() => import('./pages/Privacy'));
+const Terms = lazy(() => import('./pages/Terms'));
 
 const DetailPageWrapper = () => {
   const { id } = useParams<{ id: string }>();
@@ -56,6 +59,9 @@ const AppContent = () => {
           <Route path="/detail/:id" element={<DetailPageWrapper />} />
           <Route path="/player/:bookId/:episodeId" element={<PlayerPageWrapper />} />
           <Route path="/panel" element={<AdminPanel />} />
+          <Route path="/help" element={<HelpCenter />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
         </Routes>
       </Suspense>
     </Layout>
