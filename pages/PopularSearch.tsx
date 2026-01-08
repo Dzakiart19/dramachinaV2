@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { apiService } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import { AlertCircle, Search as SearchIcon, TrendingUp } from 'lucide-react';
-import { PageLoading } from '../components/Skeleton';
+import { Skeleton } from '../components/Skeleton';
 
 const PopularSearch: React.FC = () => {
   const [searches, setSearches] = useState<string[]>([]);
@@ -39,7 +39,19 @@ const PopularSearch: React.FC = () => {
   };
 
   if (loading && searches.length === 0) {
-    return <PageLoading />;
+    return (
+      <div className="container mx-auto px-4 md:px-16 py-20 bg-black min-h-screen">
+        <div className="mb-20 space-y-4">
+          <Skeleton className="h-1 w-12" />
+          <Skeleton className="h-16 w-1/2" />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={i} className="h-32 w-full rounded-xl" />
+          ))}
+        </div>
+      </div>
+    );
   }
 
   if (error || searches.length === 0) {

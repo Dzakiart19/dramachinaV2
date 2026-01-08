@@ -27,18 +27,9 @@ const PlayerPageWrapper = () => {
 };
 
 const AppContent = () => {
-  const [isInitialLoading, setIsInitialLoading] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setIsInitialLoading(false), 1200);
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (isInitialLoading) return <PageLoading />;
-
   return (
     <Layout>
-      <Suspense fallback={<PageLoading />}>
+      <Suspense fallback={null}>
         <Routes>
           <Route path="/" element={<Latest />} />
           <Route path="/vip" element={<VIP />} />

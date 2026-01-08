@@ -213,7 +213,20 @@ const Player: React.FC<PlayerProps> = ({ bookId, episodeId }) => {
   }, [nextEpisode, bookId]);
 
   if (loading) {
-    return <PageLoading />;
+    return (
+      <div className="container mx-auto py-8 px-4 md:px-12 max-w-7xl animate-pulse">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+          <div className="flex items-start gap-4">
+             <div className="w-12 h-12 bg-zinc-900 rounded-md"></div>
+             <div className="space-y-2">
+               <div className="h-2 w-20 bg-zinc-900"></div>
+               <div className="h-8 w-48 bg-zinc-900"></div>
+             </div>
+          </div>
+        </div>
+        <div className="aspect-video w-full bg-zinc-900 rounded-md"></div>
+      </div>
+    );
   }
 
   if (error || !currentEpisode) {

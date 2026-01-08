@@ -4,7 +4,7 @@ import { apiService } from '../services/api';
 import { Drama } from '../types';
 import MovieCard from '../components/MovieCard';
 import { Loader2, AlertCircle, RefreshCcw, ChevronRight, LayoutDashboard } from 'lucide-react';
-import { PageLoading } from '../components/Skeleton';
+import { Skeleton, MovieCardSkeleton } from '../components/Skeleton';
 
 const IndoDub: React.FC = () => {
   const [allDramas, setAllDramas] = useState<Drama[]>([]);
@@ -72,7 +72,19 @@ const IndoDub: React.FC = () => {
   }, []);
 
   if (loading && allDramas.length === 0) {
-    return <PageLoading />;
+    return (
+      <div className="container mx-auto px-4 md:px-16 py-20 bg-black min-h-screen">
+        <div className="mb-20 space-y-4">
+          <Skeleton className="h-1 w-12" />
+          <Skeleton className="h-16 w-1/2" />
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-6 gap-y-12">
+          {Array.from({ length: 12 }).map((_, i) => (
+            <MovieCardSkeleton key={i} />
+          ))}
+        </div>
+      </div>
+    );
   }
 
   if (error) {
