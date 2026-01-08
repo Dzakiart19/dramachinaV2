@@ -26,7 +26,8 @@ const Detail: React.FC<DetailProps> = ({ bookId }) => {
         
         if (detailData) {
           // Handle various response formats
-          const book = detailData.data?.book || detailData.book || detailData;
+          const anyData = detailData as any;
+          const book = anyData.data?.book || anyData.book || anyData;
           if (book && (book.bookId || book.id)) {
             setDrama(book);
           }
